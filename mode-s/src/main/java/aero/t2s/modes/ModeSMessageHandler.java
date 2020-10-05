@@ -11,9 +11,9 @@ import java.util.function.Consumer;
 class ModeSMessageHandler {
     private final Decoder decoder;
     private final Executor executor = Executors.newSingleThreadExecutor();
-    private Consumer<Track> onDeleted;
-    private Consumer<Track> onCreated;
-    private Consumer<Track> onUpdated;
+    private Consumer<Track> onDeleted = track -> {};
+    private Consumer<Track> onCreated = track -> {};
+    private Consumer<Track> onUpdated = track -> {};
 
     ModeSMessageHandler(Map<String, Track> tracks, double originLat, double originLon, ModeSDatabase database) {
         this.decoder = new Decoder(tracks, originLat, originLon, database);
@@ -35,10 +35,7 @@ class ModeSMessageHandler {
     void handle(final String input) {
         executor.execute(() -> {
             String hex = input.substring(1, input.length() - 1);
-            short[] data = new short[hex.length() / 2];
-            for (int index = 0; index < hex.length() / 2; index++) {
-                data[index] = Short.parseShort(hex.substring(index * 2, (index * 2) + 2), 16);
-            }
+            short[] data = BinaryHelper.stringToByteArray(hex);
 
             Track track = decoder.decode(data[0] >>> 3, data);
             if (track != null) {
