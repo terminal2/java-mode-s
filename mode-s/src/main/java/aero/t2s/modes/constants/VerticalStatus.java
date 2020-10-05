@@ -1,7 +1,13 @@
 package aero.t2s.modes.constants;
 
 public enum VerticalStatus {
+    /**
+     * 0 - The aircraft is airborne
+     */
     AIRBORNE,
+    /**
+     * 1 - The aircraft is on the ground
+     */
     GROUND,
     ;
 

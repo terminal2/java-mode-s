@@ -1,13 +1,10 @@
 package aero.t2s.modes;
 
-import aero.t2s.modes.constants.AcasReplyInformation;
-import aero.t2s.modes.constants.AcasSensitivity;
-import aero.t2s.modes.constants.ResolutionAdvisory;
-import aero.t2s.modes.constants.VerticalStatus;
+import aero.t2s.modes.constants.*;
 
 public class Acas {
     private VerticalStatus verticalStatus = VerticalStatus.AIRBORNE;
-    private boolean crossLinkCapability;
+    private CrossLinkCapability crossLinkCapability = CrossLinkCapability.UNSUPPORTED;
     private AcasSensitivity sensitivity = AcasSensitivity.INOP;
     private AcasReplyInformation replyInformation = AcasReplyInformation.NO_OPERATING_ACAS;
     private Altitude altitude = new Altitude();
@@ -32,11 +29,11 @@ public class Acas {
         return verticalStatus;
     }
 
-    public void setCrossLinkCapability(boolean crossLinkCapability) {
+    public void setCrossLinkCapability(CrossLinkCapability crossLinkCapability) {
         this.crossLinkCapability = crossLinkCapability;
     }
 
-    public boolean isCrossLinkCapability() {
+    public CrossLinkCapability getCrossLinkCapability() {
         return crossLinkCapability;
     }
 
