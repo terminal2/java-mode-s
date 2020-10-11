@@ -24,7 +24,7 @@ import aero.t2s.modes.constants.SelectedAltitudeSource;
  *     </li>
  * </ul>
  *
- * <h2>MCP/FCU Selected altitude<h2>
+ * <h2>MCP/FCU Selected altitude</h2>
  *
  * <p>
  *     This information which represents the real “aircraft intent,” when available,

@@ -46,7 +46,7 @@ public class Track {
     private double trueHeading;
     private boolean iasAvailable;
     private int ias;
-    private int tas;
+    private double tas;
     private boolean selectedAltitudeManagedFms;
     private boolean selectedAltitudeManagedMcp;
     private int selectedAltitude;
@@ -376,11 +376,11 @@ public class Track {
         return ias;
     }
 
-    public void setTas(int tas) {
+    public void setTas(double tas) {
         this.tas = tas;
     }
 
-    public int getTas() {
+    public double getTas() {
         return tas;
     }
 
