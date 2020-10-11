@@ -116,7 +116,7 @@ We hope with more BDS implemented the guessing accuracy will improve.
 | 2,2 | Antenna positions                          | ❌        |
 | 2,5 | Antenna type                               | ❌        |
 | 3,0 | ACAS Active resolution advisory            | ❌        | Detection implemented, decoding missing
-| 4,0 | Selected vertical intention                | ⚠️        | FMS/FCU (autopilot) information. Not always accurate
+| 4,0 | Selected vertical intention                | ✅️        |
 | 4,1 | Next waypoint details                      | ❌        | 9 Characters
 | 4,2 | Next waypoint details                      | ❌        | Waypoint lat/lon + crossing altitude
 | 4,3 | Next waypoint details                      | ❌        | Bearing, time and distance to waypoint
