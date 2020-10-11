@@ -45,7 +45,7 @@ public class BdsDecoder {
         sb.append("|");
         printLine(sb);
 
-        LoggerFactory.getLogger(getClass()).info(sb.toString());
+        LoggerFactory.getLogger(getClass()).debug(sb.toString());
 
 
         for (Bds bds : bdsDecoder) {

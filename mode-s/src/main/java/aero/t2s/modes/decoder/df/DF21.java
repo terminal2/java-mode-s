@@ -24,11 +24,11 @@ public class DF21 extends DownlinkFormat {
         track.getFlightStatus().setSpi(Common.isFlightStatusSpi(flightStatus));
         track.setModeA(Common.modeA((data[2] & 0x1F) << 8 | data[3]));
 
-        return track;
-//        if (!bds.decode(track, data)) {
-//            LoggerFactory.getLogger(DF20.class).warn("ADS-B: DF-21 received but could not determine BDS code {}", Common.toHexString(data));
-//        }
-//
 //        return track;
+        if (!bds.decode(track, data)) {
+            LoggerFactory.getLogger(DF20.class).warn("ADS-B: DF-21 received but could not determine BDS code {}", Common.toHexString(data));
+        }
+
+        return track;
     }
 }

@@ -25,11 +25,10 @@ public class DF20 extends DownlinkFormat {
         track.getFlightStatus().setSpi(Common.isFlightStatusSpi(flightStatus));
         track.setAltitude(AltitudeEncoding.decode((data[2] & 0x1F) << 8 | data[3]));
 
+        if (!bds.decode(track, data)) {
+            LoggerFactory.getLogger(DF21.class).warn("ADS-B: DF-20 received but could not determine BDS code {}", Common.toHexString(data));
+        }
+
         return track;
-//        if (!bds.decode(track, data)) {
-//            LoggerFactory.getLogger(DF21.class).warn("ADS-B: DF-20 received but could not determine BDS code {}", Common.toHexString(data));
-//        }
-//
-//        return track;
     }
 }
