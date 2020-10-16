@@ -27,8 +27,8 @@ public class Track {
     private RadiusLimit rc = new RadiusLimit(this);
     private int NACv;
     private boolean spi;
-    private int tempAlert;
-    private int emergency;
+    private boolean tempAlert;
+    private boolean emergency;
     private Version version = Version.VERSION0;
     private Acas acas = new Acas();
     private FlightStatus flightStatus = new FlightStatus();
@@ -220,19 +220,19 @@ public class Track {
         return spi;
     }
 
-    public void setTempAlert(int tempAlert) {
+    public void setTempAlert(boolean tempAlert) {
         this.tempAlert = tempAlert;
     }
 
-    public int getTempAlert() {
+    public boolean getTempAlert() {
         return tempAlert;
     }
 
-    public void setEmergency(int emergency) {
+    public void setEmergency(boolean emergency) {
         this.emergency = emergency;
     }
 
-    public int getEmergency() {
+    public boolean getEmergency() {
         return emergency;
     }
 

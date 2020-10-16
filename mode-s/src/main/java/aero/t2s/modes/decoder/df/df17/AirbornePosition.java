@@ -19,8 +19,8 @@ public class AirbornePosition extends ExtendedSquitter {
 
         int surStatus = (data[4] >>> 1) & 0x3; // Interested in 00000xx0 and with 6 and shift by one to get x as int.
         track.setSpi(surStatus == 3);
-        track.setTempAlert(surStatus = 2);
-        track.setEmergency(surStatus = 1);
+        track.setTempAlert(surStatus == 2);
+        track.setEmergency(surStatus == 1);
 
         // Determine Antenna or Navigation Integrity Category
         if (track.getVersion().ordinal() < Version.VERSION2.ordinal()) {
