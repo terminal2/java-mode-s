@@ -17,6 +17,7 @@ public class BdsDecoder {
         bdsDecoder.add(new Bds40());
         bdsDecoder.add(new Bds44());
         bdsDecoder.add(new Bds50());
+        bdsDecoder.add(new Bds53());
         bdsDecoder.add(new Bds60());
     }
 
