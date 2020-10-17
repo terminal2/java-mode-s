@@ -16,6 +16,7 @@ public class BdsDecoder {
         bdsDecoder.add(new Bds30());
         bdsDecoder.add(new Bds40());
         bdsDecoder.add(new Bds44());
+        bdsDecoder.add(new Bds45());
         bdsDecoder.add(new Bds50());
         bdsDecoder.add(new Bds53());
         bdsDecoder.add(new Bds60());
@@ -35,7 +36,6 @@ public class BdsDecoder {
             }
         }
 
-        int tc = (data[4] >>> 4) * 10 + (data[4] & 0xF);
         return false;
     }
 }
