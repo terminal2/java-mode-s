@@ -31,6 +31,7 @@ public class Track {
     private FlightStatus flightStatus = new FlightStatus();
     private Altitude altitude = new Altitude();
     private SelectedAltitudeSource selectedAltitudeSource = SelectedAltitudeSource.UNKNOWN;
+    private Meteo meteo = new Meteo();
     private CapabilityReport capabilityReport = new CapabilityReport();
     private int modeA;
     private int geometricHeightOffset;
@@ -582,6 +583,10 @@ public class Track {
 
     public void setWasJustCreated(boolean state) {
         this.wasJustCreated = state;
+    }
+
+    public Meteo getMeteo() {
+        return meteo;
     }
 
     public CapabilityReport getCapabilityReport() {
