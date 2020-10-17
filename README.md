@@ -102,7 +102,7 @@ We hope with more BDS implemented the guessing accuracy will improve.
 | BDS | Human Readable                             | Supported | Note |
 |-----|--------------------------------------------|-----------|------|
 | 1,0 | Data link capability report                | ❌        | Detection implemented, decoding missing
-| 1,7 | Common usage GICB capability report        | ❌        | Detection implemented, decoding missing
+| 1,7 | Common usage GICB capability report        | ✅        |
 | 1,8 | Mode S services GICB capability report     | ❌        |
 | 1,9 | Mode S services GICB capability report     | ❌        |
 | 1,A | Mode S services GICB capability report     | ❌        |
@@ -120,18 +120,18 @@ We hope with more BDS implemented the guessing accuracy will improve.
 | 4,1 | Next waypoint details                      | ❌        | 9 Characters
 | 4,2 | Next waypoint details                      | ❌        | Waypoint lat/lon + crossing altitude
 | 4,3 | Next waypoint details                      | ❌        | Bearing, time and distance to waypoint
-| 4,4 | Meteorological routine air report          | ❌        |
-| 4,5 | Meteorological hazard report               | ❌        |
+| 4,4 | Meteorological routine air report          | ✅        |
+| 4,5 | Meteorological hazard report               | ✅        |
 | 4,8 | VHF Channel report                         | ❌        | Info on VHF 1/2/3 (frequency + status) & Guard status
-| 5,0 | Track and turn report                      | ⚠️        | Not always accurate
+| 5,0 | Track and turn report                      | ✅        |
 | 5,1 | Position report coarse                     | ❌        |
 | 5,2 | Position report fine                       | ❌        |
-| 5,3 | Air-reference state vector                 | ❌        |
+| 5,3 | Air-reference state vector                 | ✅        |
 | 5,4 | Waypoint 1                                 | ❌        | 5 Chars, ETA, Estimated level, time to go
 | 5,5 | Waypoint 2                                 | ❌        | 5 Chars, ETA, Estimated level, time to go
 | 5,5 | Waypoint 3                                 | ❌        | 5 Chars, ETA, Estimated level, time to go
 | 5,F | Quasi-static parameter monitoring          | ❌        |
-| 6,0 | Heading and speed report                   | ⚠️        | Not always accurate
+| 6,0 | Heading and speed report                   | ✅        |
 | 6,1 | Priority/emergency status                  | ❌        |
 | 6,5 | Aircraft operational status                | ❌        |
 | E,3 | Transponder type/part number               | ❌        |
