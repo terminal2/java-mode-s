@@ -1,8 +1,6 @@
 package aero.t2s.modes;
 
-import aero.t2s.modes.constants.EmergencyState;
-import aero.t2s.modes.constants.LengthWidthCode;
-import aero.t2s.modes.constants.Version;
+import aero.t2s.modes.constants.*;
 
 import java.time.Instant;
 
@@ -26,12 +24,15 @@ public class Track {
     private RadiusLimit rc = new RadiusLimit(this);
     private int NACv;
     private boolean spi;
-    private int tempAlert;
-    private int emergency;
+    private boolean tempAlert;
+    private boolean emergency;
     private Version version = Version.VERSION0;
     private Acas acas = new Acas();
     private FlightStatus flightStatus = new FlightStatus();
     private Altitude altitude = new Altitude();
+    private SelectedAltitudeSource selectedAltitudeSource = SelectedAltitudeSource.UNKNOWN;
+    private Meteo meteo = new Meteo();
+    private CapabilityReport capabilityReport = new CapabilityReport();
     private int modeA;
     private int geometricHeightOffset;
     private int rocd;
@@ -45,7 +46,7 @@ public class Track {
     private double trueHeading;
     private boolean iasAvailable;
     private int ias;
-    private int tas;
+    private double tas;
     private boolean selectedAltitudeManagedFms;
     private boolean selectedAltitudeManagedMcp;
     private int selectedAltitude;
@@ -218,19 +219,19 @@ public class Track {
         return spi;
     }
 
-    public void setTempAlert(int tempAlert) {
+    public void setTempAlert(boolean tempAlert) {
         this.tempAlert = tempAlert;
     }
 
-    public int getTempAlert() {
+    public boolean getTempAlert() {
         return tempAlert;
     }
 
-    public void setEmergency(int emergency) {
+    public void setEmergency(boolean emergency) {
         this.emergency = emergency;
     }
 
-    public int getEmergency() {
+    public boolean getEmergency() {
         return emergency;
     }
 
@@ -374,11 +375,11 @@ public class Track {
         return ias;
     }
 
-    public void setTas(int tas) {
+    public void setTas(double tas) {
         this.tas = tas;
     }
 
-    public int getTas() {
+    public double getTas() {
         return tas;
     }
 
@@ -502,6 +503,14 @@ public class Track {
         return fmsSelectedAltitude;
     }
 
+    public void setSelectedAltitudeSource(SelectedAltitudeSource selectedAltitudeSource) {
+        this.selectedAltitudeSource = selectedAltitudeSource;
+    }
+
+    public SelectedAltitudeSource getSelectedAltitudeSource() {
+        return selectedAltitudeSource;
+    }
+
     public void setRollAngle(double rollAngle) {
         this.rollAngle = rollAngle;
     }
@@ -574,6 +583,14 @@ public class Track {
 
     public void setWasJustCreated(boolean state) {
         this.wasJustCreated = state;
+    }
+
+    public Meteo getMeteo() {
+        return meteo;
+    }
+
+    public CapabilityReport getCapabilityReport() {
+        return capabilityReport;
     }
 
     @Override

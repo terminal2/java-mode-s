@@ -7,7 +7,6 @@ import aero.t2s.modes.constants.AcasSensitivity;
 import aero.t2s.modes.constants.CrossLinkCapability;
 import aero.t2s.modes.constants.VerticalStatus;
 import aero.t2s.modes.decoder.AltitudeEncoding;
-import aero.t2s.modes.decoder.Common;
 import aero.t2s.modes.decoder.Decoder;
 
 /**
