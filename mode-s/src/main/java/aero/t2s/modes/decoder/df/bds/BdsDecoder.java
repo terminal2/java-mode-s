@@ -21,6 +21,11 @@ public class BdsDecoder {
     }
 
     public boolean decode(Track track, short[] data) {
+        // Indicates no message is present and is most likely a reply to a uplink request Altitude from ground station.
+        if (data[4] == 0 && data[5] == 0 && data[6] == 0 && data[7] == 0 && data[8] == 0 && data[9] == 0 && data[10] == 0) {
+            return true;
+        }
+
         for (Bds bds : bdsDecoder) {
             if (bds.attemptDecode(track, data)) {
                 LoggerFactory.getLogger(getClass()).debug("Matched {}", bds.getClass().getSimpleName());
