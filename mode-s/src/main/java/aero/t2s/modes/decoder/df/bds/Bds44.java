@@ -12,10 +12,6 @@ public class Bds44 extends Bds {
 
     @Override
     public boolean attemptDecode(Track track, short[] data) {
-        if (!track.getCapabilityReport().isBds44()) {
-            return false;
-        }
-
         MeteoSource source = MeteoSource.find(data[4] >>> 4);
 
         if (source == MeteoSource.INVALID || source == MeteoSource.RESERVED) {

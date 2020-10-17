@@ -10,10 +10,6 @@ public class Bds45 extends Bds {
 
     @Override
     public boolean attemptDecode(Track track, short[] data) {
-        if (!track.getCapabilityReport().isBds45()) {
-            return false;
-        }
-
         boolean turbulenceStatus = data[4] >>> 7 == 1;
         boolean windShearStatus = ((data[4] & 0b00010000) >>> 4) == 1;
         boolean microBurstStatus = ((data[4] & 0b00000010) >>> 1) == 1;

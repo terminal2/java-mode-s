@@ -10,10 +10,6 @@ public class Bds53 extends Bds {
 
     @Override
     public boolean attemptDecode(Track track, short[] data) {
-        if (!track.getCapabilityReport().isBds53()) {
-            return false;
-        }
-
         boolean magHdgStatus = (data[4] & 0b10000000) == 0b10000000;
         boolean iasStatus = (data[5] & 0b00001000) == 0b00001000;
         boolean machStatus = (data[6] & 0b00000001) == 0b00000001;

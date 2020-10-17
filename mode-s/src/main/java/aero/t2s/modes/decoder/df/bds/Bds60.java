@@ -9,10 +9,6 @@ public class Bds60 extends Bds {
 
     @Override
     public boolean attemptDecode(Track track, short[] data) {
-        if (!track.getCapabilityReport().isBds60()) {
-            return false;
-        }
-
         boolean statusMagHdg = ((data[4] >>> 7) & 0x1) == 1;
         boolean statusIas = ((data[5] >>> 4) & 0x1) == 1;
         boolean statusMach = (data[6] & 0x1) == 1;

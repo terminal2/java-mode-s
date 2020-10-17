@@ -6,10 +6,6 @@ import aero.t2s.modes.decoder.Common;
 public class Bds20 extends Bds {
     @Override
     public boolean attemptDecode(Track track, short[] data) {
-        if (!track.getCapabilityReport().isBds20()) {
-            return false;
-        }
-
         if (data[4] >>> 4 != 2 || (data[4] & 0xF) != 0) {
             return false;
         }
