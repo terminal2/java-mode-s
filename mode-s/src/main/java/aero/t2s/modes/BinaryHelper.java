@@ -22,8 +22,27 @@ public class BinaryHelper {
     {
         StringBuilder sb = new StringBuilder();
 
-        printLine(sb);
+        printLine(sb, 32);
+        for (int i = 0; i < 4; i++) {
+            sb.append("|");
+            for (int j = 7; j >= 0; j--) {
+                sb.append(String.format(" %2d ", (i + 1) * 8 - j));
+            }
+        }
+        printLine(sb, 32);
+        for(int i = 0; i < 4; i++) {
+            sb.append("|");
 
+            for (int j = 7; j >= 0; j--) {
+                sb.append(String.format(" %2d ", (data[i] >>> j) & 0x1));
+            }
+        }
+        printLine(sb, 32);
+
+
+        // Message Field
+        sb.append("\nMB Field");
+        printLine(sb, 56);
         for(int i = 4; i<= 10; i++) {
             sb.append("|");
 
@@ -32,7 +51,7 @@ public class BinaryHelper {
             }
         }
         sb.append("|");
-        printLine(sb);
+        printLine(sb, 56);
 
         for(int i = 4; i<= 10; i++) {
             sb.append("|");
@@ -42,16 +61,15 @@ public class BinaryHelper {
             }
         }
         sb.append("|");
-        printLine(sb);
+        printLine(sb, 56);
 
         LoggerFactory.getLogger(BinaryHelper.class).debug(sb.toString());
     }
 
-
-    private static void printLine(StringBuilder sb) {
+    private static void printLine(StringBuilder sb, int bits) {
         sb.append("\n");
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < bits / 8; i++) {
             sb.append("-");
             for (int j = 0; j < 8; j++) {
                 sb.append("----");

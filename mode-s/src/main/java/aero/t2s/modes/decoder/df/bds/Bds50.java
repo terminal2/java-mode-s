@@ -124,6 +124,10 @@ public class Bds50 extends Bds {
 
     @Override
     public boolean attemptDecode(Track track, short[] data) {
+        if (!track.getCapabilityReport().isBds50()) {
+            return false;
+        }
+
         boolean statusRollAngle = ((data[4] >>> 7) & 0x1) == 1;
         boolean statusTrackAngle = ((data[5] >>> 4) & 0x1) == 1;
         boolean statusGroundSpeed = (data[6] & 0x1) == 1;
@@ -131,8 +135,11 @@ public class Bds50 extends Bds {
         boolean statusTrueAirspeed = ((data[9] >>> 2) & 0x1) == 1;
 
         boolean isLeftWingDown = ((data[4] >>> 6) & 0x1) == 1;
-        int rollAngle = (((data[4] & 0x3F) << 3) | (data[6] >>> 5));
+        double rollAngle = ((((data[4] & 0b00111111) << 3) | (data[5] >>> 5)) - (isLeftWingDown ? 512 : 0)) * ROLL_ACCURACY;
         if (!statusRollAngle && (isLeftWingDown || rollAngle != 0)) {
+            return false;
+        }
+        if (statusRollAngle && Math.abs(rollAngle) > 50) {
             return false;
         }
 
@@ -152,40 +159,17 @@ public class Bds50 extends Bds {
         if (!statusTrueAngleRate && (isTrackAngleRateNegative || trackAngleRate != 0)) {
             return false;
         }
+        if (statusTrueAngleRate && trackAngleRate == 0b11111111) {
+            return false;
+        }
 
         int trueAirspeed = ((data[9] & 0x3) << 8) | data[10];
         if (!statusTrueAirspeed && trueAirspeed != 0) {
             return false;
         }
 
-        // If both are available check if they are within reasonable distance
-        if (statusGroundSpeed && statusTrueAirspeed) {
-            // diff > 400 kts is probably an error
-            if (Math.abs(gs - trueAirspeed) * 2 > 400) {
-                return false;
-            }
-
-            if (trueAirspeed < 50 && gs > 200) {
-                return false;
-            }
-        }
-
-        if (statusRollAngle && (rollAngle * ROLL_ACCURACY > 60)) {
-            return false;
-        }
-
-        if (statusTrackAngle && trackAngleRate > 8) {
-            return false;
-        }
-
-        if (statusTrackAngle && statusRollAngle) {
-            if (rollAngle * ROLL_ACCURACY > 30 && trackAngleRate * TRUE_TRACK_RATE_ACCURACY < 2) {
-                return false;
-            }
-        }
-
         if (statusRollAngle)
-            track.setRollAngle(rollAngle * ROLL_ACCURACY * (isLeftWingDown ? -1d : 1d));
+            track.setRollAngle(rollAngle);
 
         if (statusTrackAngle)
             track.setTrueHeading(trueTrack * TRUE_TRACK_ANGLE_ACCURACY + (isWest ? 180d : 0d));

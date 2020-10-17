@@ -1,9 +1,6 @@
 package aero.t2s.modes;
 
-import aero.t2s.modes.constants.EmergencyState;
-import aero.t2s.modes.constants.LengthWidthCode;
-import aero.t2s.modes.constants.SelectedAltitudeSource;
-import aero.t2s.modes.constants.Version;
+import aero.t2s.modes.constants.*;
 
 import java.time.Instant;
 
@@ -33,6 +30,8 @@ public class Track {
     private Acas acas = new Acas();
     private FlightStatus flightStatus = new FlightStatus();
     private Altitude altitude = new Altitude();
+    private SelectedAltitudeSource selectedAltitudeSource = SelectedAltitudeSource.UNKNOWN;
+    private CapabilityReport capabilityReport = new CapabilityReport();
     private int modeA;
     private int geometricHeightOffset;
     private int rocd;
@@ -72,7 +71,6 @@ public class Track {
     private String operator;
 
     private boolean wasJustCreated = true;
-    private SelectedAltitudeSource selectedAltitudeSource = SelectedAltitudeSource.UNKNOWN;
 
     public Track(String icao) {
         this.icao = icao;
@@ -584,6 +582,10 @@ public class Track {
 
     public void setWasJustCreated(boolean state) {
         this.wasJustCreated = state;
+    }
+
+    public CapabilityReport getCapabilityReport() {
+        return capabilityReport;
     }
 
     @Override

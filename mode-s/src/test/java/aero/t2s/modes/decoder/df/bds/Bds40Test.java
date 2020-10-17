@@ -18,6 +18,7 @@ public class Bds40Test {
     public void before()
     {
         track = new Track("123456");
+        track.getCapabilityReport().all();
         bds = new Bds40();
     }
 

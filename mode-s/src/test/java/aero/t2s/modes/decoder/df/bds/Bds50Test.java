@@ -15,6 +15,7 @@ class Bds50Test {
     public void before()
     {
         track = new Track("123456");
+        track.getCapabilityReport().all();
         bds = new Bds50();
     }
 
@@ -339,6 +340,24 @@ class Bds50Test {
         assertEquals(0, track.getRollAngle());
         assertEquals(0, track.getTrueHeading());
         assertEquals(0, track.getGs());
+        assertEquals(-0.03d, track.getTrackAngleRate(), 0.01);
+        assertEquals(0, track.getTas());
+
+        success = bds.attemptDecode(track, new short[] {
+            0x0, 0x0, 0x0, 0x0,
+            0b00000000,
+            0b00000000,
+            0b00000001,
+            0b00000000,
+            0b01110000,
+            0b00001000,
+            0b00000000,
+        });
+
+        assertTrue(success);
+        assertEquals(0, track.getRollAngle());
+        assertEquals(0, track.getTrueHeading());
+        assertEquals(2, track.getGs());
         assertEquals(-0.03d, track.getTrackAngleRate(), 0.01);
         assertEquals(0, track.getTas());
     }
