@@ -3,7 +3,6 @@ package aero.t2s.modes.decoder.df.bds;
 import aero.t2s.modes.BinaryHelper;
 import aero.t2s.modes.Track;
 import aero.t2s.modes.constants.SelectedAltitudeSource;
-import aero.t2s.modes.decoder.Common;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
