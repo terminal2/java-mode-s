@@ -38,10 +38,12 @@ public class Decoder {
         downlinkFormatDecoders.put(24, new DF24(this));
     }
 
-    public Track decode(int downlinkFormat, short[] data) {
+    public Track decode(short[] data) {
         if (Common.isValid(data)) {
             return null;
         }
+
+        int downlinkFormat = data[0] >>> 3;
 
         // Remaining bits are used by the data object
         if (downlinkFormat >= 24) {

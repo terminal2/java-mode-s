@@ -37,7 +37,7 @@ class ModeSMessageHandler {
             String hex = input.substring(1, input.length() - 1);
             short[] data = BinaryHelper.stringToByteArray(hex);
 
-            Track track = decoder.decode(data[0] >>> 3, data);
+            Track track = decoder.decode(data);
             if (track != null) {
                 track.touch();
 
