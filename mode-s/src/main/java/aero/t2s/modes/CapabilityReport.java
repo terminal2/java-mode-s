@@ -1,6 +1,7 @@
 package aero.t2s.modes;
 
 public class CapabilityReport {
+    boolean isAvailable = false;
     boolean bds05 = true;
     boolean bds06 = true;
     boolean bds07 = true;
@@ -27,6 +28,7 @@ public class CapabilityReport {
     boolean bds60 = false;
 
     public void update(short[] data) {
+        isAvailable = true;
         bds05 = (data[4] & 0b10000000) != 0;
         bds06 = (data[4] & 0b01000000) != 0;
         bds07 = (data[4] & 0b00100000) != 0;
@@ -53,6 +55,10 @@ public class CapabilityReport {
         bds56 = (data[6] & 0b00000100) != 0;
         bds5F = (data[6] & 0b00000010) != 0;
         bds60 = (data[6] & 0b00000001) != 0;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
     }
 
     public boolean isBds05() {

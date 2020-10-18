@@ -59,6 +59,7 @@
 
     <modules>
         <module>mode-s</module>
+        <module>example</module>
     </modules>
 
     <build>
