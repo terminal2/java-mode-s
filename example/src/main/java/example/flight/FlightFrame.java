@@ -24,12 +24,16 @@ public class FlightFrame extends JFrame {
     private JPanel mainPanel;
     private JTextArea flightModelLeft;
     private JTextArea flightInfoRight;
+    private JTextArea infoAccuracy;
+    private JTextArea infoAbds;
+    private JTextArea acas;
 
     public FlightFrame(Track track) {
         this.track = track;
 
         setContentPane(mainPanel);
-        pack();
+        setSize(1024, 1024);
+
         setVisible(true);
 
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -78,12 +82,22 @@ public class FlightFrame extends JFrame {
                 "ICAO: %s\n" +
                 "CALLSIGN: %s\n" +
                 "WTC: %s\n" +
-                "ATYP: %s\n" +
+                "ATYP: %s\n (REG: %s)\n" +
+                "Width & Length Code: %s\n" +
                 "OPERATOR: %s\n" +
                 "MODE A: %04d\n" +
+                "State: %s\n" +
+                "SPI: %s\n" +
+                "Temp Alert: %s\n" +
+                "Emergency: %s\n" +
+                "Emergency Status: %s\n" +
+                "Flight Status Alert: %s\n" +
+                "Flight Status SPI: %s\n" +
                 "-------------------------------\n" +
                 "Altitude: %d%s (step size: %d)\n" +
                 "Baro Altitude: %d\n" +
+                "Geometric offset: %d\n" +
+                "GNSS Altitude: %d\n" +
                 "Selected Altitude Source: %s\n" +
                 "Selected Altitude: %d\n" +
                 "Selected Altitude FMS: %s\n" +
@@ -97,20 +111,45 @@ public class FlightFrame extends JFrame {
                 "ROCD Baro Available: %s\n" +
                 "Baro ROCD: %dft/min\n" +
                 "------------------------------\n" +
+                "Heading Source: %s\n" +
+                "Magnetic Heading: %d\n" +
+                "True Heading: %d\n" +
+                "Selected Heading: %d\n" +
+                "------------------------------\n" +
+                "Roll Angle: %2.1f\n" +
+                "Track rate of change: %2.1f\n" +
+                "------------------------------\n" +
                 " GS: %dkt\n" +
                 "IAS: %dkt\n" +
                 "TAS: %dkt\n" +
+                "Mach: %1.3fkt\n" +
                 "VX, VY: %d, %d\n" +
+                "------------------------------\n" +
+                "Autopilot: %s\n" +
+                "LNAV: %s\n" +
+                "VNAV: %s\n" +
+                "ALT HOLD: %s\n" +
+                "APP: %s\n" +
                 "------------------------------\n"
             ,
             track.getIcao(),
             track.getCallsign(),
             track.getWtc(),
-            track.getAtype(),
+            track.getAtype(), track.getRegistration(),
+            track.getLengthWidthCode().name(),
             track.getOperator(),
             track.getModeA(),
+            track.isGroundBit() ? "GROUND" : "AIRBORNE",
+            track.getSpi() ? "YES" : "NO",
+            track.getTempAlert() ? "YES" : "NO",
+            track.getEmergency() ? "YES" : "NO",
+            track.getEmergencyState().name(),
+            track.getFlightStatus().isAlert() ? "YES" : "NO",
+            track.getFlightStatus().isSpi() ? "YES" : "NO",
             (int)track.getAltitude().getAltitude(), track.getAltitude().isMetric() ? "M" : "FT", track.getAltitude().getStep(),
             track.getBaroAltitude(),
+            track.getGeometricHeightOffset(),
+            track.getGnssHeight(),
             track.getSelectedAltitudeSource().toString(),
             track.getSelectedAltitude(),
             track.getSelectedAltitudeManagedFms() ? "YES" : "NO",
@@ -121,11 +160,94 @@ public class FlightFrame extends JFrame {
             track.getRocd(),
             track.getRocdSourceBaro() ? "YES" : "NO",
             (int)track.getBaroRocd(),
+            track.isMagneticHeading() ? "MAGNETIC" : "TRUE",
+            (int)track.getMagneticHeading(),
+            (int)track.getTrueHeading(),
+            (int)track.getSelectedHeading(),
+            track.getRollAngle(),
+            track.getTrackAngleRate(),
             (int)track.getGs(),
             track.getIas(),
             (int)track.getTas(),
-            track.getVx(), track.getVy()
+            track.getMach(),
+            track.getVx(), track.getVy(),
+            track.getAutopilot() ? "YES" : "NO",
+            track.getLnav() ? "YES" : "NO",
+            track.getVnav() ? "YES" : "NO",
+            track.getAltitudeHold() ? "YES" : "NO",
+            track.getApproachMode() ? "YES" : "NO"
         ));
+
+        acas.setText(String.format(
+            "Vertical Status: %s\n" +
+            "Cross-Link Capability: %s\n" +
+            "Sensitivity: %s\n" +
+            "Reply Information: %s\n" +
+            "Altitude: %d%s (step %dft)\n" +
+            "Active: %s\n" +
+            "Resolution: %s\n" +
+            "Multiple threats: %s\n" +
+            "RA do not pass below: %s\n" +
+            "RA do not pass above: %s\n" +
+            "RA do not turn left: %s\n" +
+            "RA do not turn right: %s\n" +
+            "Threat type: %s\n" +
+            "Target MODE-S: %s\n" +
+            "Target Altitude: %d\n" +
+            "Target Bearing: %d\n" +
+            "Target Range: %2.1f\n" +
+            "------------------------------\n",
+            track.getAcas().getVerticalStatus().name(),
+            track.getAcas().getCrossLinkCapability().name(),
+            track.getAcas().getSensitivity().name(),
+            track.getAcas().getReplyInformation().name(),
+            (int)track.getAcas().getAltitude().getAltitude(), track.getAcas().getAltitude().isMetric() ? "M" : "FT", track.getAcas().getAltitude().getStep(),
+            track.getAcas().getActive() ? "YES" : "NO",
+            formatAcasResolution(),
+            track.getAcas().getMultipleThreats() ? "YES" : "NO",
+            track.getAcas().getRANotPassBelow() ? "YES" : "NO",
+            track.getAcas().getRANotPassAbove() ? "YES" : "NO",
+            track.getAcas().getRANotTurnLeft() ? "YES" : "NO",
+            track.getAcas().getRANotTurnRight() ? "YES" : "NO",
+            track.getAcas().getThreatType().name(),
+            track.getAcas().getTargetModeS(),
+            (int)track.getAcas().getTargetAltitude(),
+            track.getAcas().getTargetBearing(),
+            track.getAcas().getTargetRange()
+        ));
+
+        infoAccuracy.setText(String.format(
+            "NIC: %d\n" +
+            "NICa: %d\n" +
+            "NICb: %d\n" +
+            "NICc: %d\n" +
+            "NACv: %d\n" +
+            "Valid Status: %s\n" +
+            "SIL: %d\n" +
+            "----------------------------\n",
+            track.getNIC(),
+            track.getNICa(),
+            track.getNICb(),
+            track.getNICc(),
+            track.getNACv(),
+            track.getValidStatus() ? "YES" : "NO",
+            track.getSil()
+        ));
+
+        infoAbds.setText(String.format(
+            "Version: %s\n" +
+            "Single Antenna: %s\n",
+            track.getVersion().name(),
+            track.getSingleAntenna() ? "YES" : "NO"
+        ));
+    }
+
+    private String formatAcasResolution() {
+        if (!track.getAcas().getResolutionAdvisory().isActive()) {
+            return "No Resolution";
+        }
+
+        return track.getAcas().getResolutionAdvisory().toString();
     }
 
     private void createUIComponents() {
