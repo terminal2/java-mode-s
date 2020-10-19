@@ -177,7 +177,7 @@ public class Bds50 extends Bds {
             track.setGs(gs);
 
         if (statusTrueAngleRate)
-            track.setTrackAngleRate(trackAngleRate * TRUE_TRACK_RATE_ACCURACY * (isTrackAngleRateNegative ? -1d : 1d));
+            track.setTrackAngleRate((trackAngleRate + (isTrackAngleRateNegative ? -512d : 0)) * TRUE_TRACK_RATE_ACCURACY);
 
         if (statusTrueAirspeed) {
             track.setTas(trueAirspeed);
