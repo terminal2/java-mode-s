@@ -23,6 +23,7 @@ public class Track {
     private int NICc;
     private RadiusLimit rc = new RadiusLimit(this);
     private int NACv;
+    private NavigationAccuracyCategoryPosition NACp = NavigationAccuracyCategoryPosition.UNKNOWN;
     private boolean spi;
     private boolean tempAlert;
     private boolean emergency;
@@ -52,7 +53,6 @@ public class Track {
     private int selectedAltitude;
     private double baroSetting;
     private double selectedHeading;
-    private boolean validStatus;
     private int sil;
     private boolean autopilot;
     private boolean vnav;
@@ -209,6 +209,15 @@ public class Track {
             this.NICc = NICc;
             rc.determine();
         }
+    }
+
+    public NavigationAccuracyCategoryPosition getNACp() {
+        return NACp;
+    }
+
+    public Track setNACp(NavigationAccuracyCategoryPosition NACp) {
+        this.NACp = NACp;
+        return this;
     }
 
     public void setSpi(boolean spi) {
@@ -421,14 +430,6 @@ public class Track {
 
     public double getSelectedHeading() {
         return selectedHeading;
-    }
-
-    public void setValidStatus(boolean validStatus) {
-        this.validStatus = validStatus;
-    }
-
-    public boolean getValidStatus() {
-        return validStatus;
     }
 
     public void setSil(int sil) {

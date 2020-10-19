@@ -222,7 +222,7 @@ public class FlightFrame extends JFrame {
             "NICb: %d\n" +
             "NICc: %d\n" +
             "NACv: %d\n" +
-            "Valid Status: %s\n" +
+            "NACp: %s\n" +
             "SIL: %d\n" +
             "----------------------------\n",
             track.getNIC(),
@@ -230,7 +230,7 @@ public class FlightFrame extends JFrame {
             track.getNICb(),
             track.getNICc(),
             track.getNACv(),
-            track.getValidStatus() ? "YES" : "NO",
+            track.getNACp(),
             track.getSil()
         ));
 
