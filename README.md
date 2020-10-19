@@ -112,7 +112,7 @@ We hope with more BDS implemented the guessing accuracy will improve.
 | 1,E | Mode S services GICB capability report     | ❌        |
 | 1,F | Mode S services GICB capability report     | ❌        |
 | 2,0 | Aircraft Identification                    | ✅        |
-| 2,1 | Aircraft and Airline registration marking  | ❌        |
+| 2,1 | Aircraft and Airline registration marking  | ⚠️        | Experimental
 | 2,2 | Antenna positions                          | ❌        |
 | 2,5 | Antenna type                               | ❌        |
 | 3,0 | ACAS Active resolution advisory            | ❌        | Detection implemented, decoding missing

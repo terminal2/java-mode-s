@@ -20,6 +20,7 @@ public class BdsDecoder {
         bdsDecoder.add(new Bds50());
         bdsDecoder.add(new Bds53());
         bdsDecoder.add(new Bds60());
+        bdsDecoder.add(new Bds21());
     }
 
     public boolean decode(Track track, short[] data) {
@@ -30,8 +31,6 @@ public class BdsDecoder {
 
         for (Bds bds : bdsDecoder) {
             if (bds.attemptDecode(track, data)) {
-                LoggerFactory.getLogger(getClass()).debug("Matched {}", bds.getClass().getSimpleName());
-
                 return true;
             }
         }
