@@ -23,13 +23,9 @@ public class AltitudeEncoding {
     }
 
     private static Altitude decodeFeet(int encoded) {
-        int n = ((encoded >>> 2) & 0xF60) | ((encoded >>> 1) & 0x10) | (encoded & 0xF);
+        int n = ((encoded & 0b1111110000000) >>> 2) | (encoded & 0b11111);
 
-         int altitude = (25 * n) - 1000;
-
-        if (altitude > 50175) {
-            return decodeModeC(encoded);
-        }
+        int altitude = (25 * n) - 1000;
 
         return new Altitude(altitude, false, 25);
     }
