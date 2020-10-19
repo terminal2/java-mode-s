@@ -145,7 +145,7 @@ public class Bds50 extends Bds {
             return false;
         }
 
-        int gs = (data[7] << 2) | ((data[8] >>> 6) & 0x3);
+        double gs = ((data[7] << 2) | ((data[8] >>> 6) & 0x3)) * SPEED_ACCURACY;
         if (!statusGroundSpeed && gs != 0) {
             return false;
         }
@@ -159,8 +159,11 @@ public class Bds50 extends Bds {
             return false;
         }
 
-        int trueAirspeed = ((data[9] & 0x3) << 8) | data[10];
+        double trueAirspeed = (((data[9] & 0x3) << 8) | data[10]) * SPEED_ACCURACY;
         if (!statusTrueAirspeed && trueAirspeed != 0) {
+            return false;
+        }
+        if (statusGroundSpeed && statusTrueAirspeed && Math.abs((trueAirspeed - gs)) > 200) {
             return false;
         }
 
@@ -171,13 +174,13 @@ public class Bds50 extends Bds {
             track.setTrueHeading(trueTrack * TRUE_TRACK_ANGLE_ACCURACY + (isWest ? 180d : 0d));
 
         if (statusGroundSpeed)
-            track.setGs(gs * SPEED_ACCURACY);
+            track.setGs(gs);
 
         if (statusTrueAngleRate)
             track.setTrackAngleRate(trackAngleRate * TRUE_TRACK_RATE_ACCURACY * (isTrackAngleRateNegative ? -1d : 1d));
 
         if (statusTrueAirspeed) {
-            track.setTas(trueAirspeed * SPEED_ACCURACY);
+            track.setTas(trueAirspeed);
         }
 
         return true;
