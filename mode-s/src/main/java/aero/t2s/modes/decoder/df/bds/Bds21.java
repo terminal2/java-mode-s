@@ -6,10 +6,6 @@ import aero.t2s.modes.decoder.Common;
 public class Bds21 extends Bds {
     @Override
     public boolean attemptDecode(Track track, short[] data) {
-        if (track.getCapabilityReport().isAvailable() && !track.getCapabilityReport().isBds21()) {
-            return false;
-        }
-
         boolean aircraftRegistrationStatus = (data[4] & 0b10000000) != 0;
         boolean airlineRegistrationStatus = (data[9] & 0b00010000) != 0;
 

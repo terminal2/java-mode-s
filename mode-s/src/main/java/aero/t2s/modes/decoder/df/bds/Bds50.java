@@ -135,7 +135,7 @@ public class Bds50 extends Bds {
         if (!statusRollAngle && (isLeftWingDown || rollAngle != 0)) {
             return false;
         }
-        if (statusRollAngle && Math.abs(rollAngle) > 50) {
+        if (statusRollAngle && (Math.abs(rollAngle) > 50 || Math.abs((Math.abs(track.getRollAngle()) - rollAngle)) > 30)) {
             return false;
         }
 
