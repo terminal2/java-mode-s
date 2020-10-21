@@ -248,16 +248,8 @@ public class Track {
         return acas;
     }
 
-    public void setAcas(Acas acas) {
-        this.acas = acas;
-    }
-
     public FlightStatus getFlightStatus() {
         return flightStatus;
-    }
-
-    public void setFlightStatus(FlightStatus flightStatus) {
-        this.flightStatus = flightStatus;
     }
 
     public void setAltitude(Altitude altitude) {
