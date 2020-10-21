@@ -28,7 +28,13 @@ public class AircraftOperationalStatusMessage extends ExtendedSquitter {
         // TODO Decode CC (C.2.3.10.3)
 
         track.setLengthWidthCode(LengthWidthCode.from(data[6] & 0xF));
-        track.getAcas().setActive(((data[7] >>> 5) & 0x1) == 1);
+
+        // Operational Mode Codes
+        if ((data[7] & 0b11000000) != 0) {
+            // Reserved OM Status
+            return;
+        }
+        track.getAcas().getResolutionAdvisory().setActive(((data[7] >>> 5) & 0x1) == 1);
         track.setSpi(((data[7] >>> 4) & 0x1) == 1);
         track.setSingleAntenna(((data[7] >>> 2) & 0x1) == 1);
         track.setHeadingSource((data[10] >>> 3 & 0x1) == 1);
@@ -40,7 +46,12 @@ public class AircraftOperationalStatusMessage extends ExtendedSquitter {
     private void decodeAirborne(Track track, short[] data) {
         // TODO Decode CC (C.2.3.10.3)
 
-        track.getAcas().setActive(((data[7] >>> 5) & 0x1) == 1);
+        // Operational Mode Codes
+        if ((data[7] & 0b11000000) != 0) {
+            // Reserved OM Status
+            return;
+        }
+        track.getAcas().getResolutionAdvisory().setActive(((data[7] >>> 5) & 0x1) == 1);
         track.setSpi(((data[7] >>> 4) & 0x1) == 1);
         track.setSingleAntenna(((data[7] >>> 2) & 0x1) == 1);
         track.setNICb(data[10] >>> 3 & 0x1);
