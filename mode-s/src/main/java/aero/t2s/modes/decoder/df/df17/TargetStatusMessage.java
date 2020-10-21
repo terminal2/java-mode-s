@@ -28,8 +28,10 @@ public class TargetStatusMessage extends ExtendedSquitter {
             track.setSelectedAltitude(selectedAltitude);
         }
 
-        double baroSetting = (((((data[6] & 0xF) << 5) | (data[7] >>> 3)) - 2) * 0.8) + 800;
-        track.setBaroSetting(baroSetting);
+        double baroSetting = ((((data[6] & 0b00001111) << 5) | (data[7] >>> 3)));
+        if (baroSetting != 0) {
+            track.setBaroSetting(Math.round((baroSetting - 1) * 0.8 + 800));
+        }
 
         boolean selectedHeadingStatus = ((data[7] >>> 2) & 0x1) == 1;
         if (selectedHeadingStatus) {
