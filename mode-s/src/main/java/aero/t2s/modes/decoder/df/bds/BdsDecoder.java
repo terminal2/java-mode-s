@@ -15,12 +15,12 @@ public class BdsDecoder {
         bdsDecoder.add(new Bds17());
         bdsDecoder.add(new Bds30());
         bdsDecoder.add(new Bds40());
-        bdsDecoder.add(new Bds44());
-        bdsDecoder.add(new Bds45());
         bdsDecoder.add(new Bds50());
         bdsDecoder.add(new Bds53());
         bdsDecoder.add(new Bds60());
         bdsDecoder.add(new Bds21());
+        bdsDecoder.add(new Bds44());
+        bdsDecoder.add(new Bds45());
     }
 
     public boolean decode(Track track, short[] data) {
