@@ -42,7 +42,7 @@ public class DF0 extends DownlinkFormat {
     }
 
     @Override
-    public Track decode(short[] data, int downlinkFormat) {
+    public Track decode(short[] data) {
         Track track = getDecoder().getTrack(getIcaoAddressFromParity(data));
         Acas acas = track.getAcas();
 

@@ -16,7 +16,7 @@ public class DF21 extends DownlinkFormat {
     }
 
     @Override
-    public Track decode(short[] data, int downlinkFormat) {
+    public Track decode(short[] data) {
         Track track = getDecoder().getTrack(getIcaoAddressFromParity(data));
 
         int flightStatus = data[0] & 0x3;

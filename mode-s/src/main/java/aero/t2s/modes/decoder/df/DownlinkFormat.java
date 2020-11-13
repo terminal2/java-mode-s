@@ -20,7 +20,7 @@ public abstract class DownlinkFormat {
         return decoder;
     }
 
-    public abstract Track decode(short[] data, int downlinkFormat);
+    public abstract Track decode(short[] data);
 
     protected String getIcaoAddressFromParity(short[] data) {
         short[] payload = Arrays.copyOfRange(data, 0, data.length - 3);

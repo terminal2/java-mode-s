@@ -31,12 +31,12 @@ class DF0Test {
     {
         assertEquals(0, tracks.size());
 
-        df0.decode(BinaryHelper.stringToByteArray("02E194979F2C4B"), 0);
+        df0.decode(BinaryHelper.stringToByteArray("02E194979F2C4B"));
         assertEquals(1, tracks.size());
         assertEquals(VerticalStatus.AIRBORNE, tracks.values().stream().findFirst().get().getAcas().getVerticalStatus());
 
         tracks.clear();
-        df0.decode(BinaryHelper.stringToByteArray("6E194979F2C4B"), 0);
+        df0.decode(BinaryHelper.stringToByteArray("6E194979F2C4B"));
         assertEquals(1, tracks.size());
         assertEquals(VerticalStatus.GROUND, tracks.values().stream().findFirst().get().getAcas().getVerticalStatus());
     }
@@ -46,12 +46,12 @@ class DF0Test {
     {
         assertEquals(0, tracks.size());
 
-        df0.decode(BinaryHelper.stringToByteArray("02E194979F2C4B"), 0);
+        df0.decode(BinaryHelper.stringToByteArray("02E194979F2C4B"));
         assertEquals(1, tracks.size());
         assertEquals(CrossLinkCapability.SUPPORTED, tracks.values().stream().findFirst().get().getAcas().getCrossLinkCapability());
 
         tracks.clear();
-        df0.decode(BinaryHelper.stringToByteArray("00E194979F2C4B"), 0);
+        df0.decode(BinaryHelper.stringToByteArray("00E194979F2C4B"));
         assertEquals(1, tracks.size());
         assertEquals(CrossLinkCapability.UNSUPPORTED, tracks.values().stream().findFirst().get().getAcas().getCrossLinkCapability());
     }
@@ -61,7 +61,7 @@ class DF0Test {
     {
         assertEquals(0, tracks.size());
 
-        df0.decode(BinaryHelper.stringToByteArray("02E194979F2C4B"), 0);
+        df0.decode(BinaryHelper.stringToByteArray("02E194979F2C4B"));
         assertEquals(1, tracks.size());
         assertEquals(AcasSensitivity.LEVEL7, tracks.values().stream().findFirst().get().getAcas().getSensitivity());
     }
@@ -71,7 +71,7 @@ class DF0Test {
     {
         assertEquals(0, tracks.size());
 
-        df0.decode(BinaryHelper.stringToByteArray("02E194979F2C4B"), 0);
+        df0.decode(BinaryHelper.stringToByteArray("02E194979F2C4B"));
         assertEquals(1, tracks.size());
         assertEquals(AcasReplyInformation.RESERVED3, tracks.values().stream().findFirst().get().getAcas().getReplyInformation());
     }
@@ -81,7 +81,7 @@ class DF0Test {
     {
         assertEquals(0, tracks.size());
 
-        df0.decode(BinaryHelper.stringToByteArray("02E192B9CB91DF"), 0);
+        df0.decode(BinaryHelper.stringToByteArray("02E192B9CB91DF"));
         assertEquals(1, tracks.size());
 
         Track track = tracks.values().stream().findFirst().get();

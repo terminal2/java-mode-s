@@ -10,7 +10,7 @@ public class DF24 extends DownlinkFormat {
     }
 
     @Override
-    public Track decode(short[] data, int downlinkFormat) {
+    public Track decode(short[] data) {
         LoggerFactory.getLogger(getClass()).warn("{}: Not implemented", getClass().getSimpleName());
 
         return null;

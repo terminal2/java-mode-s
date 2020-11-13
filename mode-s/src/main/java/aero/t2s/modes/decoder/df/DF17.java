@@ -54,7 +54,7 @@ public class DF17 extends DownlinkFormat {
     }
 
     @Override
-    public Track decode(short[] data, int downlinkFormat) {
+    public Track decode(short[] data) {
         Track track = getDecoder().getTrack(getIcaoAddress(data));
 
         int typeCode = data[4] >>> 3;

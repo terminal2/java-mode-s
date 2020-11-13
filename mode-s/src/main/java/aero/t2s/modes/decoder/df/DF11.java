@@ -9,7 +9,7 @@ public class DF11 extends DownlinkFormat {
     }
 
     @Override
-    public Track decode(short[] data, int downlinkFormat) {
+    public Track decode(short[] data) {
         return getDecoder().getTrack(getIcaoAddress(data));
     }
 }

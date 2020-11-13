@@ -63,6 +63,7 @@ public class BinaryHelper {
         sb.append("|");
         printLine(sb, 56);
 
+        System.out.println(sb.toString());
         LoggerFactory.getLogger(BinaryHelper.class).debug(sb.toString());
     }
 

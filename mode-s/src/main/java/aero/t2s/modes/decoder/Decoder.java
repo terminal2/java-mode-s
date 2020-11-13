@@ -51,7 +51,7 @@ public class Decoder {
         }
 
         if (downlinkFormatDecoders.containsKey(downlinkFormat)) {
-            return downlinkFormatDecoders.get(downlinkFormat).decode(data, downlinkFormat);
+            return downlinkFormatDecoders.get(downlinkFormat).decode(data);
         }
 
         logger.warn("Unknown Mode S Packet: {} => {}", downlinkFormat, Common.toHexString(data));
