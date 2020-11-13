@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class ModeSDatabase {
         atypDatbase = new AircraftTypeDatabase();
     }
 
-    public ModeSDatabase(String modeSFile, String atypeFile) {
+    public ModeSDatabase(Path modeSFile, Path atypeFile) {
         this.atypDatbase = new AircraftTypeDatabase(atypeFile);
 
         loadModeS(modeSFile);
@@ -26,8 +27,8 @@ public class ModeSDatabase {
         return new ModeSDatabase();
     }
 
-    private void loadModeS(String modeSFile) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(modeSFile)))) {
+    private void loadModeS(Path modeSFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(modeSFile.toUri().toURL().openStream()))) {
             // Skip first line
             if (reader.ready()) {
                 reader.readLine();

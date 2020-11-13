@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,8 +14,8 @@ public class AircraftTypeDatabase {
 
     public AircraftTypeDatabase() {}
 
-    public AircraftTypeDatabase(String csvFile) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(csvFile)))) {
+    public AircraftTypeDatabase(Path csvFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(csvFile.toUri().toURL().openStream()))) {
             // Skip first line
             if (reader.ready()) {
                 reader.readLine();
