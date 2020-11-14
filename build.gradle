@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.13.0'
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'java-library'
+apply plugin: "com.vanniktech.maven.publish"
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.25'
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.+'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+compileJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+signing {
+    if (hasProperty('SIGNING_PRIVATE_KEY')) {
+        useInMemoryPgpKeys(SIGNING_PRIVATE_KEY, "")
+    }
+}
+
+

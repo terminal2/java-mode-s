@@ -1,0 +1,33 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  publish:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Upload release
+        run: ./gradlew mode-s:uploadArchives --no-daemon --no-parallel
+        env:
+          ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_SECRET_KEYS }}
+
+      - name: Publish release
+        run: ./gradlew mode-s:closeAndReleaseRepoistory --no-daemon --no-parallel
+        env:
+          ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}

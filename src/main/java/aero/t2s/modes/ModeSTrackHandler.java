@@ -12,13 +12,13 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-class ModeSTrackHandler extends ModeSHandler {
+public class ModeSTrackHandler extends ModeSHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModeSTrackHandler.class);
 
     private final Decoder decoder;
     private final Executor executor = Executors.newSingleThreadExecutor();
 
-    ModeSTrackHandler(Map<String, Track> tracks, double originLat, double originLon, ModeSDatabase database) {
+    public ModeSTrackHandler(Map<String, Track> tracks, double originLat, double originLon, ModeSDatabase database) {
         this.decoder = new Decoder(tracks, originLat, originLon, database);
 
         Timer timer = new Timer();

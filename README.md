@@ -146,14 +146,20 @@ We hope with more BDS implemented the guessing accuracy will improve.
 
 # Installation 
 
-This package we are waiting on sonatype verification process once available we will publish this package on maven-central 
+This package is available through maven central
 
+Pom
 ```xml
 <dependency>
   <groupId>aero.t2s</groupId>
   <artifactId>mode-s</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
 </dependency>
+```
+
+Gradle
+```
+    compile('aero.t2s:mode-s:0.2.0-SNAPSHOT')
 ```
 
 # Usage
@@ -167,6 +173,9 @@ class Main
         modes.onTrackCreated(track -> System.out.println("CREATED " + track.toString()));
         modes.onTrackUpdated(track -> System.out.println("UPDATED " + track.toString()));
         modes.onTrackDeleted(track -> System.out.println("DELETED " + track.toString()));
+
+        // Get decoded Downlink messages
+        modes.onMessage(message -> System.out.println("MESSAGE " + message.getClass().getSimpleName()));
         
         // Starts listening thread
         modes.start();
@@ -179,6 +188,37 @@ class Main
     }
 }
 ```
+
+## Using Aircraft Database
+
+This library is compatible with opensky dataset (https://opensky-network.org/datasets/metadata/).
+
+In order to use the database version you can start ModeS plugin as follows
+
+```java
+class Main
+{
+    public static void main(String[] args){
+        ModeSDatabase database = new ModeSDatabase(Path.of("./doc8643AircraftTypes.csv"), Path.of("./aircraftDatabase.csv"))
+        ModeS modes = new ModeS("127.0.0.1", 30002, 52.0, 0.0);
+    }
+}
+```
+
+## DF Messages only
+
+If you don't need or want to use the track management feature you can also use this library without it.
+
+```java
+class Main
+{
+    public static void main(String[] args){
+        ModeSMessageHandler handler = new ModeSMessageHandler(52.0, 0.0);
+        handler.onMessage((df) -> System.out.println(message.getClass().getSimpleName()));
+        ModeS modes = new ModeS("127.0.0.1", 30002, handler);
+    }
+}
+``` 
 
 # Contributing
 

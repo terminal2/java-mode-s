@@ -13,7 +13,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-class ModeSMessageHandler extends ModeSHandler {
+public class ModeSMessageHandler extends ModeSHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModeSMessageHandler.class);
 
     private final Decoder decoder;
@@ -21,7 +21,7 @@ class ModeSMessageHandler extends ModeSHandler {
 
     private Consumer<DownlinkFormat> onMessage;
 
-    ModeSMessageHandler(double originLat, double originLon) {
+    public ModeSMessageHandler(double originLat, double originLon) {
         this.decoder = new Decoder(new HashMap<>(), originLat, originLon, ModeSDatabase.createDatabase());
     }
 

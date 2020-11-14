@@ -1,7 +1,9 @@
 target/
+build/
 .classpath
 .project
 .settings
 .idea/
+.gradle/
 *.iml
 demo-dist/
