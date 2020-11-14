@@ -6,20 +6,30 @@ import aero.t2s.modes.decoder.Decoder;
 import org.slf4j.LoggerFactory;
 
 public class DF5 extends DownlinkFormat {
-    public DF5(Decoder decoder) {
-        super(decoder);
+
+    private boolean alert;
+    private boolean spi;
+    private int modeA;
+
+    public DF5(short[] data) {
+        super(data, IcaoAddress.FROM_PARITY);
     }
 
     @Override
-    public Track decode(short[] data) {
-        Track track = getDecoder().getTrack(getIcaoAddressFromParity(data));
-
+    public DF5 decode() {
         int fs = data[0] & 0x7;
 
-        track.getFlightStatus().setAlert(Common.isFlightStatusAlert(fs));
-        track.getFlightStatus().setSpi(Common.isFlightStatusSpi(fs));
-        track.setModeA(Common.modeA((((data[2] << 8) | data[3])) & 0x1FFF));
+        alert = Common.isFlightStatusAlert(fs);
+        spi = Common.isFlightStatusSpi(fs);
+        modeA = Common.modeA((((data[2] << 8) | data[3])) & 0x1FFF);
 
-        return null;
+        return this;
+    }
+
+    @Override
+    public void apply(Track track) {
+        track.getFlightStatus().setAlert(alert);
+        track.getFlightStatus().setSpi(spi);
+        track.setModeA(modeA);
     }
 }

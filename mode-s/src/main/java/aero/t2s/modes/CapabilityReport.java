@@ -1,5 +1,7 @@
 package aero.t2s.modes;
 
+import aero.t2s.modes.decoder.df.bds.Bds17;
+
 public class CapabilityReport {
     boolean isAvailable = false;
     boolean bds05 = true;
@@ -55,6 +57,35 @@ public class CapabilityReport {
         bds56 = (data[6] & 0b00000100) != 0;
         bds5F = (data[6] & 0b00000010) != 0;
         bds60 = (data[6] & 0b00000001) != 0;
+    }
+
+    public void update(Bds17 bds17) {
+        this.bds05 = bds17.isBds05();
+        this.bds06 = bds17.isBds06();
+        this.bds07 = bds17.isBds07();
+        this.bds08 = bds17.isBds08();
+        this.bds09 = bds17.isBds09();
+        this.bds0A = bds17.isBds0A();
+        this.bds20 = bds17.isBds20();
+        this.bds21 = bds17.isBds21();
+
+        this.bds40 = bds17.isBds40();
+        this.bds41 = bds17.isBds41();
+        this.bds42 = bds17.isBds42();
+        this.bds43 = bds17.isBds43();
+        this.bds44 = bds17.isBds44();
+        this.bds45 = bds17.isBds45();
+        this.bds48 = bds17.isBds48();
+        this.bds50 = bds17.isBds50();
+
+        this.bds51 = bds17.isBds51();
+        this.bds52 = bds17.isBds52();
+        this.bds53 = bds17.isBds53();
+        this.bds54 = bds17.isBds54();
+        this.bds55 = bds17.isBds55();
+        this.bds56 = bds17.isBds56();
+        this.bds5F = bds17.isBds5F();
+        this.bds60 = bds17.isBds60();
     }
 
     public boolean isAvailable() {

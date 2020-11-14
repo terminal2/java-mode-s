@@ -122,67 +122,131 @@ public class Bds50 extends Bds {
     private static final double SPEED_ACCURACY = 2;
     private static final double TRUE_TRACK_RATE_ACCURACY = 8.0 / 256.0;
 
-    @Override
-    public boolean attemptDecode(Track track, short[] data) {
-        boolean statusRollAngle = ((data[4] >>> 7) & 0x1) == 1;
-        boolean statusTrackAngle = ((data[5] >>> 4) & 0x1) == 1;
-        boolean statusGroundSpeed = (data[6] & 0x1) == 1;
-        boolean statusTrueAngleRate = ((data[8] >>> 5) & 0x1) == 1;
-        boolean statusTrueAirspeed = ((data[9] >>> 2) & 0x1) == 1;
+    private final boolean statusRollAngle;
+    private final boolean statusTrackAngle;
+    private final boolean statusGs;
+    private final boolean statusTrueAngleRate;
+    private final boolean statusTas;
+
+    private double gs;
+    private double trackAngleRate;
+    private double trueTrack;
+    private double tas;
+    private double rollAngle;
+
+    public Bds50(short[] data) {
+        super(data);
+
+        statusRollAngle = ((data[4] >>> 7) & 0x1) == 1;
+        statusTrackAngle = ((data[5] >>> 4) & 0x1) == 1;
+        statusGs = (data[6] & 0x1) == 1;
+        statusTrueAngleRate = ((data[8] >>> 5) & 0x1) == 1;
+        statusTas = ((data[9] >>> 2) & 0x1) == 1;
 
         boolean isLeftWingDown = ((data[4] >>> 6) & 0x1) == 1;
-        double rollAngle = ((((data[4] & 0b00111111) << 3) | (data[5] >>> 5)) - (isLeftWingDown ? 512 : 0)) * ROLL_ACCURACY;
+        rollAngle = ((((data[4] & 0b00111111) << 3) | (data[5] >>> 5)) - (isLeftWingDown ? 512 : 0)) * ROLL_ACCURACY;
         if (!statusRollAngle && (isLeftWingDown || rollAngle != 0)) {
-            return false;
+            invalidate();
+            return;
         }
-        if (statusRollAngle && (Math.abs(rollAngle) > 50 || Math.abs((Math.abs(track.getRollAngle()) - rollAngle)) > 30)) {
-            return false;
+        if (statusRollAngle && Math.abs(rollAngle) > 50) {
+            invalidate();
+            return;
         }
 
         boolean isWest = (data[5] & 0b00001000) != 0;
-        int trueTrack = (((data[5] & 0x7) << 7) | (data[6] >>> 1));
+        trueTrack = (((data[5] & 0x7) << 7) | (data[6] >>> 1));
         if (!statusTrackAngle && (isWest || trueTrack != 0)) {
-            return false;
+            invalidate();
+            return;
         }
+        trueTrack = trueTrack * TRUE_TRACK_ANGLE_ACCURACY + (isWest ? 180d : 0d);
 
-        double gs = ((data[7] << 2) | ((data[8] >>> 6) & 0x3)) * SPEED_ACCURACY;
-        if (!statusGroundSpeed && gs != 0) {
-            return false;
+        gs = ((data[7] << 2) | ((data[8] >>> 6) & 0x3)) * SPEED_ACCURACY;
+        if (!statusGs && gs != 0) {
+            invalidate();
+            return;
         }
 
         boolean isTrackAngleRateNegative = (data[8] & 0b00010000) != 0;
-        int trackAngleRate = ((data[8] & 0xF) << 5) | data[9] >>> 3;
+        trackAngleRate = ((data[8] & 0xF) << 5) | data[9] >>> 3;
         if (!statusTrueAngleRate && (isTrackAngleRateNegative || trackAngleRate != 0)) {
-            return false;
+            invalidate();
+            return;
         }
         if (statusTrueAngleRate && trackAngleRate == 0b11111111) {
-            return false;
+            invalidate();
+            return;
         }
+        trackAngleRate = (trackAngleRate + (isTrackAngleRateNegative ? -512d : 0)) * TRUE_TRACK_RATE_ACCURACY;
 
-        double trueAirspeed = (((data[9] & 0x3) << 8) | data[10]) * SPEED_ACCURACY;
-        if (!statusTrueAirspeed && trueAirspeed != 0) {
-            return false;
+        tas = (((data[9] & 0x3) << 8) | data[10]) * SPEED_ACCURACY;
+        if (!statusTas && tas != 0) {
+            invalidate();
+            return;
         }
-        if (statusGroundSpeed && statusTrueAirspeed && Math.abs((trueAirspeed - gs)) > 200) {
-            return false;
+        if (statusGs && statusTas && Math.abs((tas - gs)) > 200) {
+            invalidate();
+            return;
         }
+    }
 
+    @Override
+    public void apply(Track track) {
         if (statusRollAngle)
             track.setRollAngle(rollAngle);
 
         if (statusTrackAngle)
-            track.setTrueHeading(trueTrack * TRUE_TRACK_ANGLE_ACCURACY + (isWest ? 180d : 0d));
+            track.setTrueHeading(trueTrack);
 
-        if (statusGroundSpeed)
+        if (statusGs)
             track.setGs(gs);
 
         if (statusTrueAngleRate)
-            track.setTrackAngleRate((trackAngleRate + (isTrackAngleRateNegative ? -512d : 0)) * TRUE_TRACK_RATE_ACCURACY);
+            track.setTrackAngleRate(trackAngleRate);
 
-        if (statusTrueAirspeed) {
-            track.setTas(trueAirspeed);
+        if (statusTas) {
+            track.setTas(tas);
         }
+    }
 
-        return true;
+    public boolean isStatusRollAngle() {
+        return statusRollAngle;
+    }
+
+    public boolean isStatusTrackAngle() {
+        return statusTrackAngle;
+    }
+
+    public boolean isStatusGs() {
+        return statusGs;
+    }
+
+    public boolean isStatusTrueAngleRate() {
+        return statusTrueAngleRate;
+    }
+
+    public boolean isStatusTas() {
+        return statusTas;
+    }
+
+    public double getGs() {
+        return gs;
+    }
+
+    public double getTrackAngleRate() {
+        return trackAngleRate;
+    }
+
+    public double getTrueTrack() {
+        return trueTrack;
+    }
+
+    public double getTas() {
+        return tas;
+    }
+
+    public double getRollAngle() {
+        return rollAngle;
     }
 }

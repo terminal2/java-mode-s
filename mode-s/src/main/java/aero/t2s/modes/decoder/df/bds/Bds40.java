@@ -73,57 +73,140 @@ import aero.t2s.modes.constants.SelectedAltitudeSource;
  * </ul>
  */
 public class Bds40 extends Bds {
-    @Override
-    public boolean attemptDecode(Track track, short[] data) {
-        boolean mcpStatus = data[4] >>> 7 == 1;
-        boolean fmsStatus = ((data[5] >>> 2) & 0x1) == 1;
-        boolean baroStatus = ((data[7] >>> 5) & 0x1) == 1;
-        boolean mcpModeStatus = (data[9] & 0x1) == 1;
-        boolean targetSource = ((data[10] >>> 2) & 0x1) == 1;
+
+    private final boolean statusMcp;
+    private final boolean statusFms;
+    private final boolean statusBaro;
+    private final boolean statusMcpMode;
+    private final boolean statusTargetSource;
+
+    private SelectedAltitudeSource selectedAltitudeSource;
+    private int selectedAltitude;
+    private int fmsAltitude;
+
+    private double baro;
+
+    private boolean autopilotVnav;
+    private boolean autopilotAltitudeHold;
+    private boolean autopilotApproach;
+
+    public Bds40(short[] data) {
+        super(data);
+
+        statusMcp = data[4] >>> 7 == 1;
+        statusFms = ((data[5] >>> 2) & 0x1) == 1;
+        statusBaro = ((data[7] >>> 5) & 0x1) == 1;
+        statusMcpMode = (data[9] & 0x1) == 1;
+        statusTargetSource = ((data[10] >>> 2) & 0x1) == 1;
         boolean reservedZeroA = ((data[8] & 0x1) | (data[9] >>> 1)) == 0;
         boolean reservedZeroB = ((data[10] >>> 3) & 0x3) == 0;
 
         if (!reservedZeroA) {
-            return false;
+            invalidate();
+            return;
         }
 
         if (!reservedZeroB) {
-            return false;
+            invalidate();
+            return;
         }
 
-        int mcpFcuAltitude = (((data[4] & 0x7F) << 5) | (data[6] >> 3)) * 16;
-        if (mcpStatus && mcpFcuAltitude > 50000) {
-            return false;
+        selectedAltitude = (((data[4] & 0x7F) << 5) | (data[6] >> 3)) * 16;
+        if (statusMcp && selectedAltitude > 50000) {
+            invalidate();
+            return;
         }
 
-        int fmsAltitude = (((data[5] & 0x3) << 10) | (data[6] << 2) | ((data[7] >>> 6) & 0x3)) * 16;
-        if (fmsStatus && (fmsAltitude <= 0 || fmsAltitude > 50000)) {
-            return false;
+        fmsAltitude = (((data[5] & 0x3) << 10) | (data[6] << 2) | ((data[7] >>> 6) & 0x3)) * 16;
+        if (statusFms && (fmsAltitude <= 0 || fmsAltitude > 50000)) {
+            invalidate();
+            return;
         }
 
-        double baro = ((((data[7] & 0x1F) << 7) | (data[8] >>> 1)) * 0.1) + 800.0;
-        if (baroStatus && (baro < 850 || baro > 1100)) {
-            return false;
+        baro = ((((data[7] & 0x1F) << 7) | (data[8] >>> 1)) * 0.1) + 800.0;
+        if (statusBaro && (baro < 850 || baro > 1100)) {
+            invalidate();
+            return;
         }
 
-        if (mcpStatus)
-            track.setSelectedAltitude(mcpFcuAltitude);
+        if (statusMcpMode) {
+            autopilotVnav = (data[10] >>> 7) == 1;
+            autopilotAltitudeHold = ((data[10] >>> 6) & 0x1) == 1;
+            autopilotApproach = ((data[10] >>> 5) & 0x1) == 1;
+        }
 
-        if (fmsStatus)
+        if  (statusTargetSource) {
+            selectedAltitudeSource = SelectedAltitudeSource.find(data[10] & 0x3);
+        }
+    }
+
+    @Override
+    public void apply(Track track) {
+        if (statusMcp)
+            track.setSelectedAltitude(selectedAltitude);
+
+        if (statusFms)
             track.setFmsSelectedAltitude(fmsAltitude);
 
-        if (baroStatus)
+        if (statusBaro)
             track.setBaroSetting(baro);
 
-        if (mcpModeStatus) {
-            track.setVnav((data[10] >>> 7) == 1);
-            track.setAltitudeHold(((data[10] >>> 6) & 0x1) == 1);
-            track.setApproachMode(((data[10] >>> 5) & 0x1) == 1);
+        if (statusMcpMode) {
+            track.setVnav(autopilotVnav);
+            track.setAltitudeHold(autopilotAltitudeHold);
+            track.setApproachMode(autopilotApproach);
         }
 
-        if  (targetSource)
-            track.setSelectedAltitudeSource(SelectedAltitudeSource.find(data[10] & 0x3));
+        if  (statusTargetSource) {
+            track.setSelectedAltitudeSource(selectedAltitudeSource);
+        }
+    }
 
-        return true;
+    public boolean isStatusMcp() {
+        return statusMcp;
+    }
+
+    public boolean isStatusFms() {
+        return statusFms;
+    }
+
+    public boolean isStatusBaro() {
+        return statusBaro;
+    }
+
+    public boolean isStatusMcpMode() {
+        return statusMcpMode;
+    }
+
+    public boolean isStatusTargetSource() {
+        return statusTargetSource;
+    }
+
+    public SelectedAltitudeSource getSelectedAltitudeSource() {
+        return selectedAltitudeSource;
+    }
+
+    public int getSelectedAltitude() {
+        return selectedAltitude;
+    }
+
+    public int getFmsAltitude() {
+        return fmsAltitude;
+    }
+
+    public double getBaro() {
+        return baro;
+    }
+
+    public boolean isAutopilotVnav() {
+        return autopilotVnav;
+    }
+
+    public boolean isAutopilotAltitudeHold() {
+        return autopilotAltitudeHold;
+    }
+
+    public boolean isAutopilotApproach() {
+        return autopilotApproach;
     }
 }

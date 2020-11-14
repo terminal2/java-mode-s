@@ -7,12 +7,12 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
 class ModeSListener extends Thread {
-    private InetSocketAddress address;
-    private ModeSMessageHandler handler;
+    private final InetSocketAddress address;
+    private final ModeSHandler handler;
 
     private int attempts;
 
-    public ModeSListener(InetSocketAddress address, ModeSMessageHandler handler) {
+    public ModeSListener(InetSocketAddress address, ModeSHandler handler) {
         super("Mode S Listener");
         this.address = address;
         this.handler = handler;

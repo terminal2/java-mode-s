@@ -8,85 +8,180 @@ public class Bds45 extends Bds {
     private static final double SAT_ACCURACY = 0.25d;
     private static final int RADIO_HEIGHT_ACCURACY = 16;
 
-    @Override
-    public boolean attemptDecode(Track track, short[] data) {
-        boolean turbulenceStatus = data[4] >>> 7 == 1;
-        boolean windShearStatus = ((data[4] & 0b00010000) >>> 4) == 1;
-        boolean microBurstStatus = ((data[4] & 0b00000010) >>> 1) == 1;
-        boolean icingStatus = ((data[5] & 0b01000000) >>> 6) == 1;
-        boolean wakeStatus = ((data[5] & 0b00001000) >>> 3) == 1;
-        boolean satStatus = (data[5] & 0b00000001) == 1;
-        boolean averageStaticPressureStatus = ((data[7] & 0b00100000) >>> 5) == 1;
-        boolean radioHeightStatus = ((data[7] & 0b00000010) >>> 1) == 1;
+    private final boolean statusTurbulence;
+    private final boolean statusWindShear;
+    private final boolean statusMicroBurst;
+    private final boolean statusIcing;
+    private final boolean statusWake;
+    private final boolean statusSat;
+    private final boolean statusAverageStaticPressure;
+    private final boolean statusRadioHeight;
+
+    private Hazard turbulence;
+    private Hazard windShear;
+    private Hazard microBurst;
+    private Hazard icing;
+    private Hazard wake;
+    private double sat;
+    private int averageStaticPressure;
+    private int radioHeight;
+
+    public Bds45(short[] data) {
+        super(data);
+
+        statusTurbulence = data[4] >>> 7 == 1;
+        statusWindShear = ((data[4] & 0b00010000) >>> 4) == 1;
+        statusMicroBurst = ((data[4] & 0b00000010) >>> 1) == 1;
+        statusIcing = ((data[5] & 0b01000000) >>> 6) == 1;
+        statusWake = ((data[5] & 0b00001000) >>> 3) == 1;
+        statusSat = (data[5] & 0b00000001) == 1;
+        statusAverageStaticPressure = ((data[7] & 0b00100000) >>> 5) == 1;
+        statusRadioHeight = ((data[7] & 0b00000010) >>> 1) == 1;
 
         // Reserved
         if ((data[10] & 0b00011111) != 0) {
-            return false;
+            invalidate();
+            return;
         }
 
-        Hazard turbulence = Hazard.find((data[4] & 0b01100000) >>> 5);
-        if (!turbulenceStatus && turbulence != Hazard.NIL) {
-            return false;
+        turbulence = Hazard.find((data[4] & 0b01100000) >>> 5);
+        if (!statusTurbulence && turbulence != Hazard.NIL) {
+            invalidate();
+            return;
         }
 
-        Hazard windShear = Hazard.find((data[4] & 0b00001100) >>> 2);
-        if (!windShearStatus && windShear != Hazard.NIL) {
-            return false;
+        windShear = Hazard.find((data[4] & 0b00001100) >>> 2);
+        if (!statusWindShear && windShear != Hazard.NIL) {
+            invalidate();
+            return;
         }
 
-        Hazard microBurst = Hazard.find((data[4] & 0b00000001) << 1 | data[5] >> 7);
-        if (!microBurstStatus && microBurst != Hazard.NIL) {
-            return false;
+        microBurst = Hazard.find((data[4] & 0b00000001) << 1 | data[5] >> 7);
+        if (!statusMicroBurst && microBurst != Hazard.NIL) {
+            invalidate();
+            return;
         }
 
-        Hazard icing = Hazard.find((data[5] & 0b00110000) >>> 4);
-        if (!icingStatus && icing != Hazard.NIL) {
-            return false;
+        icing = Hazard.find((data[5] & 0b00110000) >>> 4);
+        if (!statusIcing && icing != Hazard.NIL) {
+            invalidate();
+            return;
         }
 
-        Hazard wake = Hazard.find((data[5] & 0b00000110) >>> 1);
-        if (!wakeStatus && wake != Hazard.NIL) {
-            return false;
+        wake = Hazard.find((data[5] & 0b00000110) >>> 1);
+        if (!statusWake && wake != Hazard.NIL) {
+            invalidate();
+            return;
         }
 
         boolean isSatNegative = data[6] >>> 7 == 1;
-        double sat = (((data[6] & 0b01111111) << 2) | data[7] >>> 6) * SAT_ACCURACY * (isSatNegative ? -1 : 1);
-        if (!satStatus && sat != 0) {
-            return false;
+        sat = (((data[6] & 0b01111111) << 2) | data[7] >>> 6) * SAT_ACCURACY * (isSatNegative ? -1 : 1);
+        if (!statusSat && sat != 0) {
+            invalidate();
+            return;
         }
-        if (satStatus && (sat > 60 || sat < -80)) {
-            return false;
-        }
-
-        int averageStaticPressure = ((data[7] & 0b00011111) << 6) | data[8] >>> 2;
-        if (!averageStaticPressureStatus && averageStaticPressure != 0) {
-            return false;
+        if (statusSat && (sat > 60 || sat < -80)) {
+            invalidate();
+            return;
         }
 
-        int radioHeight = (((data[8] & 0b00000001) << 11) | (data[9] << 3) | data[10] >>> 5) * RADIO_HEIGHT_ACCURACY;
-        if (!radioHeightStatus && radioHeight != 0) {
-            return false;
+        averageStaticPressure = ((data[7] & 0b00011111) << 6) | data[8] >>> 2;
+        if (!statusAverageStaticPressure && averageStaticPressure != 0) {
+            invalidate();
+            return;
         }
 
+        radioHeight = (((data[8] & 0b00000001) << 11) | (data[9] << 3) | data[10] >>> 5) * RADIO_HEIGHT_ACCURACY;
+        if (!statusRadioHeight && radioHeight != 0) {
+            invalidate();
+            return;
+        }
+    }
+
+
+    @Override
+    public void apply(Track track) {
         Meteo meteo = track.getMeteo();
 
-        if (turbulenceStatus)
+        if (statusTurbulence)
             meteo.setTurbulence(turbulence);
-        if (windShearStatus)
+        if (statusWindShear)
             meteo.setWindShear(windShear);
-        if (microBurstStatus)
+        if (statusMicroBurst)
             meteo.setMicroBurst(microBurst);
-        if (icingStatus)
+        if (statusIcing)
             meteo.setIcing(icing);
-        if (wakeStatus)
+        if (statusWake)
             meteo.setWake(wake);
-        if (satStatus)
+        if (statusSat)
             meteo.setStaticAirTemperature(sat);
-        if (averageStaticPressureStatus)
+        if (statusAverageStaticPressure)
             meteo.setAverageStaticPressure(averageStaticPressure);
-        if (radioHeightStatus)
+        if (statusRadioHeight)
             meteo.setRadioHeight(radioHeight);
+    }
 
-        return true;
+    public boolean isStatusTurbulence() {
+        return statusTurbulence;
+    }
+
+    public boolean isStatusWindShear() {
+        return statusWindShear;
+    }
+
+    public boolean isStatusMicroBurst() {
+        return statusMicroBurst;
+    }
+
+    public boolean isStatusIcing() {
+        return statusIcing;
+    }
+
+    public boolean isStatusWake() {
+        return statusWake;
+    }
+
+    public boolean isStatusSat() {
+        return statusSat;
+    }
+
+    public boolean isStatusAverageStaticPressure() {
+        return statusAverageStaticPressure;
+    }
+
+    public boolean isStatusRadioHeight() {
+        return statusRadioHeight;
+    }
+
+    public Hazard getTurbulence() {
+        return turbulence;
+    }
+
+    public Hazard getWindShear() {
+        return windShear;
+    }
+
+    public Hazard getMicroBurst() {
+        return microBurst;
+    }
+
+    public Hazard getIcing() {
+        return icing;
+    }
+
+    public Hazard getWake() {
+        return wake;
+    }
+
+    public double getSat() {
+        return sat;
+    }
+
+    public int getAverageStaticPressure() {
+        return averageStaticPressure;
+    }
+
+    public int getRadioHeight() {
+        return radioHeight;
     }
 }

@@ -59,6 +59,13 @@ public class Common {
         return res;
     }
 
+    public static String getIcaoAddressFromParity(short[] data) {
+        short[] payload = Arrays.copyOfRange(data, 0, data.length - 3);
+        short[] parity = Arrays.copyOfRange(data, data.length - 3, data.length);
+
+        return getIcaoAddress(payload, parity);
+    }
+
     public static String getIcaoAddress(short[] data, short[] messageParity) {
         short[] calculatedParity = getParity(data);
 

@@ -3,13 +3,17 @@ package aero.t2s.modes.decoder.df.bds;
 import aero.t2s.modes.Track;
 
 public class Bds30 extends Bds {
-    @Override
-    public boolean attemptDecode(Track track, short[] data) {
+    public Bds30(short[] data) {
+        super(data);
+
         if (data[4] >>> 4 != 3 || (data[4] & 0xF) != 0) {
-            return false;
+            invalidate();
+            return;
         }
+    }
 
+    @Override
+    public void apply(Track track) {
 
-        return true;
     }
 }

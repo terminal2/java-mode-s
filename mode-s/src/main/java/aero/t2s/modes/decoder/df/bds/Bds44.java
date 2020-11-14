@@ -10,66 +10,131 @@ public class Bds44 extends Bds {
     private static final double SAT_ACCURACY = 0.25;
     private static final double HUMIDITY_ACCURACY = 100d / 64d;
 
-    @Override
-    public boolean attemptDecode(Track track, short[] data) {
-        MeteoSource source = MeteoSource.find(data[4] >>> 4);
+    private final MeteoSource source;
+    private int windSpeed;
+    private boolean statusWindSpeed;
+    private double windDirection;
+    private double humidity;
+    private boolean statusHumidity;
+    private boolean statusTurbulence;
+    private Hazard turbulence;
+    private int averageStaticPressure;
+    private boolean statusAverageStaticPressure;
+    private double staticAirTemperature;
+
+    public Bds44(short[] data) {
+        super(data);
+
+        source = MeteoSource.find(data[4] >>> 4);
 
         if (source == MeteoSource.INVALID || source == MeteoSource.RESERVED) {
-            return false;
+            invalidate();
+            return;
         }
 
-        boolean windSpeedStatus = (data[4] & 0b00001000) != 0;
-        int windSpeed = (data[4] & 0b00000111) << 6 | data[5] >> 2;
-        double windDirection = ((data[5] & 0b00000011) << 7 | data[6] >> 1) * WIND_DIRECTION_ACCURACY;
-        if (!windSpeedStatus && windSpeed != 0) {
-            return false;
+        statusWindSpeed = (data[4] & 0b00001000) != 0;
+        windSpeed = (data[4] & 0b00000111) << 6 | data[5] >> 2;
+        windDirection = ((data[5] & 0b00000011) << 7 | data[6] >> 1) * WIND_DIRECTION_ACCURACY;
+        if (!statusWindSpeed && windSpeed != 0) {
+            invalidate();
+            return;
         }
         // According to Annex 3 wind speed is range 0, 250
-        if (windSpeedStatus && windSpeed > 250) {
-            return false;
+        if (statusWindSpeed && windSpeed > 250) {
+            invalidate();
+            return;
         }
 
         boolean isSatNegative = (data[6] & 0b00000001) == 1;
-        double sat = (data[7] << 2 | data[8] >>> 6) * SAT_ACCURACY * (isSatNegative ? -1 : 1);
-        if (sat > 60 || sat < -80) {
-            return false;
+        staticAirTemperature = (data[7] << 2 | data[8] >>> 6) * SAT_ACCURACY * (isSatNegative ? -1 : 1);
+        if (staticAirTemperature > 60 || staticAirTemperature < -80) {
+            invalidate();
+            return;
         }
 
-        boolean averageStaticPressureStatus = (data[8] & 0b00100000) != 0;
-        int averageStaticPressure = ((data[8] & 0b00011111) << 6) | data[9] >> 2;
-        if (!averageStaticPressureStatus && averageStaticPressure != 0) {
-            return false;
+        statusAverageStaticPressure = (data[8] & 0b00100000) != 0;
+        averageStaticPressure = ((data[8] & 0b00011111) << 6) | data[9] >> 2;
+        if (!statusAverageStaticPressure && averageStaticPressure != 0) {
+            invalidate();
+            return;
         }
 
-        boolean turbulenceStatus = (data[9] & 0b00000010) != 0;
-        Hazard turbulence = Hazard.find(((data[9] & 0b00000001) << 1) | data[10] >>> 7);
-        if (!turbulenceStatus && turbulence != Hazard.NIL) {
-            return false;
+        statusTurbulence = (data[9] & 0b00000010) != 0;
+        turbulence = Hazard.find(((data[9] & 0b00000001) << 1) | data[10] >>> 7);
+        if (!statusTurbulence && turbulence != Hazard.NIL) {
+            invalidate();
+            return;
         }
 
-        boolean humidityStatus = (data[10] & 0b01000000) != 0;
-        double humidity = (data[10] & 0b00111111) * HUMIDITY_ACCURACY;
-        if (!humidityStatus && humidity != 0) {
-            return false;
+        statusHumidity = (data[10] & 0b01000000) != 0;
+        humidity = (data[10] & 0b00111111) * HUMIDITY_ACCURACY;
+        if (!statusHumidity && humidity != 0) {
+            invalidate();
+            return;
         }
+    }
 
+    @Override
+    public void apply(Track track) {
         Meteo meteo = track.getMeteo();
-        if (windSpeedStatus) {
+        if (statusWindSpeed) {
             meteo.setWindSpeed(windSpeed);
             meteo.setWindDirection(windDirection);
         }
 
-        if (averageStaticPressureStatus)
+        if (statusAverageStaticPressure)
             meteo.setAverageStaticPressure(averageStaticPressure);
 
-        if (turbulenceStatus)
+        if (statusTurbulence)
             meteo.setTurbulence(turbulence);
 
-        meteo.setStaticAirTemperature(sat);
+        meteo.setStaticAirTemperature(staticAirTemperature);
 
-        if (humidityStatus)
+        if (statusHumidity)
             meteo.setHumidity(humidity);
+    }
 
-        return true;
+    public MeteoSource getSource() {
+        return source;
+    }
+
+    public int getWindSpeed() {
+        return windSpeed;
+    }
+
+    public boolean isStatusWindSpeed() {
+        return statusWindSpeed;
+    }
+
+    public double getWindDirection() {
+        return windDirection;
+    }
+
+    public double getHumidity() {
+        return humidity;
+    }
+
+    public boolean isStatusHumidity() {
+        return statusHumidity;
+    }
+
+    public boolean isStatusTurbulence() {
+        return statusTurbulence;
+    }
+
+    public Hazard getTurbulence() {
+        return turbulence;
+    }
+
+    public int getAverageStaticPressure() {
+        return averageStaticPressure;
+    }
+
+    public boolean isStatusAverageStaticPressure() {
+        return statusAverageStaticPressure;
+    }
+
+    public double getStaticAirTemperature() {
+        return staticAirTemperature;
     }
 }

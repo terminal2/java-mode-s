@@ -1,6 +1,7 @@
 package aero.t2s.modes;
 
 import aero.t2s.modes.database.ModeSDatabase;
+import aero.t2s.modes.decoder.df.DownlinkFormat;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -10,23 +11,30 @@ import java.util.function.Consumer;
 public class ModeS {
     private final ModeSListener listener;
     private final Map<String, Track> tracks = new ConcurrentHashMap<>();
-    private final ModeSMessageHandler handler;
+    private final ModeSHandler handler;
 
     private Consumer<Track> onTrackDeleted = (track) -> {};
     private Consumer<Track> onTrackUpdated = (track) -> {};
     private Consumer<Track> onTrackCreated = (track) -> {};
+    private Consumer<DownlinkFormat> onMessage;
 
     public ModeS(String host, int port, double originLat, double originLon) {
         this(host, port, originLat, originLon, null);
     }
 
     public ModeS(String host, int port, double originLat, double originLon, ModeSDatabase database) {
-        handler = new ModeSMessageHandler(tracks, originLat, originLon, database);
+        handler = new ModeSTrackHandler(tracks, originLat, originLon, database);
 
         handler.onTrackCreated(onTrackCreated);
         handler.onTrackCreated(onTrackUpdated);
         handler.onTrackCreated(onTrackDeleted);
+        handler.onMessage(onMessage);
 
+        listener = new ModeSListener(new InetSocketAddress(host, port), handler);
+    }
+
+    public ModeS(String host, int port, ModeSHandler handler) {
+        this.handler = handler;
         listener = new ModeSListener(new InetSocketAddress(host, port), handler);
     }
 
@@ -40,6 +48,10 @@ public class ModeS {
 
     public void onTrackUpdated(Consumer<Track> consumer) {
         handler.onTrackUpdated(consumer);
+    }
+
+    public void onMessage(Consumer<DownlinkFormat> consumer) {
+        handler.onMessage(consumer);
     }
 
     public void start() {

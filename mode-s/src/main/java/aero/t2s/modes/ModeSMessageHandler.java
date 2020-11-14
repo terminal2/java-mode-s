@@ -2,63 +2,50 @@ package aero.t2s.modes;
 
 import aero.t2s.modes.database.ModeSDatabase;
 import aero.t2s.modes.decoder.Decoder;
+import aero.t2s.modes.decoder.UnknownDownlinkFormatException;
+import aero.t2s.modes.decoder.df.DownlinkFormat;
+import aero.t2s.modes.decoder.df.df17.InvalidExtendedSquitterTypeCodeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-class ModeSMessageHandler {
+class ModeSMessageHandler extends ModeSHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModeSMessageHandler.class);
+
     private final Decoder decoder;
     private final Executor executor = Executors.newSingleThreadExecutor();
-    private Consumer<Track> onDeleted = track -> {};
-    private Consumer<Track> onCreated = track -> {};
-    private Consumer<Track> onUpdated = track -> {};
 
-    ModeSMessageHandler(Map<String, Track> tracks, double originLat, double originLon, ModeSDatabase database) {
-        this.decoder = new Decoder(tracks, originLat, originLon, database);
+    private Consumer<DownlinkFormat> onMessage;
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                List<String> expired = new ArrayList<>();
-
-                tracks.values().stream().filter(Track::isExpired).forEach((track) -> expired.add(track.getIcao()));
-
-                expired.forEach((icao) -> onDeleted.accept(tracks.remove(icao)));
-            }
-        }, 1000, 5000);
-
+    ModeSMessageHandler(double originLat, double originLon) {
+        this.decoder = new Decoder(new HashMap<>(), originLat, originLon, ModeSDatabase.createDatabase());
     }
 
-    void handle(final String input) {
+    public void handle(final String input) {
         executor.execute(() -> {
             String hex = input.substring(1, input.length() - 1);
             short[] data = BinaryHelper.stringToByteArray(hex);
 
-            Track track = decoder.decode(data);
-            if (track != null) {
-                track.touch();
+            try {
+                DownlinkFormat df = decoder.decode(data);
 
-                if (track.wasJustCreated()) {
-                    this.onCreated.accept(track);
-                } else {
-                    this.onUpdated.accept(track);
+                if (onMessage != null) {
+                    onMessage.accept(df);
                 }
+
+            } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
+                LOGGER.error(e.getMessage());
+            } catch (Throwable throwable) {
+                LOGGER.error("Message could not be parsed", throwable);
             }
         });
     }
 
-    public void onTrackDeleted(Consumer<Track> onDeleted) {
-        this.onDeleted = onDeleted;
-    }
-
-    public void onTrackUpdated(Consumer<Track> onUpdated) {
-        this.onUpdated = onUpdated;
-    }
-
-    public void onTrackCreated(Consumer<Track> onCreated) {
-        this.onCreated = onCreated;
+    public void onMessage(Consumer<DownlinkFormat> onMessage) {
+        this.onMessage = onMessage;
     }
 }

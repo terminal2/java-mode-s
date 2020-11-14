@@ -1,11 +1,20 @@
 package aero.t2s.modes.decoder.df.df17;
 
+import aero.t2s.modes.NotImplementedException;
 import aero.t2s.modes.Track;
-import org.slf4j.LoggerFactory;
 
 public class SurfacePosition extends ExtendedSquitter {
+    public SurfacePosition(short[] data) {
+        super(data);
+    }
+
     @Override
-    public void decode(Track track, int typeCode, short[] data) {
-        LoggerFactory.getLogger(getClass()).warn("{}: Not implemented", getClass().getSimpleName());
+    public SurfacePosition decode() {
+        throw new NotImplementedException(getClass().getSimpleName() + " Not implemented");
+    }
+
+    @Override
+    public void apply(Track track) {
+        throw new NotImplementedException(getClass().getSimpleName() + " Not implemented");
     }
 }

@@ -1,25 +1,46 @@
 package aero.t2s.modes.decoder.df;
 
+import aero.t2s.modes.Altitude;
 import aero.t2s.modes.Track;
 import aero.t2s.modes.decoder.AltitudeEncoding;
 import aero.t2s.modes.decoder.Common;
-import aero.t2s.modes.decoder.Decoder;
 
 public class DF4 extends DownlinkFormat {
-    public DF4(Decoder decoder) {
-        super(decoder);
+    private boolean alert;
+    private boolean spi;
+    private Altitude altitude;
+
+    public DF4(short[] data) {
+        super(data, IcaoAddress.FROM_PARITY);
     }
 
     @Override
-    public Track decode(short[] data) {
-        Track track = getDecoder().getTrack(getIcaoAddressFromParity(data));
-
+    public DF4 decode() {
         int fs = data[0] & 0x7;
 
-        track.getFlightStatus().setAlert(Common.isFlightStatusAlert(fs));
-        track.getFlightStatus().setSpi(Common.isFlightStatusSpi(fs));
-        track.setAltitude(AltitudeEncoding.decode((((data[2] << 8) | data[3])) & 0x1FFF));
+        alert = Common.isFlightStatusAlert(fs);
+        spi = Common.isFlightStatusSpi(fs);
+        altitude = AltitudeEncoding.decode((((data[2] << 8) | data[3])) & 0x1FFF);
 
-        return null;
+        return this;
+    }
+
+    @Override
+    public void apply(Track track) {
+        track.getFlightStatus().setAlert(alert);
+        track.getFlightStatus().setSpi(spi);
+        track.setAltitude(altitude);
+    }
+
+    public boolean isAlert() {
+        return alert;
+    }
+
+    public boolean isSpi() {
+        return spi;
+    }
+
+    public Altitude getAltitude() {
+        return altitude;
     }
 }

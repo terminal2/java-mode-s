@@ -2,7 +2,6 @@ package aero.t2s.modes.decoder.df;
 
 import aero.t2s.modes.Track;
 import aero.t2s.modes.decoder.Common;
-import aero.t2s.modes.decoder.Decoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,26 +9,34 @@ import java.util.Arrays;
 
 public abstract class DownlinkFormat {
     protected static final Logger logger = LoggerFactory.getLogger(DownlinkFormat.class);
-    private final Decoder decoder;
+    protected final short[] data;
 
-    public DownlinkFormat(Decoder decoder) {
-        this.decoder = decoder;
+    private final String icao;
+
+    public DownlinkFormat(short[] data, IcaoAddress icaoAddressFrom) {
+        this.data = data;
+
+        if (icaoAddressFrom == IcaoAddress.FROM_PARITY) {
+            this.icao = Common.getIcaoAddressFromParity(data);
+        } else {
+            this.icao = Common.toHexString(Arrays.copyOfRange(data, 1, 4));
+        }
     }
 
-    public Decoder getDecoder() {
-        return decoder;
+    public abstract DownlinkFormat decode();
+
+    public abstract void apply(Track track);
+
+    public String getIcao() {
+        return this.icao;
     }
 
-    public abstract Track decode(short[] data);
-
-    protected String getIcaoAddressFromParity(short[] data) {
-        short[] payload = Arrays.copyOfRange(data, 0, data.length - 3);
-        short[] parity = Arrays.copyOfRange(data, data.length - 3, data.length);
-
-        return Common.getIcaoAddress(payload, parity);
+    public short[] getData() {
+        return data;
     }
 
-    protected String getIcaoAddress(short[] data) {
-        return Common.toHexString(Arrays.copyOfRange(data, 1, 4));
+    protected enum IcaoAddress {
+        FROM_MESSAGE,
+        FROM_PARITY,
     }
 }

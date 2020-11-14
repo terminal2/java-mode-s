@@ -9,6 +9,24 @@ public class ResolutionAdvisory {
     private boolean senseReversal;
     private boolean active;
 
+    public ResolutionAdvisory() {
+
+    }
+
+    public ResolutionAdvisory(int activeResolutionAdvisory) {
+        update(activeResolutionAdvisory);
+    }
+
+    public void update(ResolutionAdvisory advisory) {
+        requiresCorrectionUpwards = advisory.isRequiresCorrectionUpwards();
+        requiresPositiveClimb = advisory.isRequiresPositiveClimb();
+        requiresCorrectionDownwards = advisory.isRequiresCorrectionDownwards();
+        requiresPositiveDescend = advisory.isRequiresPositiveDescend();
+        requiresCrossing = advisory.isRequiresCrossing();
+        senseReversal = advisory.isSenseReversal();
+        active = advisory.isActive();
+    }
+
     public void update(int ara) {
         requiresCorrectionUpwards = ara >>> 12 == 1;
         requiresPositiveClimb = ara >>> 11 == 1;
@@ -32,27 +50,27 @@ public class ResolutionAdvisory {
         active = false;
     }
 
-    public boolean requiresCorrectionUpwards() {
+    public boolean isRequiresCorrectionUpwards() {
         return requiresCorrectionUpwards;
     }
 
-    public boolean ruquiresPositiveClimb() {
+    public boolean isRequiresPositiveClimb() {
         return requiresPositiveClimb;
     }
 
-    public boolean requiresCorrectionDownwards() {
+    public boolean isRequiresCorrectionDownwards() {
         return requiresCorrectionDownwards;
     }
 
-    public boolean requiresPositiveDescend() {
+    public boolean isRequiresPositiveDescend() {
         return requiresPositiveDescend;
     }
 
-    public boolean requiresCrossing() {
+    public boolean isRequiresCrossing() {
         return requiresCrossing;
     }
 
-    public boolean senseReversal() {
+    public boolean isSenseReversal() {
         return senseReversal;
     }
 

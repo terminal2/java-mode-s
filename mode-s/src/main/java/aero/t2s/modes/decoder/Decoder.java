@@ -10,35 +10,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Decoder {
-    private static final Logger logger = LoggerFactory.getLogger(Decoder.class);
+    private final double originLat;
+    private final double originLon;
 
-    private ModeSDatabase modeSDatabase;
-    private Map<String, Track> tracks;
-
-    private Map<Integer, DownlinkFormat> downlinkFormatDecoders = new HashMap<>();
+    private final ModeSDatabase modeSDatabase;
+    private final Map<String, Track> tracks;
 
     public Decoder(Map<String, Track> tracks, double originLat, double originLon, ModeSDatabase database) {
         this.tracks = tracks;
-
-        if (database == null) {
-            database = ModeSDatabase.createDatabase();
-        }
-        this.modeSDatabase = database;
-
-        downlinkFormatDecoders.put(0, new DF0(this));
-        downlinkFormatDecoders.put(4, new DF4(this));
-        downlinkFormatDecoders.put(5, new DF5(this));
-        downlinkFormatDecoders.put(11, new DF11(this));
-        downlinkFormatDecoders.put(16, new DF16(this));
-        downlinkFormatDecoders.put(17, new DF17(this, originLat, originLon));
-        downlinkFormatDecoders.put(18, new DF18(this));
-        downlinkFormatDecoders.put(20, new DF20(this));
-        downlinkFormatDecoders.put(21, new DF21(this));
-        downlinkFormatDecoders.put(22, new DF22(this));
-        downlinkFormatDecoders.put(24, new DF24(this));
+        this.originLat = originLat;
+        this.originLon = originLon;
+        this.modeSDatabase = database == null ? ModeSDatabase.createDatabase() : database;
     }
 
-    public Track decode(short[] data) {
+    public DownlinkFormat decode(short[] data) throws UnknownDownlinkFormatException {
+        // @Todo: Confusing statement this should probably be refactored to return inverse or renamed to invalid
         if (Common.isValid(data)) {
             return null;
         }
@@ -50,12 +36,46 @@ public class Decoder {
             downlinkFormat = 24;
         }
 
-        if (downlinkFormatDecoders.containsKey(downlinkFormat)) {
-            return downlinkFormatDecoders.get(downlinkFormat).decode(data);
+        DownlinkFormat df;
+        switch (downlinkFormat) {
+            case 0:
+                df = new DF0(data);
+                break;
+            case 4:
+                df = new DF4(data);
+                break;
+            case 5:
+                df = new DF5(data);
+                break;
+            case 11:
+                df = new DF11(data);
+                break;
+            case 16:
+                df = new DF16(data);
+                break;
+            case 17:
+                df = new DF17(data, originLat, originLon);
+                break;
+            case 18:
+                df = new DF18(data);
+                break;
+            case 20:
+                df = new DF20(data);
+                break;
+            case 21:
+                df = new DF21(data);
+                break;
+            case 22:
+                df = new DF22(data);
+                break;
+            case 24:
+                df = new DF24(data);
+                break;
+            default:
+                throw new UnknownDownlinkFormatException(downlinkFormat, data);
         }
 
-        logger.warn("Unknown Mode S Packet: {} => {}", downlinkFormat, Common.toHexString(data));
-        return null;
+        return df.decode();
     }
 
     public Track getTrack(String icao) {

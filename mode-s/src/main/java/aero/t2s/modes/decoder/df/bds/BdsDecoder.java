@@ -1,40 +1,51 @@
 package aero.t2s.modes.decoder.df.bds;
 
-import aero.t2s.modes.Track;
-import org.slf4j.LoggerFactory;
+import aero.t2s.modes.NotImplementedException;
+import aero.t2s.modes.decoder.Common;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class BdsDecoder {
-    private List<Bds> bdsDecoder = new ArrayList<>();
+    private final short[] data;
+    private final List<Bds> bdsMessages = new LinkedList<>();
+    private final List<Bds> valid = new LinkedList<>();
 
-    public BdsDecoder() {
-        bdsDecoder.add(new Bds10());
-        bdsDecoder.add(new Bds20());
-        bdsDecoder.add(new Bds17());
-        bdsDecoder.add(new Bds30());
-        bdsDecoder.add(new Bds40());
-        bdsDecoder.add(new Bds50());
-        bdsDecoder.add(new Bds53());
-        bdsDecoder.add(new Bds60());
-        bdsDecoder.add(new Bds21());
-        bdsDecoder.add(new Bds44());
-        bdsDecoder.add(new Bds45());
+    public BdsDecoder(short[] data) {
+        this.data = data;
+        bdsMessages.add(new Bds10(data));
+        bdsMessages.add(new Bds20(data));
+        bdsMessages.add(new Bds17(data));
+        bdsMessages.add(new Bds30(data));
+        bdsMessages.add(new Bds40(data));
+        bdsMessages.add(new Bds50(data));
+        bdsMessages.add(new Bds53(data));
+        bdsMessages.add(new Bds60(data));
+        bdsMessages.add(new Bds21(data));
+        bdsMessages.add(new Bds44(data));
+        bdsMessages.add(new Bds45(data));
     }
 
-    public boolean decode(Track track, short[] data) {
+    public Bds decode() throws MultipleBdsMatchesFoundException, EmptyMessageException, NotImplementedException {
         // Indicates no message is present and is most likely a reply to a uplink request Altitude from ground station.
         if (data[4] == 0 && data[5] == 0 && data[6] == 0 && data[7] == 0 && data[8] == 0 && data[9] == 0 && data[10] == 0) {
-            return true;
+            throw new EmptyMessageException();
         }
 
-        for (Bds bds : bdsDecoder) {
-            if (bds.attemptDecode(track, data)) {
-                return true;
+        for (Bds message : bdsMessages) {
+            if (message.isValid()) {
+                valid.add(message);
             }
         }
 
-        return false;
+        if (valid.size() == 0) {
+            throw new NotImplementedException("No matching BDS found for " + Common.toHexString(data));
+        }
+
+        if (valid.size() > 1) {
+            throw new MultipleBdsMatchesFoundException(valid);
+        }
+
+        return valid.get(0);
     }
 }

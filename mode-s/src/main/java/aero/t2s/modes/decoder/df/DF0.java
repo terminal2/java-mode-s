@@ -1,13 +1,13 @@
 package aero.t2s.modes.decoder.df;
 
 import aero.t2s.modes.Acas;
+import aero.t2s.modes.Altitude;
 import aero.t2s.modes.Track;
 import aero.t2s.modes.constants.AcasReplyInformation;
 import aero.t2s.modes.constants.AcasSensitivity;
 import aero.t2s.modes.constants.CrossLinkCapability;
 import aero.t2s.modes.constants.VerticalStatus;
 import aero.t2s.modes.decoder.AltitudeEncoding;
-import aero.t2s.modes.decoder.Decoder;
 
 /**
  * Short Air-Air Surveillance
@@ -37,22 +37,56 @@ import aero.t2s.modes.decoder.Decoder;
  * </ul>
  */
 public class DF0 extends DownlinkFormat {
-    public DF0(Decoder decoder) {
-        super(decoder);
+    private VerticalStatus verticalStatus;
+    private CrossLinkCapability crossLinkCapability;
+    private AcasSensitivity sensitivity;
+    private AcasReplyInformation replyInformation;
+    private Altitude altitude;
+
+    public DF0(short[] data) {
+        super(data, IcaoAddress.FROM_PARITY);
     }
 
     @Override
-    public Track decode(short[] data) {
-        Track track = getDecoder().getTrack(getIcaoAddressFromParity(data));
+    public DF0 decode() {
+        verticalStatus = VerticalStatus.from((data[0] >>> 2) & 0x1);
+        crossLinkCapability = CrossLinkCapability.from((data[0] >>> 1) & 0x1);
+        sensitivity = AcasSensitivity.from(data[1] >>> 5);
+        replyInformation = AcasReplyInformation.from(((data[1] & 0x7) << 1) | ((data[2] >> 7) & 0x1));
+        altitude = AltitudeEncoding.decode((((data[2] << 8) | data[3])) & 0x1FFF);
+
+        return this;
+    }
+
+    @Override
+    public void apply(Track track) {
         Acas acas = track.getAcas();
+        acas.setVerticalStatus(verticalStatus);
+        acas.setCrossLinkCapability(crossLinkCapability);
+        acas.setSensitivity(sensitivity);
+        acas.setReplyInformation(replyInformation);
+        acas.setAltitude(altitude);
 
-        acas.setVerticalStatus(VerticalStatus.from((data[0] >>> 2) & 0x1));
-        acas.setCrossLinkCapability(CrossLinkCapability.from((data[0] >>> 1) & 0x1));
-        acas.setSensitivity(AcasSensitivity.from(data[1] >>> 5));
-        acas.setReplyInformation(AcasReplyInformation.from(((data[1] & 0x7) << 1) | ((data[2] >> 7) & 0x1)));
-        acas.setAltitude(AltitudeEncoding.decode((((data[2] << 8) | data[3])) & 0x1FFF));
-        track.setAltitude(AltitudeEncoding.decode((((data[2] << 8) | data[3])) & 0x1FFF));
+        track.setAltitude(altitude);
+    }
 
-        return track;
+    public VerticalStatus getVerticalStatus() {
+        return verticalStatus;
+    }
+
+    public CrossLinkCapability getCrossLinkCapability() {
+        return crossLinkCapability;
+    }
+
+    public AcasSensitivity getSensitivity() {
+        return sensitivity;
+    }
+
+    public AcasReplyInformation getReplyInformation() {
+        return replyInformation;
+    }
+
+    public Altitude getAltitude() {
+        return altitude;
     }
 }

@@ -15,7 +15,7 @@ public class Acas {
     private boolean RANotTurnLeft;
     private boolean RANotTurnRight;
     private boolean active;
-    private ThreatType threatType = ThreatType.NO_ID;
+    private ThreatTypeIndicator threatType = ThreatTypeIndicator.NO_ID;
     private String targetModeS;
     private double targetAltitude;
     private double targetRange;
@@ -113,11 +113,11 @@ public class Acas {
         return active;
     }
 
-    public void setThreatType(int threatType) {
-        this.threatType = ThreatType.values()[threatType];
+    public void setThreatType(ThreatTypeIndicator threatType) {
+        this.threatType = threatType;
     }
 
-    public ThreatType getThreatType() {
+    public ThreatTypeIndicator getThreatType() {
         return threatType;
     }
 
@@ -153,11 +153,4 @@ public class Acas {
         return targetBearing;
     }
 
-    public enum ThreatType {
-        NO_ID,
-        MODES,
-        ALT_BRG_DIST,
-        NOT_ASSIGNED,
-        ;
-    }
 }

@@ -8,58 +8,119 @@ public class Bds53 extends Bds {
     private static final double TAS_ACCURACY = 0.5d;
     private static final int VS_ACCURACY = 64;
 
-    @Override
-    public boolean attemptDecode(Track track, short[] data) {
-        boolean magHdgStatus = (data[4] & 0b10000000) == 0b10000000;
-        boolean iasStatus = (data[5] & 0b00001000) == 0b00001000;
-        boolean machStatus = (data[6] & 0b00000001) == 0b00000001;
-        boolean tasStatus = (data[8] & 0b01000000) == 0b01000000;
-        boolean vsStatus = (data[9] & 0b00000010) == 0b00000010;
+    private final double magneticHeading;
+    private final boolean statusRocd;
+    private final boolean statusTas;
+    private final boolean statusMach;
+    private final boolean statusIas;
+    private final boolean statusMagneticHeading;
+
+    private  int rocd;
+    private  double tas;
+    private  double mach;
+    private  int ias;
+
+    public Bds53(short[] data) {
+        super(data);
+
+        statusMagneticHeading = (data[4] & 0b10000000) == 0b10000000;
+        statusIas = (data[5] & 0b00001000) == 0b00001000;
+        statusMach = (data[6] & 0b00000001) == 0b00000001;
+        statusTas = (data[8] & 0b01000000) == 0b01000000;
+        statusRocd = (data[9] & 0b00000010) == 0b00000010;
 
         boolean isMagHdgNegative = (data[4] & 0b01000000) == 0b01000000;
-        double magHdg = ((((data[4] & 0b00111111) << 4) | ((data[5] & 0b11110000))) * HEADING_ACCURACY + (isMagHdgNegative ? 180 : 0));
-        if ((!magHdgStatus && magHdg != 0) || magHdg > 360) {
-            return false;
+        magneticHeading = ((((data[4] & 0b00111111) << 4) | ((data[5] & 0b11110000))) * HEADING_ACCURACY + (isMagHdgNegative ? 180 : 0));
+        if ((!statusMagneticHeading && magneticHeading != 0) || magneticHeading > 360) {
+            invalidate();
+            return;
         }
 
-        int ias = ((data[5] & 0b00000111) << 7) | ((data[6] & 0b11111110) >>> 1);
-        if (!iasStatus && ias != 0) {
-            return false;
+        ias = ((data[5] & 0b00000111) << 7) | ((data[6] & 0b11111110) >>> 1);
+        if (!statusIas && ias != 0) {
+            invalidate();
+            return;
         }
-        if (iasStatus && ias > 500) {
-            return false;
-        }
-
-        double mach = ((data[7] << 1) | (data[8] >>> 7)) * MACH_ACCURACY;
-        if (!machStatus && mach != 0) {
-            return false;
+        if (statusIas && ias > 500) {
+            invalidate();
+            return;
         }
 
-        double tas = (((data[8] & 0b00111111) << 6) | ((data[9] & 0b11111100) >>> 2)) * TAS_ACCURACY;
-        if (!tasStatus && tas != 0) {
-            return false;
-        }
-        if (tasStatus && tas > 500) {
-            return false;
+        mach = ((data[7] << 1) | (data[8] >>> 7)) * MACH_ACCURACY;
+        if (!statusMach && mach != 0) {
+            invalidate();
+            return;
         }
 
-        boolean isVsNegative = (data[9] & 0b00000001) == 0b00000001;
-        int vs = data[10] * VS_ACCURACY * (isVsNegative ? -1 : 0);
-        if (!vsStatus && vs != 0) {
-            return false;
+        tas = (((data[8] & 0b00111111) << 6) | ((data[9] & 0b11111100) >>> 2)) * TAS_ACCURACY;
+        if (!statusTas && tas != 0) {
+            invalidate();
+            return;
+        }
+        if (statusTas && tas > 500) {
+            invalidate();
+            return;
         }
 
-        if (magHdgStatus)
-            track.setMagneticHeading(magHdg);
-        if (iasStatus)
+        boolean isRocdNegative = (data[9] & 0b00000001) == 0b00000001;
+        rocd = data[10] * VS_ACCURACY * (isRocdNegative ? -1 : 0);
+        if (!statusRocd && rocd != 0) {
+            invalidate();
+            return;
+        }
+    }
+
+    @Override
+    public void apply(Track track) {
+        if (statusMagneticHeading)
+            track.setMagneticHeading(magneticHeading);
+        if (statusIas)
             track.setIas(ias);
-        if (machStatus)
+        if (statusMach)
             track.setMach(mach);
-        if (tasStatus)
+        if (statusTas)
             track.setTas(tas);
-        if (vsStatus)
-            track.setRocd(vs);
+        if (statusRocd)
+            track.setRocd(rocd);
+    }
 
-        return true;
+    public double getMagneticHeading() {
+        return magneticHeading;
+    }
+
+    public boolean isStatusRocd() {
+        return statusRocd;
+    }
+
+    public boolean isStatusTas() {
+        return statusTas;
+    }
+
+    public boolean isStatusMach() {
+        return statusMach;
+    }
+
+    public boolean isStatusIas() {
+        return statusIas;
+    }
+
+    public boolean isStatusMagneticHeading() {
+        return statusMagneticHeading;
+    }
+
+    public int getRocd() {
+        return rocd;
+    }
+
+    public double getTas() {
+        return tas;
+    }
+
+    public double getMach() {
+        return mach;
+    }
+
+    public int getIas() {
+        return ias;
     }
 }
