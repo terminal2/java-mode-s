@@ -101,6 +101,10 @@ public class Track {
         return updated;
     }
 
+    public void setUpdatedAt(Instant time) {
+        this.updated = time;
+    }
+
     public void touch() {
         updated = Instant.now();
     }

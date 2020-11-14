@@ -5,13 +5,12 @@ import aero.t2s.modes.Track;
 import aero.t2s.modes.decoder.Common;
 import aero.t2s.modes.decoder.df.bds.Bds;
 import aero.t2s.modes.decoder.df.bds.BdsDecoder;
-import aero.t2s.modes.decoder.df.bds.EmptyMessageException;
+import aero.t2s.modes.EmptyMessageException;
 import aero.t2s.modes.decoder.df.bds.MultipleBdsMatchesFoundException;
 
 import java.util.List;
 
 public class DF21 extends DownlinkFormat {
-
     private Bds bds;
     private boolean alert;
     private boolean spi;

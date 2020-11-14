@@ -32,4 +32,16 @@ public class DF5 extends DownlinkFormat {
         track.getFlightStatus().setSpi(spi);
         track.setModeA(modeA);
     }
+
+    public boolean isAlert() {
+        return alert;
+    }
+
+    public boolean isSpi() {
+        return spi;
+    }
+
+    public int getModeA() {
+        return modeA;
+    }
 }

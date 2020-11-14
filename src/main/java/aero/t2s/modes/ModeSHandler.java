@@ -27,4 +27,16 @@ abstract public class ModeSHandler {
     }
 
     public abstract void handle(String data);
+    public abstract void handleSync(String data);
+
+
+    protected short[] toData(final String input) throws EmptyMessageException {
+        if (input.startsWith("*0000")) {
+            throw new EmptyMessageException();
+        }
+
+        String hex = input.replace("*", "").replace(";", "");
+
+        return BinaryHelper.stringToByteArray(hex);
+    }
 }

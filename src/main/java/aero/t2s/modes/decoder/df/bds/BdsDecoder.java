@@ -1,5 +1,6 @@
 package aero.t2s.modes.decoder.df.bds;
 
+import aero.t2s.modes.EmptyMessageException;
 import aero.t2s.modes.NotImplementedException;
 import aero.t2s.modes.decoder.Common;
 

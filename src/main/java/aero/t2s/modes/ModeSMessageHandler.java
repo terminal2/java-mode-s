@@ -26,24 +26,24 @@ public class ModeSMessageHandler extends ModeSHandler {
     }
 
     public void handle(final String input) {
-        executor.execute(() -> {
-            String hex = input.substring(1, input.length() - 1);
-            short[] data = BinaryHelper.stringToByteArray(hex);
-
-            try {
-                DownlinkFormat df = decoder.decode(data);
-
-                if (onMessage != null) {
-                    onMessage.accept(df);
-                }
-
-            } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
-                LOGGER.error(e.getMessage());
-            } catch (Throwable throwable) {
-                LOGGER.error("Message could not be parsed", throwable);
-            }
-        });
+        executor.execute(() -> handleSync(input));
     }
+
+    public void handleSync(final String input) {
+        try {
+            DownlinkFormat df = decoder.decode(toData(input));
+
+            if (onMessage != null) {
+                onMessage.accept(df);
+            }
+        } catch (EmptyMessageException ignored) {
+        } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
+            LOGGER.error(e.getMessage());
+        } catch (Throwable throwable) {
+            LOGGER.error("Message could not be parsed", throwable);
+        }
+    }
+
 
     public void onMessage(Consumer<DownlinkFormat> onMessage) {
         this.onMessage = onMessage;

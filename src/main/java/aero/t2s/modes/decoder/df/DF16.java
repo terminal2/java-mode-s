@@ -78,4 +78,48 @@ public class DF16 extends DownlinkFormat {
         acas.setRANotTurnRight(RANotTurnRight);
         acas.setMultipleThreats(multipleThreats);
     }
+
+    public VerticalStatus getVerticalStatus() {
+        return verticalStatus;
+    }
+
+    public CrossLinkCapability getCrossLinkCapability() {
+        return crossLinkCapability;
+    }
+
+    public AcasSensitivity getSensitivity() {
+        return sensitivity;
+    }
+
+    public AcasReplyInformation getReplyInformation() {
+        return replyInformation;
+    }
+
+    public Altitude getAltitude() {
+        return altitude;
+    }
+
+    public ResolutionAdvisory getResolutionAdvisory() {
+        return resolutionAdvisory;
+    }
+
+    public boolean isMultipleThreats() {
+        return multipleThreats;
+    }
+
+    public boolean isRANotPassBelow() {
+        return RANotPassBelow;
+    }
+
+    public boolean isRANotPassAbove() {
+        return RANotPassAbove;
+    }
+
+    public boolean isRANotTurnLeft() {
+        return RANotTurnLeft;
+    }
+
+    public boolean isRANotTurnRight() {
+        return RANotTurnRight;
+    }
 }

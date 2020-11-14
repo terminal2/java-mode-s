@@ -18,6 +18,8 @@ public class ModeSTrackHandler extends ModeSHandler {
     private final Decoder decoder;
     private final Executor executor = Executors.newSingleThreadExecutor();
 
+    private boolean cleanupEnabled = true;
+
     public ModeSTrackHandler(Map<String, Track> tracks, double originLat, double originLon, ModeSDatabase database) {
         this.decoder = new Decoder(tracks, originLat, originLon, database);
 
@@ -25,6 +27,10 @@ public class ModeSTrackHandler extends ModeSHandler {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+                if (!cleanupEnabled) {
+                    return;
+                }
+
                 List<String> expired = new ArrayList<>();
 
                 tracks.values().stream().filter(Track::isExpired).forEach((track) -> expired.add(track.getIcao()));
@@ -36,36 +42,43 @@ public class ModeSTrackHandler extends ModeSHandler {
     }
 
     public void handle(final String input) {
-        executor.execute(() -> {
-            String hex = input.substring(1, input.length() - 1);
-            short[] data = BinaryHelper.stringToByteArray(hex);
+        executor.execute(() -> handleSync(input));
+    }
 
-            try {
-                DownlinkFormat df = decoder.decode(data);
+    public void handleSync(final String input) {
+        try {
+            DownlinkFormat df = decoder.decode(toData(input));
+            Track track = decoder.getTrack(df.getIcao());
 
-                if (onMessage != null) {
-                    onMessage.accept(df);
-                }
-
-                Track track = decoder.getTrack(df.getIcao());
-
-                if (track == null) {
-                    return;
-                }
-
-                df.apply(track);
-                track.touch();
-
-                if (track.wasJustCreated()) {
-                    this.onCreated.accept(track);
-                } else {
-                    this.onUpdated.accept(track);
-                }
-            } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
-                LOGGER.error(e.getMessage());
-            } catch (Throwable throwable) {
-                LOGGER.error("Message could not be parsed", throwable);
+            if (track == null) {
+                return;
             }
-        });
+
+            df.apply(track);
+            track.touch();
+
+            if (track.wasJustCreated()) {
+                this.onCreated.accept(track);
+            } else {
+                this.onUpdated.accept(track);
+            }
+
+            if (onMessage != null) {
+                onMessage.accept(df);
+            }
+        } catch (EmptyMessageException ignored) {
+        } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
+            LOGGER.error(e.getMessage());
+        } catch (Throwable throwable) {
+            LOGGER.error("Message could not be parsed", throwable);
+        }
+    }
+
+    public void enableCleanup() {
+        this.cleanupEnabled = true;
+    }
+
+    public void disableCleanup() {
+        this.cleanupEnabled = false;
     }
 }
