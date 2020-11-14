@@ -1,15 +1,12 @@
 package aero.t2s.modes.decoder.df.bds;
 
 import aero.t2s.modes.BinaryHelper;
-import aero.t2s.modes.Track;
 import aero.t2s.modes.constants.SelectedAltitudeSource;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Bds40Test {
-
     private Bds40 bds;
 
     @Test
@@ -20,7 +17,7 @@ public class Bds40Test {
         assertTrue(bds.isValid());
         assertEquals(38048, bds.getSelectedAltitude());
         assertEquals(38000, bds.getFmsAltitude());
-        assertEquals(1013.2, bds.getBaro());
+        assertEquals(1013.2, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
@@ -31,7 +28,7 @@ public class Bds40Test {
         assertTrue(bds.isValid());
         assertEquals(32224, bds.getSelectedAltitude());
         assertEquals(32000, bds.getFmsAltitude());
-        assertEquals(1013.2, bds.getBaro());
+        assertEquals(1013.2, bds.getBaro(), 0.1);
         assertTrue(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
@@ -55,7 +52,7 @@ public class Bds40Test {
         assertTrue(bds.isValid());
         assertEquals(0, bds.getSelectedAltitude());
         assertEquals(0, bds.getFmsAltitude());
-        assertEquals(0, bds.getBaro());
+        assertEquals(0, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
@@ -103,11 +100,11 @@ public class Bds40Test {
         assertFalse(bds.isValid());
         assertEquals(0, bds.getSelectedAltitude());
         assertEquals(0, bds.getFmsAltitude());
-        assertEquals(0, bds.getBaro());
+        assertEquals(0, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
-        assertEquals(SelectedAltitudeSource.UNKNOWN, bds.getSelectedAltitudeSource());
+        assertNull(bds.getSelectedAltitudeSource());
 
         bds = new Bds40(new short[] {
             0x0, 0x0, 0x0, 0x0, // Bits before MB field
@@ -123,11 +120,11 @@ public class Bds40Test {
         assertFalse(bds.isValid());
         assertEquals(0, bds.getSelectedAltitude());
         assertEquals(0, bds.getFmsAltitude());
-        assertEquals(0, bds.getBaro());
+        assertEquals(0, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
-        assertEquals(SelectedAltitudeSource.UNKNOWN, bds.getSelectedAltitudeSource());
+        assertNull(bds.getSelectedAltitudeSource());
 
         bds = new Bds40(new short[] {
             0x0, 0x0, 0x0, 0x0, // Bits before MB field
@@ -143,11 +140,11 @@ public class Bds40Test {
         assertFalse(bds.isValid());
         assertEquals(0, bds.getSelectedAltitude());
         assertEquals(0, bds.getFmsAltitude());
-        assertEquals(0, bds.getBaro());
+        assertEquals(0, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
-        assertEquals(SelectedAltitudeSource.UNKNOWN, bds.getSelectedAltitudeSource());
+        assertNull(bds.getSelectedAltitudeSource());
     }
 
     @Test
@@ -167,11 +164,11 @@ public class Bds40Test {
         assertFalse(bds.isValid());
         assertEquals(0, bds.getSelectedAltitude());
         assertEquals(0, bds.getFmsAltitude());
-        assertEquals(0, bds.getBaro());
+        assertEquals(0, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
-        assertEquals(SelectedAltitudeSource.UNKNOWN, bds.getSelectedAltitudeSource());
+        assertNull(bds.getSelectedAltitudeSource());
     }
 
     @Test
@@ -191,11 +188,11 @@ public class Bds40Test {
         assertFalse(bds.isValid());
         assertEquals(0, bds.getSelectedAltitude());
         assertEquals(0, bds.getFmsAltitude());
-        assertEquals(0, bds.getBaro());
+        assertEquals(0, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
-        assertEquals(SelectedAltitudeSource.UNKNOWN, bds.getSelectedAltitudeSource());
+        assertNull(bds.getSelectedAltitudeSource());
     }
 
     @Test
@@ -215,11 +212,11 @@ public class Bds40Test {
         assertFalse(bds.isValid());
         assertEquals(0, bds.getSelectedAltitude());
         assertEquals(0, bds.getFmsAltitude());
-        assertEquals(0, bds.getBaro());
+        assertEquals(0, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
-        assertEquals(SelectedAltitudeSource.UNKNOWN, bds.getSelectedAltitudeSource());
+        assertNull(bds.getSelectedAltitudeSource());
     }
 
     @Test
@@ -239,11 +236,11 @@ public class Bds40Test {
         assertFalse(bds.isValid());
         assertEquals(0, bds.getSelectedAltitude());
         assertEquals(0, bds.getFmsAltitude());
-        assertEquals(0, bds.getBaro());
+        assertEquals(0, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
-        assertEquals(SelectedAltitudeSource.UNKNOWN, bds.getSelectedAltitudeSource());
+        assertNull(bds.getSelectedAltitudeSource());
     }
 
     @Test
@@ -263,10 +260,10 @@ public class Bds40Test {
         assertFalse(bds.isValid());
         assertEquals(0, bds.getSelectedAltitude());
         assertEquals(0, bds.getFmsAltitude());
-        assertEquals(0, bds.getBaro());
+        assertEquals(0, bds.getBaro(), 0.1);
         assertFalse(bds.isAutopilotVnav());
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
-        assertEquals(SelectedAltitudeSource.UNKNOWN, bds.getSelectedAltitudeSource());
+        assertNull(bds.getSelectedAltitudeSource());
     }
 }

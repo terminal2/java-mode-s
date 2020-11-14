@@ -15,7 +15,10 @@ public abstract class Bds {
 
     protected void invalidate() {
         this.valid = false;
+        reset();
     }
+
+    protected abstract void reset();
 
     public boolean isValid() {
         return valid;

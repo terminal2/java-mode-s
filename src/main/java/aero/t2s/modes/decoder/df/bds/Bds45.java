@@ -8,14 +8,14 @@ public class Bds45 extends Bds {
     private static final double SAT_ACCURACY = 0.25d;
     private static final int RADIO_HEIGHT_ACCURACY = 16;
 
-    private final boolean statusTurbulence;
-    private final boolean statusWindShear;
-    private final boolean statusMicroBurst;
-    private final boolean statusIcing;
-    private final boolean statusWake;
-    private final boolean statusSat;
-    private final boolean statusAverageStaticPressure;
-    private final boolean statusRadioHeight;
+    private boolean statusTurbulence;
+    private boolean statusWindShear;
+    private boolean statusMicroBurst;
+    private boolean statusIcing;
+    private boolean statusWake;
+    private boolean statusSat;
+    private boolean statusAverageStaticPressure;
+    private boolean statusRadioHeight;
 
     private Hazard turbulence;
     private Hazard windShear;
@@ -119,6 +119,28 @@ public class Bds45 extends Bds {
             meteo.setAverageStaticPressure(averageStaticPressure);
         if (statusRadioHeight)
             meteo.setRadioHeight(radioHeight);
+    }
+
+    @Override
+    protected void reset() {
+        statusTurbulence = false;
+        statusWindShear = false;
+        statusMicroBurst = false;
+        statusIcing = false;
+        statusWake = false;
+        statusSat = false;
+        statusAverageStaticPressure = false;
+        statusRadioHeight = false;
+
+        turbulence = null;
+        windShear = null;
+        microBurst = null;
+        icing = null;
+        wake = null;
+
+        sat = 0;
+        averageStaticPressure = 0;
+        radioHeight = 0;
     }
 
     public boolean isStatusTurbulence() {

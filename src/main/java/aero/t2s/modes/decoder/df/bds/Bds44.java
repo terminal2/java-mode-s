@@ -10,7 +10,7 @@ public class Bds44 extends Bds {
     private static final double SAT_ACCURACY = 0.25;
     private static final double HUMIDITY_ACCURACY = 100d / 64d;
 
-    private final MeteoSource source;
+    private MeteoSource source;
     private int windSpeed;
     private boolean statusWindSpeed;
     private double windDirection;
@@ -92,6 +92,22 @@ public class Bds44 extends Bds {
 
         if (statusHumidity)
             meteo.setHumidity(humidity);
+    }
+
+    @Override
+    protected void reset() {
+        statusAverageStaticPressure = false;
+        statusWindSpeed = false;
+        statusHumidity = false;
+        statusTurbulence = false;
+
+        source = null;
+        windSpeed = 0;
+        windDirection = 0;
+        humidity = 0;
+        turbulence = null;
+        averageStaticPressure = 0;
+        staticAirTemperature = 0;
     }
 
     public MeteoSource getSource() {

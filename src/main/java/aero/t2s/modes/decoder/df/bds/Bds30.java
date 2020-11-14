@@ -16,4 +16,9 @@ public class Bds30 extends Bds {
     public void apply(Track track) {
 
     }
+
+    @Override
+    protected void reset() {
+
+    }
 }

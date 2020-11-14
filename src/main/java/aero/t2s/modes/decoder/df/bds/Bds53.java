@@ -8,17 +8,17 @@ public class Bds53 extends Bds {
     private static final double TAS_ACCURACY = 0.5d;
     private static final int VS_ACCURACY = 64;
 
-    private final double magneticHeading;
-    private final boolean statusRocd;
-    private final boolean statusTas;
-    private final boolean statusMach;
-    private final boolean statusIas;
-    private final boolean statusMagneticHeading;
+    private boolean statusRocd;
+    private boolean statusTas;
+    private boolean statusMach;
+    private boolean statusIas;
+    private boolean statusMagneticHeading;
 
-    private  int rocd;
-    private  double tas;
-    private  double mach;
-    private  int ias;
+    private double magneticHeading;
+    private int rocd;
+    private double tas;
+    private double mach;
+    private int ias;
 
     public Bds53(short[] data) {
         super(data);
@@ -82,6 +82,21 @@ public class Bds53 extends Bds {
             track.setTas(tas);
         if (statusRocd)
             track.setRocd(rocd);
+    }
+
+    @Override
+    protected void reset() {
+        statusRocd = false;
+        statusTas = false;
+        statusMach = false;
+        statusIas = false;
+        statusMagneticHeading = false;
+
+        magneticHeading = 0;
+        rocd = 0;
+        tas = 0;
+        mach = 0;
+        ias = 0;
     }
 
     public double getMagneticHeading() {

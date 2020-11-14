@@ -4,8 +4,8 @@ import aero.t2s.modes.Track;
 import aero.t2s.modes.decoder.Common;
 
 public class Bds21 extends Bds {
-    private final boolean statusAircraftRegistration;
-    private final boolean statusAirlineRegistration;
+    private boolean statusAircraftRegistration;
+    private boolean statusAirlineRegistration;
     private String registration;
     private String airline;
 
@@ -64,6 +64,14 @@ public class Bds21 extends Bds {
         if (statusAirlineRegistration) {
             track.setOperator(airline);
         }
+    }
+
+    @Override
+    protected void reset() {
+        statusAircraftRegistration = false;
+        statusAirlineRegistration = false;
+        registration = null;
+        airline = null;
     }
 
     public boolean isStatusAircraftRegistration() {

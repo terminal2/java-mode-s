@@ -31,6 +31,11 @@ public class Bds20 extends Bds {
         track.setCallsign(acid);
     }
 
+    @Override
+    protected void reset() {
+        acid = null;
+    }
+
     public String getAcid() {
         return acid;
     }

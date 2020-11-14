@@ -76,6 +76,36 @@ public class Bds17 extends Bds {
         track.getCapabilityReport().update(this);
     }
 
+    @Override
+    protected void reset() {
+        bds05 = false;
+        bds06 = false;
+        bds07 = false;
+        bds08 = false;
+        bds09 = false;
+        bds0A = false;
+        bds20 = false;
+        bds21 = false;
+
+        bds40 = false;
+        bds41 = false;
+        bds42 = false;
+        bds43 = false;
+        bds44 = false;
+        bds45 = false;
+        bds48 = false;
+        bds50 = false;
+
+        bds51 = false;
+        bds52 = false;
+        bds53 = false;
+        bds54 = false;
+        bds55 = false;
+        bds56 = false;
+        bds5F = false;
+        bds60 = false;
+    }
+
     public boolean isBds05() {
         return bds05;
     }

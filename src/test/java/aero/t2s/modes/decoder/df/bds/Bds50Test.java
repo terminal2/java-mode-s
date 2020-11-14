@@ -328,7 +328,7 @@ class Bds50Test {
         assertEquals(0, bds.getRollAngle());
         assertEquals(0, bds.getTrueTrack());
         assertEquals(0, bds.getGs());
-        assertEquals(-0.03d, bds.getTrackAngleRate(), 0.01);
+        assertEquals(-15.9d, bds.getTrackAngleRate(), 0.1);
         assertEquals(0, bds.getTas());
 
         bds = new Bds50(new short[] {
@@ -346,7 +346,7 @@ class Bds50Test {
         assertEquals(0, bds.getRollAngle());
         assertEquals(0, bds.getTrueTrack());
         assertEquals(2, bds.getGs());
-        assertEquals(-0.03d, bds.getTrackAngleRate(), 0.01);
+        assertEquals(-15.9d, bds.getTrackAngleRate(), 0.1);
         assertEquals(0, bds.getTas());
     }
 

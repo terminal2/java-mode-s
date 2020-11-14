@@ -7,11 +7,11 @@ public class Bds60 extends Bds {
     private static final double MACH_ACCURACY = 2048.0 / 512.0;
     private static final double ROCD_ACCURCY = 8192.0 / 256.0;
 
-    private final boolean statusMagneticHeading;
-    private final boolean statusIas;
-    private final boolean statusMach;
-    private final boolean statusBaroRocd;
-    private final boolean statusIrsRocd;
+    private boolean statusMagneticHeading;
+    private boolean statusIas;
+    private boolean statusMach;
+    private boolean statusBaroRocd;
+    private boolean statusIrsRocd;
 
     private double mach;
     private double magneticHeading;
@@ -76,6 +76,21 @@ public class Bds60 extends Bds {
         track.setRocd((int) irsRocd);
         track.setRocdAvailable(true);
         track.setRocdSourceBaro(!statusIrsRocd);
+    }
+
+    @Override
+    protected void reset() {
+        statusMagneticHeading = false;
+        statusIas = false;
+        statusMach = false;
+        statusBaroRocd = false;
+        statusIrsRocd = false;
+
+        mach = 0;
+        magneticHeading = 0;
+        ias = 0;
+        baroRocd = 0;
+        irsRocd = 0;
     }
 
     public boolean isStatusMagneticHeading() {

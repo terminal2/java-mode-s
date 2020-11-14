@@ -122,11 +122,11 @@ public class Bds50 extends Bds {
     private static final double SPEED_ACCURACY = 2;
     private static final double TRUE_TRACK_RATE_ACCURACY = 8.0 / 256.0;
 
-    private final boolean statusRollAngle;
-    private final boolean statusTrackAngle;
-    private final boolean statusGs;
-    private final boolean statusTrueAngleRate;
-    private final boolean statusTas;
+    private boolean statusRollAngle;
+    private boolean statusTrackAngle;
+    private boolean statusGs;
+    private boolean statusTrueAngleRate;
+    private boolean statusTas;
 
     private double gs;
     private double trackAngleRate;
@@ -149,9 +149,14 @@ public class Bds50 extends Bds {
             invalidate();
             return;
         }
-        if (statusRollAngle && Math.abs(rollAngle) > 50) {
-            invalidate();
-            return;
+        if (statusRollAngle) {
+            if (Math.abs(rollAngle) > 50) {
+                invalidate();
+                rollAngle = 0;
+                return;
+            }
+        } else {
+            rollAngle = 0;
         }
 
         boolean isWest = (data[5] & 0b00001000) != 0;
@@ -208,6 +213,21 @@ public class Bds50 extends Bds {
         if (statusTas) {
             track.setTas(tas);
         }
+    }
+
+    @Override
+    protected void reset() {
+        statusRollAngle = false;
+        statusTrackAngle = false;
+        statusGs = false;
+        statusTrueAngleRate = false;
+        statusTas = false;
+
+        gs = 0;
+        trackAngleRate = 0;
+        trueTrack = 0;
+        tas = 0;
+        rollAngle = 0;
     }
 
     public boolean isStatusRollAngle() {

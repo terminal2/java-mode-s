@@ -6,7 +6,7 @@ import aero.t2s.modes.constants.SelectedAltitudeSource;
 /**
  * 56-bit MB Field is structured in the following format
  * <pre>
-*
+ *
  * LSB |1-------|2----------|14------|15---------|27------|28---------|40--------|48------|49----|50---|51---|52--------|54------|55------|
  *     | STATUS |  MCP ALT  | STATUS |  FMS ALT  | STATUS |    BARO   | RESERVED | STATUS | VNAV | ALT | APP | RESERVED | STATUS | SOURCE |
  * MSB |-------1|---------13|------14|---------26|------27|---------39|--------47|------48|----49|---50|---51|--------53|------54|------56|
@@ -63,7 +63,7 @@ import aero.t2s.modes.constants.SelectedAltitudeSource;
  * <i>Note: LSB (1 bit) = 0.1mb with a range 0 - 410mb. You need to add 800mb to receive the real baro steting</i>
  *
  * <h2>MCP/FCU Mode bits</h2>
- *
+ * <p>
  * Only available if Status (bit 48) is set.
  *
  * <ul>
@@ -74,11 +74,11 @@ import aero.t2s.modes.constants.SelectedAltitudeSource;
  */
 public class Bds40 extends Bds {
 
-    private final boolean statusMcp;
-    private final boolean statusFms;
-    private final boolean statusBaro;
-    private final boolean statusMcpMode;
-    private final boolean statusTargetSource;
+    private boolean statusMcp;
+    private boolean statusFms;
+    private boolean statusBaro;
+    private boolean statusMcpMode;
+    private boolean statusTargetSource;
 
     private SelectedAltitudeSource selectedAltitudeSource;
     private int selectedAltitude;
@@ -112,21 +112,33 @@ public class Bds40 extends Bds {
         }
 
         selectedAltitude = (((data[4] & 0x7F) << 5) | (data[6] >> 3)) * 16;
-        if (statusMcp && selectedAltitude > 50000) {
-            invalidate();
-            return;
+        if (statusMcp) {
+            if (selectedAltitude > 50000) {
+                invalidate();
+                return;
+            }
+        } else {
+            selectedAltitude = 0;
         }
 
         fmsAltitude = (((data[5] & 0x3) << 10) | (data[6] << 2) | ((data[7] >>> 6) & 0x3)) * 16;
-        if (statusFms && (fmsAltitude <= 0 || fmsAltitude > 50000)) {
-            invalidate();
-            return;
+        if (statusFms) {
+            if (fmsAltitude <= 0 || fmsAltitude > 50000) {
+                invalidate();
+                return;
+            }
+        } else {
+            fmsAltitude = 0;
         }
 
         baro = ((((data[7] & 0x1F) << 7) | (data[8] >>> 1)) * 0.1) + 800.0;
-        if (statusBaro && (baro < 850 || baro > 1100)) {
-            invalidate();
-            return;
+        if (statusBaro) {
+            if (baro < 850 || baro > 1100) {
+                invalidate();
+                return;
+            }
+        } else {
+            baro = 0;
         }
 
         if (statusMcpMode) {
@@ -135,8 +147,10 @@ public class Bds40 extends Bds {
             autopilotApproach = ((data[10] >>> 5) & 0x1) == 1;
         }
 
-        if  (statusTargetSource) {
+        if (statusTargetSource) {
             selectedAltitudeSource = SelectedAltitudeSource.find(data[10] & 0x3);
+        } else {
+            selectedAltitudeSource = SelectedAltitudeSource.UNKNOWN;
         }
     }
 
@@ -157,9 +171,28 @@ public class Bds40 extends Bds {
             track.setApproachMode(autopilotApproach);
         }
 
-        if  (statusTargetSource) {
+        if (statusTargetSource) {
             track.setSelectedAltitudeSource(selectedAltitudeSource);
         }
+    }
+
+    @Override
+    protected void reset() {
+        statusMcp = false;
+        statusFms = false;
+        statusBaro = false;
+        statusMcpMode = false;
+        statusTargetSource = false;
+
+        selectedAltitudeSource = null;
+        selectedAltitude = 0;
+        fmsAltitude = 0;
+
+        baro = 0;
+
+        autopilotVnav = false;
+        autopilotAltitudeHold = false;
+        autopilotApproach = false;
     }
 
     public boolean isStatusMcp() {
