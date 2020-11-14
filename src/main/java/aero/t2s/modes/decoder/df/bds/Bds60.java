@@ -28,6 +28,11 @@ public class Bds60 extends Bds {
         statusBaroRocd = ((data[8] >>> 5) & 0x1) == 1;
         statusIrsRocd = ((data[9] >>> 2) & 0x1) == 1;
 
+        if (!(statusMagneticHeading || statusIas || statusMach || statusBaroRocd || statusIrsRocd)) {
+            invalidate();
+            return;
+        }
+
         double hdgSign = ((data[4] >>> 6) & 0x1) == 1 ? -1024d : 0d;
         magneticHeading = ((((data[4] & 0b00111111) << 4) | (data[5] >>> 4)) + hdgSign) * MAG_ACCURACY;
         if (magneticHeading < 0) {
