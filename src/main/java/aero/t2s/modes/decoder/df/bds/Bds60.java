@@ -45,9 +45,16 @@ public class Bds60 extends Bds {
         }
 
         ias = ((data[5] & 0x7) << 7) | data[6] >>> 1;
-        if (statusIas && (ias <= 0 || ias > 512)) {
-            invalidate();
-            return;
+        if (statusIas) {
+            if (ias <= 0 || ias > 512) {
+                invalidate();
+                return;
+            }
+        } else {
+            if (ias != 0) {
+                invalidate();
+                return;
+            }
         }
 
         mach = ((data[7] << 2) | data[8] >> 6) * MACH_ACCURACY;
