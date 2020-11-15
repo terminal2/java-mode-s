@@ -39,9 +39,16 @@ public class Bds60 extends Bds {
         if (magneticHeading < 0) {
             magneticHeading += 360d;
         }
-        if (statusMagneticHeading && (magneticHeading <= 0 || magneticHeading > 360.0)) {
-            invalidate();
-            return;
+        if (statusMagneticHeading) {
+            if (magneticHeading <= 0 || magneticHeading > 360.0) {
+                invalidate();
+                return;
+            }
+        } else {
+            if (magneticHeading != 0) {
+                invalidate();
+                return;
+            }
         }
 
         ias = ((data[5] & 0x7) << 7) | data[6] >>> 1;
