@@ -93,11 +93,11 @@ public class Bds40 extends Bds {
     public Bds40(short[] data) {
         super(data);
 
-        statusMcp = data[4] >>> 7 == 1;
-        statusFms = ((data[5] >>> 2) & 0x1) == 1;
-        statusBaro = ((data[7] >>> 5) & 0x1) == 1;
-        statusMcpMode = (data[9] & 0x1) == 1;
-        statusTargetSource = ((data[10] >>> 2) & 0x1) == 1;
+        statusMcp = (data[4] & 0b10000000) != 0;
+        statusFms = (data[5] & 0b00000100) != 0;
+        statusBaro = (data[7] & 0b00100000) != 0;
+        statusMcpMode = (data[9] & 0b00000001) != 0;
+        statusTargetSource = (data[10] & 0b00000100) != 0;
         boolean reservedZeroA = ((data[8] & 0x1) | (data[9] >>> 1)) == 0;
         boolean reservedZeroB = ((data[10] >>> 3) & 0x3) == 0;
 
@@ -118,7 +118,10 @@ public class Bds40 extends Bds {
                 return;
             }
         } else {
-            selectedAltitude = 0;
+            if (selectedAltitude != 0) {
+                invalidate();
+                return;
+            }
         }
 
         fmsAltitude = (((data[5] & 0x3) << 10) | (data[6] << 2) | ((data[7] >>> 6) & 0x3)) * 16;
@@ -128,7 +131,10 @@ public class Bds40 extends Bds {
                 return;
             }
         } else {
-            fmsAltitude = 0;
+            if (fmsAltitude != 0) {
+                invalidate();
+                return;
+            }
         }
 
         baro = ((((data[7] & 0x1F) << 7) | (data[8] >>> 1)) * 0.1) + 800.0;
@@ -138,19 +144,30 @@ public class Bds40 extends Bds {
                 return;
             }
         } else {
-            baro = 0;
+            if (baro != 800) {
+                invalidate();
+                return;
+            }
         }
 
-        if (statusMcpMode) {
-            autopilotVnav = (data[10] >>> 7) == 1;
-            autopilotAltitudeHold = ((data[10] >>> 6) & 0x1) == 1;
-            autopilotApproach = ((data[10] >>> 5) & 0x1) == 1;
+        autopilotVnav = (data[10] & 0b10000000) != 0;
+        autopilotAltitudeHold = (data[10] & 0b01000000) != 0;
+        autopilotApproach = (data[10] & 0b00100000) != 0;
+        if (!statusMcpMode) {
+            if (autopilotAltitudeHold || autopilotVnav || autopilotApproach) {
+                invalidate();
+                return;
+            }
         }
 
+        int selectedSource = data[10] & 0b00000011;
         if (statusTargetSource) {
-            selectedAltitudeSource = SelectedAltitudeSource.find(data[10] & 0x3);
+            selectedAltitudeSource = SelectedAltitudeSource.find(selectedSource);
         } else {
-            selectedAltitudeSource = SelectedAltitudeSource.UNKNOWN;
+            if (selectedSource != 0) {
+                invalidate();
+                return;
+            }
         }
     }
 
