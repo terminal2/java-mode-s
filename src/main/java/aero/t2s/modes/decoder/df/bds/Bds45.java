@@ -36,7 +36,7 @@ public class Bds45 extends Bds {
         statusWake = ((data[5] & 0b00001000) >>> 3) == 1;
         statusSat = (data[5] & 0b00000001) == 1;
         statusAverageStaticPressure = ((data[7] & 0b00100000) >>> 5) == 1;
-        statusRadioHeight = ((data[7] & 0b00000010) >>> 1) == 1;
+        statusRadioHeight = ((data[8] & 0b00000010) >>> 1) == 1;
 
         // Reserved
         if ((data[10] & 0b00011111) != 0) {
