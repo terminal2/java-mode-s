@@ -25,6 +25,11 @@ public class Bds21 extends Bds {
             return;
         }
 
+        if (data[4] != 0b00100000) {
+            invalidate();
+            return;
+        }
+
         if (statusAircraftRegistration) {
             // Char 7
             registration = Common.charToString((data[4] & 0b01111110) >>> 1) // Char 1
