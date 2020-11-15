@@ -44,6 +44,11 @@ public class Bds45 extends Bds {
             return;
         }
 
+        if (! (statusTurbulence || statusWindShear || statusMicroBurst || statusIcing || statusWake || statusSat || statusAverageStaticPressure || statusRadioHeight)) {
+            invalidate();
+            return;
+        }
+
         turbulence = Hazard.find((data[4] & 0b01100000) >>> 5);
         if (!statusTurbulence && turbulence != Hazard.NIL) {
             invalidate();
@@ -87,6 +92,10 @@ public class Bds45 extends Bds {
 
         averageStaticPressure = ((data[7] & 0b00011111) << 6) | data[8] >>> 2;
         if (!statusAverageStaticPressure && averageStaticPressure != 0) {
+            invalidate();
+            return;
+        }
+        if (statusAverageStaticPressure && averageStaticPressure >= 1050) {
             invalidate();
             return;
         }
