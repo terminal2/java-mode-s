@@ -80,9 +80,16 @@ public class Bds60 extends Bds {
 
         double baroSign = ((data[8] >>> 4) & 0x1) == 1 ? -512.0 : 0.0;
         baroRocd = ((((data[8] & 0b00001111) << 5) | (data[9] >>> 3)) + baroSign) * ROCD_ACCURCY;
-        if (statusBaroRocd && (baroRocd < -8000 || baroRocd > 8000)) {
-            invalidate();
-            return;
+        if (statusBaroRocd) {
+            if (baroRocd < -8000 || baroRocd > 8000) {
+                invalidate();
+                return;
+            }
+        } else {
+            if (baroRocd != 0) {
+                invalidate();
+                return;
+            }
         }
 
         double irsSign = ((data[9] >> 1) & 0x1) == 1 ? -512.0 : 0.0;
