@@ -63,7 +63,7 @@ public class Bds53 extends Bds {
         }
 
         boolean isRocdNegative = (data[9] & 0b00000001) == 0b00000001;
-        rocd = data[10] * VS_ACCURACY * (isRocdNegative ? -1 : 0);
+        rocd = data[10] * VS_ACCURACY * (isRocdNegative ? -1 : 1);
         if (!statusRocd && rocd != 0) {
             invalidate();
             return;
