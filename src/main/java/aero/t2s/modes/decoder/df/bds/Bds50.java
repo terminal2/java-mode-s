@@ -168,9 +168,16 @@ public class Bds50 extends Bds {
         trueTrack = trueTrack * TRUE_TRACK_ANGLE_ACCURACY + (isWest ? 180d : 0d);
 
         gs = ((data[7] << 2) | ((data[8] >>> 6) & 0x3)) * SPEED_ACCURACY;
-        if (!statusGs && gs != 0) {
-            invalidate();
-            return;
+        if (statusGs) {
+            if (gs > 600) {
+                invalidate();
+                return;
+            }
+        } else {
+            if (gs != 0) {
+                invalidate();
+                return;
+            }
         }
 
         boolean isTrackAngleRateNegative = (data[8] & 0b00010000) != 0;
