@@ -23,11 +23,11 @@ public class Bds60 extends Bds {
     public Bds60(short[] data) {
         super(data);
 
-        statusMagneticHeading = ((data[4] >>> 7) & 0x1) == 1;
-        statusIas = ((data[5] >>> 4) & 0x1) == 1;
-        statusMach = (data[6] & 0x1) == 1;
-        statusBaroRocd = ((data[8] >>> 5) & 0x1) == 1;
-        statusIrsRocd = ((data[9] >>> 2) & 0x1) == 1;
+        statusMagneticHeading = (data[4] & 0b10000000) != 0;
+        statusIas = (data[5] & 0b00001000) != 0;
+        statusMach = (data[6] & 0b00000001) != 0;
+        statusBaroRocd = (data[8] & 0b00100000) != 0;
+        statusIrsRocd = (data[9] & 0b00000100) != 0;
 
         if (!(statusMagneticHeading || statusIas || statusMach || statusBaroRocd || statusIrsRocd)) {
             invalidate();
