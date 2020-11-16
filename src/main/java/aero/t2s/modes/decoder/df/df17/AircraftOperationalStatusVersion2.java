@@ -9,7 +9,7 @@ public class AircraftOperationalStatusVersion2 extends AircraftOperationalStatus
     }
 
     @Override
-    public AircraftOperationalStatusMessage decode() {
+    public AircraftOperationalStatusVersion2 decode() {
         int subType = data[4] & 0x7;
 
         switch (subType) {
