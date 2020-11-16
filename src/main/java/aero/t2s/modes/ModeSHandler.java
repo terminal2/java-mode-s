@@ -27,7 +27,7 @@ abstract public class ModeSHandler {
     }
 
     public abstract void handle(String data);
-    public abstract void handleSync(String data);
+    public abstract DownlinkFormat handleSync(String data);
 
 
     protected short[] toData(final String input) throws EmptyMessageException {

@@ -45,13 +45,13 @@ public class ModeSTrackHandler extends ModeSHandler {
         executor.execute(() -> handleSync(input));
     }
 
-    public void handleSync(final String input) {
+    public DownlinkFormat handleSync(final String input) {
         try {
             DownlinkFormat df = decoder.decode(toData(input));
             Track track = decoder.getTrack(df.getIcao());
 
             if (track == null) {
-                return;
+                return null;
             }
 
             df.apply(track);
@@ -66,12 +66,16 @@ public class ModeSTrackHandler extends ModeSHandler {
             if (onMessage != null) {
                 onMessage.accept(df);
             }
+
+            return df;
         } catch (EmptyMessageException ignored) {
         } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
             LOGGER.error(e.getMessage());
         } catch (Throwable throwable) {
             LOGGER.error("Message could not be parsed", throwable);
         }
+
+        return null;
     }
 
     public void enableCleanup() {

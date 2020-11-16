@@ -29,19 +29,23 @@ public class ModeSMessageHandler extends ModeSHandler {
         executor.execute(() -> handleSync(input));
     }
 
-    public void handleSync(final String input) {
+    public DownlinkFormat handleSync(final String input) {
         try {
             DownlinkFormat df = decoder.decode(toData(input));
 
             if (onMessage != null) {
                 onMessage.accept(df);
             }
+
+            return df;
         } catch (EmptyMessageException ignored) {
         } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
             LOGGER.error(e.getMessage());
         } catch (Throwable throwable) {
             LOGGER.error("Message could not be parsed", throwable);
         }
+
+        return null;
     }
 
 
