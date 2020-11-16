@@ -40,7 +40,7 @@ public class Bds60 extends Bds {
             magneticHeading += 360d;
         }
         if (statusMagneticHeading) {
-            if (magneticHeading <= 0 || magneticHeading > 360.0) {
+            if (magneticHeading < 0 || magneticHeading > 360.0) {
                 invalidate();
                 return;
             }
