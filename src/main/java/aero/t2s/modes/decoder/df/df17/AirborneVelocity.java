@@ -58,7 +58,7 @@ public class AirborneVelocity extends ExtendedSquitter {
             rocd *= -1;
         }
 
-        gnssAltitudeDifferenceFromBaro = data[10] * 0b01111111;
+        gnssAltitudeDifferenceFromBaro = data[10] & 0b01111111;
         gnssAltitudeDifferenceFromBaroAvailable = gnssAltitudeDifferenceFromBaro != 0;
         gnssAltitudeDifferenceFromBaro = (gnssAltitudeDifferenceFromBaro - 1) * 25;
         if ((data[10] & 0b10000000) != 0) {
