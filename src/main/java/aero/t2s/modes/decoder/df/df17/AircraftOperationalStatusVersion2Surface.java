@@ -13,6 +13,7 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
     private Angle horizontalSource;
     private SourceIntegrityLevelSupplement SILsupp;
     private SourceIntegrityLevel SIL;
+    private Version verison;
 
     public AircraftOperationalStatusVersion2Surface(short[] data) {
         super(data);
@@ -20,7 +21,8 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
 
     @Override
     public AircraftOperationalStatusVersion2Surface decode() {
-        surfaceCapability = new SurfaceCapability((data[5] << 4) | (data[6] & 0b11110000) >>> 4);
+        verison = Version.VERSION2;
+        surfaceCapability = new SurfaceCapability((data[5] << 4) | (data[6] & 0b11110000) >>> 4, verison);
         lengthWidthCode = LengthWidthCode.from(data[6] & 0b00001111);
         operationalMode = new SurfaceOperationalMode((data[7] << 8) | data[8]);
 
@@ -79,5 +81,9 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
 
     public SourceIntegrityLevel getSIL() {
         return SIL;
+    }
+
+    public Version getVerison() {
+        return verison;
     }
 }

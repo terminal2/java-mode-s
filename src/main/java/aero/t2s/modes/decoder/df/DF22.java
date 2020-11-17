@@ -2,8 +2,6 @@ package aero.t2s.modes.decoder.df;
 
 import aero.t2s.modes.NotImplementedException;
 import aero.t2s.modes.Track;
-import aero.t2s.modes.decoder.Decoder;
-import org.slf4j.LoggerFactory;
 
 public class DF22 extends DownlinkFormat {
     public DF22(short[] data) {
@@ -11,7 +9,7 @@ public class DF22 extends DownlinkFormat {
     }
 
     @Override
-    public DF24 decode() {
+    public DF22 decode() {
         throw new NotImplementedException(getClass().getSimpleName() + ": Not implemented");
     }
 

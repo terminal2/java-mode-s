@@ -14,6 +14,7 @@ public class AircraftOperationalStatusVersion2Airborne extends AircraftOperation
     private SourceIntegrityLevel SIL;
     private Angle horizontalSource;
     private GeometricVerticalAccuracy gva;
+    private Version version;
 
     public AircraftOperationalStatusVersion2Airborne(short[] data) {
         super(data);
@@ -21,7 +22,8 @@ public class AircraftOperationalStatusVersion2Airborne extends AircraftOperation
 
     @Override
     public AircraftOperationalStatusVersion2Airborne decode() {
-        capability = new AirborneCapability((data[5] << 8) | data[6]);
+        version = Version.VERSION2;
+        capability = new AirborneCapability((data[5] << 8) | data[6], version);
         operationalMode = new AirborneOperationalMode((data[7] << 8) | data[8]);
 
         int NICsuppA = (data[9] & 0b00010000) >>> 4;
@@ -39,7 +41,7 @@ public class AircraftOperationalStatusVersion2Airborne extends AircraftOperation
 
     @Override
     public void apply(Track track) {
-        track.setVersion(Version.VERSION2);
+        track.setVersion(version);
     }
 
     public AirborneCapability getCapability() {
@@ -72,5 +74,9 @@ public class AircraftOperationalStatusVersion2Airborne extends AircraftOperation
 
     public GeometricVerticalAccuracy getGva() {
         return gva;
+    }
+
+    public Version getVersion() {
+        return version;
     }
 }
