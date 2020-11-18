@@ -197,7 +197,7 @@ class Bds50Test {
             0b00000000,
             0b00000000,
             0b00000001,
-            0b10000000,
+            0b01000000,
             0b00000000,
             0b00000000,
             0b00000000,
@@ -206,7 +206,7 @@ class Bds50Test {
         assertTrue(bds.isValid());
         assertEquals(0, bds.getRollAngle());
         assertEquals(0, bds.getTrueTrack());
-        assertEquals(1024, bds.getGs());
+        assertEquals(512, bds.getGs());
         assertEquals(0, bds.getTrackAngleRate());
         assertEquals(0, bds.getTas());
 

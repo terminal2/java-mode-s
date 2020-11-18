@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class DfTEst {
     @Test
     public void test() throws UnknownDownlinkFormatException {
-        String message = "A8000E0C2004C2F5C338201C1EA1";
+        String message = "A0001338000557F0A8000098FCDB";
 
         Decoder decoder = new Decoder(new HashMap<>(), 50, 2, ModeSDatabase.createDatabase());
 
