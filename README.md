@@ -58,9 +58,9 @@ Most features of the DF17/18 protocol have been implemented, some message lack s
 | 26        | Reserved Message             | ✅        |
 | 27        | Reserved (Trajectory Change) | ✅        |
 | 28        | Aircraft Status Message      | ✅        | Priority mode A code (emergency) + TCAS/ACAS RA Broadcast
-| 29        | Target Status Message        | ⚠️        | Partial support
+| 29        | Target Status Message        | ✅        | Partial support
 | 30        | Reserved Message             | ✅        |
-| 31        | Aircraft Operational Status  | ⚠️        | Partial support
+| 31        | Aircraft Operational Status  | ✅        | Partial support
 
 
 ## DF20/21 Comm-B
@@ -112,7 +112,7 @@ We hope with more BDS implemented the guessing accuracy will improve.
 | 1,E | Mode S services GICB capability report     | ❌        |
 | 1,F | Mode S services GICB capability report     | ❌        |
 | 2,0 | Aircraft Identification                    | ✅        |
-| 2,1 | Aircraft and Airline registration marking  | ⚠️        | Experimental
+| 2,1 | Aircraft and Airline registration marking  | ✅️        | Experimental
 | 2,2 | Antenna positions                          | ❌        |
 | 2,5 | Antenna type                               | ❌        |
 | 3,0 | ACAS Active resolution advisory            | ❌        | Detection implemented, decoding missing
@@ -153,7 +153,7 @@ Pom
 <dependency>
   <groupId>aero.t2s</groupId>
   <artifactId>mode-s</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
