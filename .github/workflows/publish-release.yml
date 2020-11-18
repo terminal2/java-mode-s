@@ -20,14 +20,14 @@ jobs:
           java-version: 11
 
       - name: Upload release
-        run: ./gradlew mode-s:uploadArchives --no-daemon --no-parallel
+        run: ./gradlew uploadArchives --no-daemon --no-parallel
         env:
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           ORG_GRADLE_PROJECT_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_SECRET_KEYS }}
 
       - name: Publish release
-        run: ./gradlew mode-s:closeAndReleaseRepoistory --no-daemon --no-parallel
+        run: ./gradlew closeAndReleaseRepoistory --no-daemon --no-parallel
         env:
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}

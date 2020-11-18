@@ -23,7 +23,7 @@ jobs:
         run: |
           echo "VERSION_NAME=$(cat gradle.properties | grep -w 'VERSION_NAME' | cut -d'=' -f2)" >> $GITHUB_ENV
       - name: Publish snapshot
-        run: ./gradlew mode-s:uploadArchives --no-daemon --no-parallel
+        run: ./gradlew uploadArchives --no-daemon --no-parallel
         if: endsWith(env.VERSION_NAME, '-SNAPSHOT')
         env:
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
