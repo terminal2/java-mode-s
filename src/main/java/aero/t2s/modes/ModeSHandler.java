@@ -39,4 +39,12 @@ abstract public class ModeSHandler {
 
         return BinaryHelper.stringToByteArray(hex);
     }
+
+    public void start() {
+
+    }
+
+    public void stop() {
+
+    }
 }

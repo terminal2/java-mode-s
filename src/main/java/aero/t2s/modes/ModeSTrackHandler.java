@@ -17,13 +17,20 @@ public class ModeSTrackHandler extends ModeSHandler {
 
     private final Decoder decoder;
     private final Executor executor = Executors.newSingleThreadExecutor();
+    private final Map<String, Track> tracks;
 
     private boolean cleanupEnabled = true;
+    private final Timer timer;
 
     public ModeSTrackHandler(Map<String, Track> tracks, double originLat, double originLon, ModeSDatabase database) {
+        this.tracks = tracks;
         this.decoder = new Decoder(tracks, originLat, originLon, database);
 
-        Timer timer = new Timer();
+        timer = new Timer();
+    }
+
+    @Override
+    public void start() {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -38,7 +45,11 @@ public class ModeSTrackHandler extends ModeSHandler {
                 expired.forEach((icao) -> onDeleted.accept(tracks.remove(icao)));
             }
         }, 1000, 5000);
+    }
 
+    @Override
+    public void stop() {
+        timer.cancel();
     }
 
     public void handle(final String input) {

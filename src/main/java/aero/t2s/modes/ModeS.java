@@ -55,11 +55,13 @@ public class ModeS {
     }
 
     public void start() {
-        listener.start();
+        this.handler.start();
+        this.listener.start();
     }
 
     public void stop() {
-        listener.interrupt();
+        this.listener.interrupt();
+        this.handler.stop();
     }
 
     public Map<String, Track> getTracks() {
