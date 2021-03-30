@@ -69,4 +69,16 @@ public class DF18 extends DownlinkFormat {
     public ExtendedSquitter getExtendedSquitter() {
         return extendedSquitter;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "DF18 Extended Squitter (Ground) :\n" +
+            "--------------------------\n\n" +
+            "%s",
+            extendedSquitter != null ? extendedSquitter.getClass().getSimpleName() : "UNKNOWN",
+            getIcao(),
+            extendedSquitter.toString()
+        );
+    }
 }

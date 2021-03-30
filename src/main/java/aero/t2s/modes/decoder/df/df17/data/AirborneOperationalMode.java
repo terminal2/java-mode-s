@@ -31,4 +31,21 @@ public class AirborneOperationalMode {
     public SourceIntegrityLevel getSystemDesignAssurance() {
         return systemDesignAssurance;
     }
+
+    @Override
+    public String toString() {
+        String out = acasRA.name() + " ";
+
+        if (acasIdent) {
+            out += "IDENT ";
+        }
+
+        if (singleAntennaFlag) {
+            out += "SINGLE ";
+        }
+
+        out += "(" + systemDesignAssurance.toString() + ")";
+
+        return out;
+    }
 }

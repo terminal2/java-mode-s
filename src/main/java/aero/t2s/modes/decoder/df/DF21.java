@@ -9,6 +9,7 @@ import aero.t2s.modes.EmptyMessageException;
 import aero.t2s.modes.decoder.df.bds.MultipleBdsMatchesFoundException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DF21 extends DownlinkFormat {
     private Bds bds;
@@ -86,5 +87,33 @@ public class DF21 extends DownlinkFormat {
 
     public List<Bds> getMatches() {
         return matches;
+    }
+
+    @Override
+    public String toString() {
+        String out = "DF21 Identity Reply (" + getIcao() + ")\n";
+        out += "---------------------------------------\n\n";
+
+        out += String.format(
+            "Alert: %b\n" +
+            "SPI (Ident): %b\n" +
+            "Mode A: %04d\n\n",
+            isAlert(),
+            isSpi(),
+            getModeA()
+        );
+
+        if (valid) {
+            out += bds.toString();
+        } else {
+            if (multipleMatches) {
+                out += "Found " + matches.size() + " matches:\n";
+                out += matches.stream().map(Object::toString).collect(Collectors.joining("\n-----\n"));
+            } else {
+                out += "No matches unknown packet";
+            }
+        }
+
+        return out;
     }
 }

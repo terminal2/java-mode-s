@@ -48,6 +48,6 @@ public enum NavigationAccuracyCategoryPosition {
 
     @Override
     public String toString() {
-        return accuracy;
+        return name() + "(" + accuracy + ")";
     }
 }

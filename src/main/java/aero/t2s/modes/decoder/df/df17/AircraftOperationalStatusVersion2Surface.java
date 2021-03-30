@@ -13,7 +13,7 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
     private Angle horizontalSource;
     private SourceIntegrityLevelSupplement SILsupp;
     private SourceIntegrityLevel SIL;
-    private Version verison;
+    private Version version;
 
     public AircraftOperationalStatusVersion2Surface(short[] data) {
         super(data);
@@ -21,8 +21,8 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
 
     @Override
     public AircraftOperationalStatusVersion2Surface decode() {
-        verison = Version.VERSION2;
-        surfaceCapability = new SurfaceCapability((data[5] << 4) | (data[6] & 0b11110000) >>> 4, verison);
+        version = Version.VERSION2;
+        surfaceCapability = new SurfaceCapability((data[5] << 4) | (data[6] & 0b11110000) >>> 4, version);
         lengthWidthCode = LengthWidthCode.from(data[6] & 0b00001111);
         operationalMode = new SurfaceOperationalMode((data[7] << 8) | data[8]);
 
@@ -83,7 +83,30 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
         return SIL;
     }
 
-    public Version getVerison() {
-        return verison;
+    public Version getVersion() {
+        return version;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "AircraftOperationalStatusVersion1Airborne\n" +
+            "Version: %s\n" +
+            "Capability: %s\n" +
+            "Operational Mode: %s\n" +
+            "Length Width Code: %s\n" +
+            "Navigation Integrity Category: %s\n" +
+            "Source Integrity Level: %s\n" +
+            "Source Integrity Level Supplement: %s\n" +
+            "Horizontal Source: %s",
+            version.name(),
+            surfaceCapability.toString(),
+            operationalMode.toString(),
+            lengthWidthCode.toString(),
+            NICp.toString(),
+            SIL.toString(),
+            SILsupp.name(),
+            horizontalSource.name()
+        );
     }
 }

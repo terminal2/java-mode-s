@@ -71,4 +71,25 @@ public class AircraftOperationalStatusVersion1Airborne extends AircraftOperation
     public Angle getHorizontalSource() {
         return horizontalSource;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "AircraftOperationalStatusVersion1Airborne\n" +
+            "Version: %s\n" +
+            "Capability: %s\n" +
+            "Operational Mode: %s\n" +
+            "Navigation Integrity Category: %s\n" +
+            "Source Integrity Level: %s\n" +
+            "Barometric Altitude Integrity Code: %s\n" +
+            "Horizontal Source: %s",
+            version.name(),
+            capability.toString(),
+            operationalMode.toString(),
+            NICp.toString(),
+            SIL.toString(),
+            NICbaro.name(),
+            horizontalSource.name()
+        );
+    }
 }

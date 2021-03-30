@@ -59,4 +59,36 @@ public class SurfaceCapability {
     public boolean isPositionOffsetApplied() {
         return positionOffsetApplied;
     }
+
+    @Override
+    public String toString() {
+        if (version == Version.VERSION1) {
+            return String.format(
+                "Airborne Capability\n" +
+                "\tVersion: %s\n" +
+                "\tLow B2 Power: %b\n" +
+                "\tPosition Offset Applied: %b\n" +
+                version.name(),
+                lowB2Power,
+                positionOffsetApplied,
+                cockpitDisplayOfTraffic
+            );
+        }
+
+        return String.format(
+            "Airborne Capability\n" +
+            "\tVersion: %s\n" +
+            "\tLow B2 Power: %b\n" +
+            "\tReceive 1090ES: %b\n" +
+            "\tNavigation Uncertainty Velocity: %s\n" +
+            "\tNavigation Uncertainty Supplement: %d\n" +
+            "\tUAT receive: %b",
+            version.name(),
+            lowB2Power,
+            receive1090ES,
+            NACv.toString(),
+            NICsuppC,
+            uatReceive
+        );
+    }
 }

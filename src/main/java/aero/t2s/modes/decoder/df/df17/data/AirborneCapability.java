@@ -55,4 +55,27 @@ public class AirborneCapability {
     public Version getVersion() {
         return version;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "Airborne Capability\n" +
+            "\tVersion: %s\n" +
+            "\tACAS Operational: %b\n" +
+            "\tReceive 1090ES: %b\n" +
+            "\tCockpit Display Traffic: %b\n" +
+            "\tSends Air referenced Velocity Report: %b\n" +
+            "\tSends Target State Report: %b" +
+            "\tTarget Change Report Capability: %s\n" +
+            "\tUAT receive: %b",
+            version.name(),
+            acasOperational,
+            receive1090ES,
+            cockpitDisplayOfTraffic,
+            sendAirReferencedVelocityReport,
+            sendTargetSateReport,
+            targetChangeReportCapability.name(),
+            uatReceive
+        );
+    }
 }

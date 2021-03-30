@@ -39,4 +39,9 @@ public abstract class DownlinkFormat {
         FROM_MESSAGE,
         FROM_PARITY,
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " (" + getIcao() + ")";
+    }
 }

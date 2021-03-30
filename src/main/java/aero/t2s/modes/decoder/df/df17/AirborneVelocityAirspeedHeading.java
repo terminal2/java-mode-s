@@ -71,4 +71,23 @@ public class AirborneVelocityAirspeedHeading extends AirborneVelocity {
     public int getAirspeed() {
         return airspeed;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "%s\n" +
+            "Extra Heading info\n" +
+            "Heading available: %b\n" +
+            "Heading: %f\n" +
+            "Airspeed available: %b\n" +
+            "Airspeed type: %s\n" +
+            "Airspeed: %d",
+            super.toString(),
+            headingAvailable,
+            heading,
+            airspeedAvailable,
+            airspeedType.name(),
+            airspeed
+        );
+    }
 }

@@ -79,4 +79,29 @@ public class AircraftOperationalStatusVersion2Airborne extends AircraftOperation
     public Version getVersion() {
         return version;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "AircraftOperationalStatusVersion1Airborne\n" +
+            "Version: %s\n" +
+            "Capability: %s\n" +
+            "Operational Mode: %s\n" +
+            "Navigation Integrity Category: %s\n" +
+            "Source Integrity Level: %s\n" +
+            "Source Integrity Level Supplement: %s\n" +
+            "Barometric Altitude Integrity Code: %s\n" +
+            "Horizontal Source: %s",
+            "Geometric Vertical Accuracy: %s",
+            version.name(),
+            capability.toString(),
+            operationalMode.toString(),
+            NICp.toString(),
+            SIL.toString(),
+            SILsupp.toString(),
+            NICbaro.name(),
+            horizontalSource.name(),
+            gva.toString()
+        );
+    }
 }

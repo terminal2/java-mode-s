@@ -273,4 +273,25 @@ public class AirbornePosition extends ExtendedSquitter {
 
         return (n * qBit) - 1000;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "AirbornePosition\n" +
+            "Surveillance Status: %s\n" +
+            "Single antenna: %b\n" +
+            "Altitude is BARO: %b\n" +
+            "Altitude: %d\n" +
+            "Position Available: %b\n" +
+            "Lat: %f\n" +
+            "Lon: %f",
+            surveillanceStatus.name(),
+            singleAntennaFlag == 1,
+            altitudeSourceBaro,
+            altitude,
+            positionAvailable,
+            lat,
+            lon
+        );
+    }
 }

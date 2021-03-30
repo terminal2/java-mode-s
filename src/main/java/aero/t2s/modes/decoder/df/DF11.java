@@ -37,4 +37,17 @@ public class DF11 extends DownlinkFormat {
     public String getAddress() {
         return address;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "DF11 Capability Report (%s):\n" +
+            "--------------------\n\n" +
+            "ICAO: %s\n" +
+            "Capability: %s",
+            getIcao(),
+            getAddress(),
+            getCapability().name()
+        );
+    }
 }

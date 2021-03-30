@@ -167,4 +167,41 @@ public class TargetStatusMessageType1 extends TargetStatusMessage {
     public boolean isAcasOperation() {
         return acasOperation;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "TargetStatusMessageType1\n" +
+            "ACAS Operational: %b\n" +
+            "Autopilot: %b\n" +
+            "Autopilot LNAV: %b\n" +
+            "Autopilot VNAV: %b\n" +
+            "Autopilot ALT HOLD: %b\n" +
+            "Autopilot APP MODE: %b\n" +
+            "Selected Altitude Source: %s\n" +
+            "Selected Altitude: %d\n" +
+            "BARO Setting: %f\n" +
+            "Selected Heading Available: %b\n" +
+            "Selected Heading: %f\n" +
+            "Source Integrity Level: %s\n" +
+            "Source Integrity Level Supplement: %s\n" +
+            "Navigation Accuracy Category Position: %s\n" +
+            "Barometric Altitude Integrity Code: %s",
+            acasOperation,
+            autopilot,
+            autopilotLnav,
+            autopilotVnav,
+            autopilotAltitudeHold,
+            autopilotApproach,
+            selectedAltitudeType.name(),
+            selectedAltitude,
+            baroSetting,
+            selectedHeadingAvailable,
+            selectedHeading,
+            SIL.toString(),
+            SILsupp.name(),
+            NACp.toString(),
+            NICbaro.name()
+        );
+    }
 }

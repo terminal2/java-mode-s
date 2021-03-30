@@ -80,4 +80,34 @@ public class SurfaceOperationalMode {
     public int getGpsLongitudinalOffset() {
         return gpsLongitudinalOffset;
     }
+
+    @Override
+    public String toString() {
+        String out = acasRA.name() + " ";
+
+        if (acasIdent) {
+            out += "IDENT ";
+        }
+
+        if (singleAntennaFlag) {
+            out += "SINGLE ";
+        }
+
+        out += "(" + systemDesignAssurance.toString() + ")\n";
+
+        if (gpsLongitudinalOffsetAvailable) {
+            out += "\tAntenna aft of nose: " + gpsLongitudinalOffset + "M";
+
+            if (gpsLongitudinalOffsetAppliedBySensor) {
+                out += " (Applied by sensor)";
+            }
+        }
+
+        if (gpsLateralOffset != 0) {
+            out += "\tAntenna Lateral Offset: " + Math.abs(gpsLateralOffset) + "M ";
+            out += gpsLateralOffset < 0 ? "Left of center" : "Right of center";
+        }
+
+        return out;
+    }
 }

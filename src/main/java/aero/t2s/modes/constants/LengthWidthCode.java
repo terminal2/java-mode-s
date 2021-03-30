@@ -42,4 +42,14 @@ public enum  LengthWidthCode {
     public double getMaxLength() {
         return length;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "%s (Length: %fM | Width: %fM)",
+            name(),
+            length,
+            width
+        );
+    }
 }

@@ -11,6 +11,7 @@ import aero.t2s.modes.EmptyMessageException;
 import aero.t2s.modes.decoder.df.bds.MultipleBdsMatchesFoundException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DF20 extends DownlinkFormat {
     private Bds bds;
@@ -88,5 +89,33 @@ public class DF20 extends DownlinkFormat {
 
     public Altitude getAltitude() {
         return altitude;
+    }
+
+    @Override
+    public String toString() {
+        String out = "DF20 Altitude Reply (" + getIcao() + ")\n";
+        out += "---------------------------------------\n\n";
+
+        out += String.format(
+            "Alert: %b\n" +
+            "SPI (Ident): %b\n" +
+            "Altitude: %s\n\n",
+            isAlert(),
+            isSpi(),
+            getAltitude()
+        );
+
+        if (valid) {
+            out += bds.toString();
+        } else {
+            if (multipleMatches) {
+                out += "Found " + matches.size() + " matches:\n";
+                out += matches.stream().map(Object::toString).collect(Collectors.joining("\n-----\n"));
+            } else {
+                out += "No matches unknown packet";
+            }
+        }
+
+        return out;
     }
 }

@@ -105,4 +105,31 @@ public class AirborneVelocity extends ExtendedSquitter {
     public int getGnssAltitudeDifferenceFromBaro() {
         return gnssAltitudeDifferenceFromBaro;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "AirborneVelocity\n" +
+            "Navigation Uncertainty Category: %s\n" +
+            "Sub Type: %d\n" +
+            "Supersonic: %b\n" +
+            "Intent Change: %b\n" +
+            "IFR Capability: %b\n" +
+            "ROCD Available: %b\n" +
+            "ROCD Source: %s\n" +
+            "ROCD: %d\n" +
+            "GNNS altitude correction available: %b\n" +
+            "GNNS altitude correction: %d",
+            getNACv().name(),
+            subType,
+            supersonic,
+            intentChange,
+            ifrCapability,
+            rocdAvailable,
+            rocdSource.name(),
+            rocd,
+            gnssAltitudeDifferenceFromBaroAvailable,
+            gnssAltitudeDifferenceFromBaro
+        );
+    }
 }

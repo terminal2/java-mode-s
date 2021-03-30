@@ -17,4 +17,9 @@ public class SurfaceSystemStatus extends ExtendedSquitter {
     public void apply(Track track) {
         throw new NotImplementedException(getClass().getSimpleName() + " Not implemented");
     }
+
+    @Override
+    public String toString() {
+        return "SurfaceSystemStatus";
+    }
 }

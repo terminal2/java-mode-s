@@ -86,6 +86,10 @@ public class ResolutionAdvisory {
     public String toString() {
         String out = "\n";
 
+        if (active) {
+            return "No Active RA";
+        }
+
         if (requiresCorrectionUpwards) {
             out += " - RA requires a correction in the upward sense";
         }

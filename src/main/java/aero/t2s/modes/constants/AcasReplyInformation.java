@@ -104,4 +104,21 @@ public enum  AcasReplyInformation {
     public int getGreaterThan() {
         return lower;
     }
+
+    @Override
+    public String toString() {
+        if (lower == 0 && upper == 0) {
+            return name();
+        }
+
+        if (lower == Integer.MIN_VALUE) {
+            return "Max Airspeed " + upper + "kts";
+        }
+
+        if (upper == Integer.MAX_VALUE) {
+            return "Max Airspeed at least " + lower + "kts";
+        }
+
+        return "Max airspeed between " + lower + "kts and " + upper + "kts";
+    }
 }

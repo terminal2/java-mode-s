@@ -66,4 +66,12 @@ public class AirborneVelocityGroundspeed extends AirborneVelocity {
             track.setGs(Math.sqrt(xVelocity * xVelocity + yVelocity * yVelocity));
         }
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n"
+            + "Extra Velocity info\n"
+            + "Velocity X: " + (xVelocityAvailable ? String.valueOf(xVelocity) : "Unavailable") + "\n"
+            + "Velocity Y: " + (yVelocityAvailable ? String.valueOf(yVelocity) : "Unavailable") + "\n";
+    }
 }

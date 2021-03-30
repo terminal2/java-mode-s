@@ -32,4 +32,19 @@ public class Altitude {
     public boolean isValid() {
         return isValid;
     }
+
+    @Override
+    public String toString() {
+        String output = String.valueOf(getAltitude());
+
+        output += isMetric() ? "M" : "FT";
+
+        output += " (" + getStep() + " step)";
+
+        if (!isValid()) {
+            output += " !Invalid!";
+        }
+
+        return output;
+    }
 }

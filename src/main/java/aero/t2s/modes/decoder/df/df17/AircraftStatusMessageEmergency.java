@@ -41,4 +41,15 @@ public class AircraftStatusMessageEmergency extends AircraftStatusMessage {
     public int getModeA() {
         return modeA;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "AircraftStatusMessageEmergency\n" +
+            "Emergency: %s\n" +
+            "Mode A: %04d",
+            emergencyState.name(),
+            modeA
+        );
+    }
 }

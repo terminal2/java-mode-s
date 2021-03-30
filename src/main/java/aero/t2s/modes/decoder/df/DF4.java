@@ -43,4 +43,19 @@ public class DF4 extends DownlinkFormat {
     public Altitude getAltitude() {
         return altitude;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "DF4: Altitude Reply (%s):\n" +
+            "-----------------\n\n" +
+            "Alert: %b\n" +
+            "SPI (Ident): %b\n" +
+            "Altitude: %s",
+            getIcao(),
+            isAlert(),
+            isSpi(),
+            getAltitude()
+        );
+    }
 }

@@ -33,4 +33,13 @@ public class AircraftIdentification extends ExtendedSquitter {
     public String getAcid() {
         return acid;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "AircraftIdentification\n" +
+            "ACID: %s",
+            acid
+        );
+    }
 }

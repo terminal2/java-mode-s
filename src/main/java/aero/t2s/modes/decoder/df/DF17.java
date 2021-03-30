@@ -90,4 +90,16 @@ public class DF17 extends DownlinkFormat {
     public ExtendedSquitter getExtendedSquitter() {
         return extendedSquitter;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "DF17 Extended Squitter (Airborne) :\n" +
+            "--------------------------\n" +
+            "ICAO: %s\n" +
+            "%s",
+            getIcao(),
+            extendedSquitter.toString()
+        );
+    }
 }

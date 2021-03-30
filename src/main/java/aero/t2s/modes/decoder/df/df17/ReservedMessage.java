@@ -16,4 +16,9 @@ public class ReservedMessage extends ExtendedSquitter {
     public void apply(Track track) {
         // Nothing to do
     }
+
+    @Override
+    public String toString() {
+        return "Reserved Message";
+    }
 }

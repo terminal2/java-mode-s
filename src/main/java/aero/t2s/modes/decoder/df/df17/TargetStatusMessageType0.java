@@ -1,6 +1,5 @@
 package aero.t2s.modes.decoder.df.df17;
 
-import aero.t2s.modes.NotImplementedException;
 import aero.t2s.modes.Track;
 import aero.t2s.modes.constants.*;
 
@@ -135,5 +134,39 @@ public class TargetStatusMessageType0 extends TargetStatusMessage {
 
     public EmergencyState getEmergency() {
         return emergency;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "TargetStatusMessageType0\n" +
+            "Emergency State: %s\n" +
+            "ACAS Capability: %s\n" +
+            "Source Integrity Level: %s\n" +
+            "Barometric Altitude Integrity Code: %s\n" +
+            "Horizontal Mode Indicator: %s",
+            "Horizontal Data Available Indicator: %s",
+            "Target Angle Source: %s",
+            "Target Angle: %d\n" +
+            "Velocity Data Available: %s",
+            "Velocity Mode Indicator: %s",
+            "Target Altitude Type: %s",
+            "Target Altitude Capability: %s",
+            "Target Altitude: %d",
+            emergency.name(),
+            acasCapability.name(),
+            sil.toString(),
+            NICbaro.name(),
+            NACp.toString(),
+            horizontalModeIndicator.name(),
+            horizontalDataAvailable.name(),
+            targetAngle.name(),
+            targetHeadingTrack,
+            verticalDataAvailable.name(),
+            verticalModeIndicator.name(),
+            targetAltitudeType.name(),
+            targetAltitudeCapability.name(),
+            targetAltitude
+        );
     }
 }

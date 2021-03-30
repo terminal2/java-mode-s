@@ -44,4 +44,19 @@ public class DF5 extends DownlinkFormat {
     public int getModeA() {
         return modeA;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "DF5: Identity Reply (%s):\n" +
+            "-----------------\n\n" +
+            "Alert: %b\n" +
+            "SPI (Ident): %b\n" +
+            "Mode A: %04d",
+            getIcao(),
+            isAlert(),
+            isSpi(),
+            getModeA()
+        );
+    }
 }

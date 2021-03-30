@@ -17,4 +17,9 @@ public class DF22 extends DownlinkFormat {
     public void apply(Track track) {
         //
     }
+
+    @Override
+    public String toString() {
+        return "DF22 Military use (not implemented)";
+    }
 }

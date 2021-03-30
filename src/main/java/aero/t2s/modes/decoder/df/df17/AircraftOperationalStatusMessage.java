@@ -28,4 +28,9 @@ public class AircraftOperationalStatusMessage extends ExtendedSquitter {
     public void apply(Track track) {
         // Nothing to do here
     }
+
+    @Override
+    public String toString() {
+        return "AircraftOperationalStatusMessage:\nVersion: " + version.name();
+    }
 }

@@ -1,6 +1,9 @@
-apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: 'application'
+plugins {
+    id 'idea'
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
 
 repositories {
     mavenCentral()
@@ -8,5 +11,13 @@ repositories {
 }
 
 dependencies {
-    compile ('aero.t2s:mode-s:0.2.0-SNAPSHOT')
+    compile ('aero.t2s:mode-s:0.2.1-SNAPSHOT')
+    compile ('org.slf4j:slf4j-simple:1.7.+')
 }
+
+javafx {
+    version = "15.0.1"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics' ]
+}
+
+mainClassName = 'example.DemoFX'

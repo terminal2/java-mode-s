@@ -90,4 +90,27 @@ public class AircraftOperationalStatusVersion1Surface extends AircraftOperationa
     public NavigationIntegrityCategory getNICp() {
         return NICp;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "AircraftOperationalStatusVersion1Airborne\n" +
+            "Version: %s\n" +
+            "Capability: %s\n" +
+            "Operational Mode: %s\n" +
+            "Length Width Code: %s\n" +
+            "Navigation Integrity Category: %s\n" +
+            "Source Integrity Level: %s\n" +
+            "Source Integrity Level Supplement: %s\n" +
+            "Horizontal Source: %s",
+            version.name(),
+            surfaceCapability.toString(),
+            operationalMode.toString(),
+            lengthWidthCode.toString(),
+            NICp.toString(),
+            SIL.toString(),
+            SILsupp.name(),
+            horizontalSource.name()
+        );
+    }
 }

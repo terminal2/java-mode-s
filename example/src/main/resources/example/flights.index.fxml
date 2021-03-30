@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="628.0" prefWidth="1063.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="example.controllers.FlightsIndexController">
+    <top>
+        <ToolBar prefHeight="36.0" prefWidth="1063.0" BorderPane.alignment="CENTER">
+            <items>
+            <ToggleButton fx:id="messageLogToggleButton" mnemonicParsing="false" onAction="#toggleMessageLog" text="Message Log" />
+                <Label fx:id="status" text="Status" />
+            </items>
+        </ToolBar>
+    </top>
+    <center>
+        <TableView fx:id="flightsTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn prefWidth="75.0" text="ICAO">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="icao" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn prefWidth="75.0" text="Callsign">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="callsign" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn prefWidth="75.0" text="Registration">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="registration" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn prefWidth="75.0" text="Type">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="type" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn prefWidth="75.0" text="Altitude">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="altitude" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn prefWidth="75.0" text="ROCD">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="rocd" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn prefWidth="75.0" text="Position">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="position" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn prefWidth="100.0" text="Mode A">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="modea" />
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

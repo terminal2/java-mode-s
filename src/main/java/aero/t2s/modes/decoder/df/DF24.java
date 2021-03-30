@@ -17,4 +17,9 @@ public class DF24 extends DownlinkFormat {
     public void apply(Track track) {
         //
     }
+
+    @Override
+    public String toString() {
+        return "DF24 Extended Length Message (ELM)\nNot implemented";
+    }
 }

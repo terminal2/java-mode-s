@@ -89,4 +89,23 @@ public class DF0 extends DownlinkFormat {
     public Altitude getAltitude() {
         return altitude;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "DF0: Short Air-to-Air (%s):\n" +
+            "-----------------\n\n" +
+            "Vertical Status: %s\n" +
+            "Cross link capability Status: %s\n" +
+            "ACAS Sensitive: %s\n" +
+            "ACAS Reply Info: %s\n" +
+            "Altitude: %s",
+            getIcao(),
+            getVerticalStatus().name(),
+            getCrossLinkCapability().name(),
+            getSensitivity().name(),
+            getReplyInformation().toString(),
+            getAltitude()
+        );
+    }
 }

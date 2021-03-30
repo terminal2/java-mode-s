@@ -122,4 +122,35 @@ public class DF16 extends DownlinkFormat {
     public boolean isRANotTurnRight() {
         return RANotTurnRight;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "DF16 ACAS Coordination (%s):\n" +
+            "-------------------\n\n" +
+            "Vertical status: %s\n" +
+            "Cross link capability: %s\n" +
+            "Altitude: %s\n" +
+            "ACAS Sensitivity: %s\n" +
+            "ACAS Reply Information: %s\n" +
+            "RA: %s\n" +
+            "Multiple threats: %b\n" +
+            "RA do not pass below: %b\n" +
+            "RA do not pass above: %b\n" +
+            "RA do not turn left: %b\n" +
+            "RA do not turn right: %b\n",
+            getIcao(),
+            getVerticalStatus().name(),
+            getCrossLinkCapability().name(),
+            getAltitude(),
+            getSensitivity().name(),
+            getReplyInformation().toString(),
+            getResolutionAdvisory().toString(),
+            isMultipleThreats(),
+            isRANotPassBelow(),
+            isRANotPassAbove(),
+            isRANotTurnLeft(),
+            isRANotTurnRight()
+        );
+    }
 }

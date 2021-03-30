@@ -144,4 +144,33 @@ public class AircraftStatusMessageAcasRA extends AircraftStatusMessage {
     public int getThreatBearing() {
         return threatBearing;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "AircraftStatusMessageAcasRA\n" +
+            "ACAS RA: %s\n" +
+            "Multiple threats: %b\n" +
+            "Do not pass below: %b\n",
+            "Do not pass above: %b\n",
+            "Do not turn left: %b\n",
+            "Do not turn right: %b\n",
+            "Threat type Indicator: %s\n" +
+            "Threat mode-s: %s\n" +
+            "Threat altitude: %fFT\n" +
+            "Threat range: %f\n" +
+            "Threat bearing: %f",
+            resolutionAdvisory,
+            multipleThreats,
+            RANotPassBelow,
+            RANotPassAbove,
+            RANotTurnLeft,
+            RANotTurnRight,
+            threatTypeIndicator.name(),
+            threatModeS,
+            threatAltitude,
+            threatRange,
+            threatBearing
+        );
+    }
 }
