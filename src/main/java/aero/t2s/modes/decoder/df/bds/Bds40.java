@@ -180,7 +180,7 @@ public class Bds40 extends Bds {
             track.setFmsSelectedAltitude(fmsAltitude);
 
         if (statusBaro)
-            track.setBaroSetting(baro);
+            track.getBaroAltitude().setBaroSetting(baro);
 
         if (statusMcpMode) {
             track.setVnav(autopilotVnav);

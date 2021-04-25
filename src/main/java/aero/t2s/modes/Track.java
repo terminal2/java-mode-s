@@ -51,7 +51,6 @@ public class Track {
     private boolean selectedAltitudeManagedFms;
     private boolean selectedAltitudeManagedMcp;
     private int selectedAltitude;
-    private double baroSetting;
     private double selectedHeading;
     private int sil;
     private boolean autopilot;
@@ -406,14 +405,6 @@ public class Track {
 
     public int getSelectedAltitude() {
         return selectedAltitude;
-    }
-
-    public void setBaroSetting(double baroSetting) {
-        this.baroSetting = baroSetting;
-    }
-
-    public double getBaroSetting() {
-        return baroSetting;
     }
 
     public void setSelectedHeading(double selectedHeading) {

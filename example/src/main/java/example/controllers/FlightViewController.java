@@ -93,6 +93,21 @@ public class FlightViewController implements Initializable {
     public TextField basicAltitude;
     public TextField basicBaroAltitude;
     public TextField basicGnssAltitude;
+    // APP / ATT
+    public CheckBox apManagedFms;
+    public TextField apSelAlt;
+    public TextField apFmsSelAlt;
+    public TextField apSelAltSource;
+    public TextField apSelHeading;
+    public CheckBox apManagedMcp;
+    public CheckBox apEnabled;
+    public CheckBox apLnav;
+    public CheckBox apVnav;
+    public CheckBox apAlt;
+    public CheckBox apApp;
+    public TextField apRollAngle;
+    public TextField apTrackAngleRate;
+
 
     private Flight flight;
     private Track track;
@@ -204,6 +219,21 @@ public class FlightViewController implements Initializable {
         basicAltitude.setText(track.getAltitude().toString());
         basicBaroAltitude.setText(track.getBaroAltitude().toString());
         basicGnssAltitude.setText(String.valueOf(track.getGnssHeight()));
+
+        // AP / ATT
+        apEnabled.setSelected(track.getAutopilot());
+        apVnav.setSelected(track.getLnav());
+        apVnav.setSelected(track.getVnav());
+        apApp.setSelected(track.getApproachMode());
+        apAlt.setSelected(track.getAltitudeHold());
+        apRollAngle.setText(String.valueOf(track.getRollAngle()));
+        apTrackAngleRate.setText(String.valueOf(track.getTrackAngleRate()));
+        apManagedFms.setSelected(track.getSelectedAltitudeManagedFms());
+        apManagedMcp.setSelected(track.getSelectedAltitudeManagedMcp());
+        apSelAlt.setText(String.valueOf(track.getSelectedAltitude()));
+        apFmsSelAlt.setText(String.valueOf(track.getFmsSelectedAltitude()));
+        apSelHeading.setText(String.valueOf(track.getSelectedHeading()));
+        apSelAltSource.setText(track.getSelectedAltitudeSource().name());
     }
 
     public void onClose(WindowEvent e) {

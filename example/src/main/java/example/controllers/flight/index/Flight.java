@@ -86,7 +86,7 @@ public class Flight {
     }
 
     public void setRocd(int rocd) {
-        if (rocd != 0) {
+        if (rocd == 0) {
             this.rocd.set("-");
         } else {
             this.rocd.set(String.format("%d fpm", rocd));
