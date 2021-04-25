@@ -82,7 +82,7 @@ public class TargetStatusMessageType1 extends TargetStatusMessage {
         track.setSelectedAltitude(selectedAltitudeType != SelectedAltitudeSource.UNKNOWN ? selectedAltitude : 0);
 
         if (isBaroAvailable()) {
-            track.setBaroAltitude((int) Math.round(baroSetting));
+            track.getBaroAltitude().setBaroSetting(baroSetting);
         }
 
         if (selectedHeadingAvailable) {

@@ -21,6 +21,12 @@ public class Altitude {
         return altitude;
     }
 
+    public Altitude setAltitude(double altitude) {
+        this.altitude = altitude;
+
+        return this;
+    }
+
     public boolean isMetric() {
         return isMetric;
     }

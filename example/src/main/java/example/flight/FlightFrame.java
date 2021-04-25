@@ -147,7 +147,7 @@ public class FlightFrame extends JFrame {
             track.getFlightStatus().isAlert() ? "YES" : "NO",
             track.getFlightStatus().isSpi() ? "YES" : "NO",
             (int)track.getAltitude().getAltitude(), track.getAltitude().isMetric() ? "M" : "FT", track.getAltitude().getStep(),
-            track.getBaroAltitude(),
+            track.getBaroAltitude().toString(),
             track.getGeometricHeightOffset(),
             track.getGnssHeight(),
             track.getSelectedAltitudeSource().toString(),

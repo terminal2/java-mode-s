@@ -202,7 +202,7 @@ public class FlightViewController implements Initializable {
 
         // Basic
         basicAltitude.setText(track.getAltitude().toString());
-        basicBaroAltitude.setText(String.valueOf(track.getBaroAltitude()));
+        basicBaroAltitude.setText(track.getBaroAltitude().toString());
         basicGnssAltitude.setText(String.valueOf(track.getGnssHeight()));
     }
 

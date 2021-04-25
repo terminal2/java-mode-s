@@ -75,7 +75,7 @@ public class AirbornePosition extends ExtendedSquitter {
         }
 
         if (altitudeSourceBaro) {
-            track.setBaroAltitude(altitude);
+            track.getBaroAltitude().setAltitude(altitude);
         } else {
             track.setGnssHeight(altitude);
         }

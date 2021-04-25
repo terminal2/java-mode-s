@@ -9,7 +9,7 @@ public class Track {
     private String callsign;
     private int category;
     private boolean groundBit;
-    private int baroAltitude;
+    private BaroAltitude baroAltitude = new BaroAltitude();
     private int gnssHeight;
     private double lat;
     private double lon;
@@ -117,11 +117,7 @@ public class Track {
         return groundBit;
     }
 
-    public void setBaroAltitude(int baroAltitude) {
-        this.baroAltitude = baroAltitude;
-    }
-
-    public int getBaroAltitude() {
+    public BaroAltitude getBaroAltitude() {
         return baroAltitude;
     }
 
