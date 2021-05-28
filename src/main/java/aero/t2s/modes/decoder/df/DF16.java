@@ -67,7 +67,6 @@ public class DF16 extends DownlinkFormat {
     public void apply(Track track) {
         Acas acas = track.getAcas();
         acas.setVerticalStatus(verticalStatus);
-        acas.setCrossLinkCapability(crossLinkCapability);
         acas.setSensitivity(sensitivity);
         acas.setReplyInformation(replyInformation);
         acas.setAltitude(altitude);
