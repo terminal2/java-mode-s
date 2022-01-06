@@ -105,7 +105,7 @@ public class Common {
         return Arrays.copyOf(parity, CRC_POLYNOMIAL.length);
     }
 
-    public static boolean isValid(short[] data) {
+    public static boolean isNotValid(short[] data) {
         short[] payload = Arrays.copyOfRange(data, 0, data.length - 3);
         short[] parity = Arrays.copyOfRange(data, data.length - 3, data.length);
 

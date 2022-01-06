@@ -3,10 +3,7 @@ package aero.t2s.modes.decoder;
 import aero.t2s.modes.Track;
 import aero.t2s.modes.database.ModeSDatabase;
 import aero.t2s.modes.decoder.df.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Decoder {
@@ -24,8 +21,7 @@ public class Decoder {
     }
 
     public DownlinkFormat decode(short[] data) throws UnknownDownlinkFormatException {
-        // @Todo: Confusing statement this should probably be refactored to return inverse or renamed to invalid
-        if (Common.isValid(data)) {
+        if (Common.isNotValid(data)) {
             return null;
         }
 
