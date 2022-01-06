@@ -83,7 +83,7 @@ public class ModeSTrackHandler extends ModeSHandler {
         } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
             LOGGER.error(e.getMessage());
         } catch (Throwable throwable) {
-            LOGGER.error("Message could not be parsed", throwable);
+            LOGGER.error("Message could not be parsed: [" + input + "]", throwable);
         }
 
         return null;
