@@ -106,8 +106,10 @@ public class Common {
     }
 
     public static boolean isNotValid(short[] data) {
+        // fixes negative length bug where data is only 2 bytes (16bit Mode A/C replies, ACAS, ...)
+        // examples: *21D2; *0200; *0101; <- only the 2 bytes are in data variable
         if(data.length < 3) {
-            return false;  // fixes negative length bug where data is only 2 bytes (16bit Mode A/C replies, ACAS, ...)
+            return true;
         }
         short[] payload = Arrays.copyOfRange(data, 0, data.length - 3);
         short[] parity = Arrays.copyOfRange(data, data.length - 3, data.length);
