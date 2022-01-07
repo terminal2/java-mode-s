@@ -59,6 +59,12 @@ public class ModeSTrackHandler extends ModeSHandler {
     public DownlinkFormat handleSync(final String input) {
         try {
             DownlinkFormat df = decoder.decode(toData(input));
+            if(df == null) {
+                // invalid packet (Mode A/C like *21D2; *0200; *0101;)
+                LOGGER.debug("DF Message could not be parsed: [{}]", input);
+                return null;
+            }
+
             Track track = decoder.getTrack(df.getIcao());
 
             if (track == null) {
@@ -83,7 +89,7 @@ public class ModeSTrackHandler extends ModeSHandler {
         } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
             LOGGER.error(e.getMessage());
         } catch (Throwable throwable) {
-            LOGGER.error("Message could not be parsed: [" + input + "]", throwable);
+            LOGGER.error("DF Message could not be parsed: [" + input + "]", throwable);
         }
 
         return null;
