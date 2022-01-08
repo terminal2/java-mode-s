@@ -38,7 +38,7 @@ public class ModeSMessageHandler extends ModeSHandler {
             }
 
             return df;
-        } catch (EmptyMessageException ignored) {
+        } catch (ModeAcMessageException | EmptyMessageException ignored) {
         } catch (InvalidExtendedSquitterTypeCodeException | UnknownDownlinkFormatException e) {
             LOGGER.error(e.getMessage());
         } catch (Throwable throwable) {

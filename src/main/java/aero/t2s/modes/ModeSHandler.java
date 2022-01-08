@@ -30,7 +30,11 @@ abstract public class ModeSHandler {
     public abstract DownlinkFormat handleSync(String data);
 
 
-    protected short[] toData(final String input) throws EmptyMessageException {
+    protected short[] toData(final String input) throws EmptyMessageException, ModeAcMessageException {
+        if(input.length() == 6) {
+            // example mode A/C: *21D2; *0200; *0101;
+            throw new ModeAcMessageException();
+        }
         if (input.startsWith("*0000")) {
             throw new EmptyMessageException();
         }
