@@ -29,6 +29,7 @@ public class Bds20 extends Bds {
     @Override
     public void apply(Track track) {
         track.setCallsign(acid);
+        track.register20().setAcid(acid);
     }
 
     @Override

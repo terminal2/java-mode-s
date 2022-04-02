@@ -1,51 +1,48 @@
 package aero.t2s.modes;
 
 import aero.t2s.modes.constants.*;
+import aero.t2s.modes.registers.*;
 
 import java.time.Instant;
 
 public class Track {
     private String icao;
     private String callsign;
-    private int category;
-    private boolean groundBit;
-    private int baroAltitude;
-    private int gnssHeight;
+    private Altitude altitude = new Altitude();
     private double lat;
     private double lon;
-    private CprPosition cprPositionEven = new CprPosition();
-    private CprPosition cprPositionOdd = new CprPosition();
+    private int vx;
+    private int vy;
+    private double gs;
+    private Version version = Version.VERSION0;
+    private boolean groundBit;
     Instant updated = Instant.now();
-    private boolean singleAntenna;
-    private int NIC;
-    private int NICb;
-    private int NICa;
-    private int NICc;
-    private RadiusLimit rc = new RadiusLimit(this);
-    private int NACv;
-    private NavigationAccuracyCategoryPosition NACp = NavigationAccuracyCategoryPosition.UNKNOWN;
+    private boolean wasJustCreated = true;
+
+    private Register05 register05 = new Register05V0();
+    private Register06 register06 = new Register06();
+    private Register07 register07 = new Register07();
+    private Register08 register08 = new Register08();
+    private Register09 register09 = new Register09();
+    private Register17 register17 = new Register17();
+    private Register20 register20 = new Register20();
+    private Register21 register21 = new Register21();
+
     private boolean spi;
     private boolean tempAlert;
     private boolean emergency;
-    private Version version = Version.VERSION0;
     private Acas acas = new Acas();
     private FlightStatus flightStatus = new FlightStatus();
-    private Altitude altitude = new Altitude();
     private SelectedAltitudeSource selectedAltitudeSource = SelectedAltitudeSource.UNKNOWN;
     private Meteo meteo = new Meteo();
-    private CapabilityReport capabilityReport = new CapabilityReport();
     private int modeA;
     private int geometricHeightOffset;
     private int rocd;
     private boolean rocdAvailable;
     private boolean rocdSourceBaro;
-    private int vx;
-    private int vy;
-    private double gs;
-    private boolean headingSourceMagnetic;
+
     private double magneticHeading;
     private double trueHeading;
-    private boolean iasAvailable;
     private int ias;
     private double tas;
     private boolean selectedAltitudeManagedFms;
@@ -59,7 +56,6 @@ public class Track {
     private boolean altitudeHold;
     private boolean approachMode;
     private boolean lnav;
-    private LengthWidthCode lengthWidthCode = LengthWidthCode.CAT15;
     private EmergencyState emergencyState = EmergencyState.NONE;
     private int fmsSelectedAltitude;
     private double rollAngle;
@@ -70,8 +66,6 @@ public class Track {
     private String wtc = "";
     private String registration;
     private String operator;
-
-    private boolean wasJustCreated = true;
 
     public Track(String icao) {
         this.icao = icao;
@@ -85,8 +79,68 @@ public class Track {
         return callsign;
     }
 
-    public void setCategory(int category) {
-        this.category = category;
+    public Register05 register05() {
+        return register05;
+    }
+
+    public void register05(Register05 register05) {
+        this.register05 = register05;
+    }
+
+    public Register06 register06() {
+        return register06;
+    }
+
+    public void register06(Register06 register06) {
+        this.register06 = register06;
+    }
+
+    public Register07 register07() {
+        return register07;
+    }
+
+    public void register07(Register07 register07) {
+        this.register07 = register07;
+    }
+
+    public Register08 register08() {
+        return register08;
+    }
+
+    public void register08(Register08 register08) {
+        this.register08 = register08;
+    }
+
+    public Register09 register09() {
+        return register09;
+    }
+
+    public void register09(Register09 register09) {
+        this.register09 = register09;
+    }
+
+    public Register17 register17() {
+        return register17;
+    }
+
+    public void register17(Register17 register17) {
+        this.register17 = register17;
+    }
+
+    public Register20 register20() {
+        return register20;
+    }
+
+    public void register20(Register20 register20) {
+        this.register20 = register20;
+    }
+
+    public Register21 register21() {
+        return register21;
+    }
+
+    public void register21(Register21 register21) {
+        this.register21 = register21;
     }
 
     public String getIcao() {
@@ -101,8 +155,9 @@ public class Track {
         return updated;
     }
 
-    public void setUpdatedAt(Instant time) {
-        this.updated = time;
+    public Track setUpdatedAt(Instant updated) {
+        this.updated = updated;
+        return this;
     }
 
     public void touch() {
@@ -115,27 +170,6 @@ public class Track {
 
     public boolean isGroundBit() {
         return groundBit;
-    }
-
-    public void setBaroAltitude(int baroAltitude) {
-        this.baroAltitude = baroAltitude;
-    }
-
-    public int getBaroAltitude() {
-        return baroAltitude;
-    }
-
-    public int getGnssHeight() {
-        return gnssHeight;
-    }
-
-    public Track setGnssHeight(int gnssHeight) {
-        this.gnssHeight = gnssHeight;
-        return this;
-    }
-
-    public CprPosition getCprPosition(boolean cprEven) {
-        return cprEven ? cprPositionEven : cprPositionOdd;
     }
 
     public void setLat(double lat) {
@@ -154,74 +188,12 @@ public class Track {
         return lon;
     }
 
-    public void setSingleAntenna(boolean singleAntenna) {
-        this.singleAntenna = singleAntenna;
-    }
-
-    public boolean getSingleAntenna() {
-        return singleAntenna;
-    }
-
     public Version getVersion() {
         return version;
     }
 
     public void setVersion(Version version) {
         this.version = version;
-    }
-
-    public int getNIC() {
-        return NIC;
-    }
-
-    public int getNICa() {
-        return NICa;
-    }
-
-    public int getNICb() {
-        return NICb;
-    }
-
-    public int getNICc() {
-        return NICc;
-    }
-
-    public void setNIC(int NIC) {
-        if (this.NIC != NIC) {
-            this.NIC = NIC;
-            rc.determine();
-        }
-    }
-
-
-    public void setNICa(int NICa) {
-        if (this.NICa != NICa) {
-            this.NICa = NICa;
-            rc.determine();
-        }
-    }
-
-    public void setNICb(int niCb) {
-        if (niCb != this.NICb) {
-            this.NICb = niCb;
-            rc.determine();
-        }
-    }
-
-    public void setNICc(int NICc) {
-        if (this.NICc != NICc) {
-            this.NICc = NICc;
-            rc.determine();
-        }
-    }
-
-    public NavigationAccuracyCategoryPosition getNACp() {
-        return NACp;
-    }
-
-    public Track setNACp(NavigationAccuracyCategoryPosition NACp) {
-        this.NACp = NACp;
-        return this;
     }
 
     public void setSpi(boolean spi) {
@@ -274,14 +246,6 @@ public class Track {
 
     public boolean isPositionAvailable() {
         return lat != 0 & lon != 0;
-    }
-
-    public void setNACv(int naCv) {
-        this.NACv = naCv;
-    }
-
-    public int getNACv() {
-        return NACv;
     }
 
     public void setGeometricHeightOffset(int geometricHeightOffset) {
@@ -340,14 +304,6 @@ public class Track {
         return gs;
     }
 
-    public boolean isMagneticHeading() {
-        return headingSourceMagnetic;
-    }
-
-    public void setHeadingSource(boolean magneticHeading) {
-        this.headingSourceMagnetic = magneticHeading;
-    }
-
     public void setMagneticHeading(double magneticHeading) {
         this.magneticHeading = magneticHeading;
     }
@@ -362,14 +318,6 @@ public class Track {
 
     public double getTrueHeading() {
         return trueHeading;
-    }
-
-    public void setIasAvailable(boolean iasAvailable) {
-        this.iasAvailable = iasAvailable;
-    }
-
-    public boolean isIasAvailable() {
-        return iasAvailable;
     }
 
     public void setIas(int ias) {
@@ -476,14 +424,6 @@ public class Track {
         return lnav;
     }
 
-    public void setLengthWidthCode(LengthWidthCode lengthWidthCode) {
-        this.lengthWidthCode = lengthWidthCode;
-    }
-
-    public LengthWidthCode getLengthWidthCode() {
-        return lengthWidthCode;
-    }
-
     public void setEmergencyState(EmergencyState emergencyState) {
         this.emergencyState = emergencyState;
     }
@@ -584,10 +524,6 @@ public class Track {
 
     public Meteo getMeteo() {
         return meteo;
-    }
-
-    public CapabilityReport getCapabilityReport() {
-        return capabilityReport;
     }
 
     @Override

@@ -12,9 +12,7 @@ public class FlightFrame extends JFrame {
     java.util.Timer timer = new Timer();
     private Track track;
 
-
     private JTabbedPane tabbedPane1;
-    private JTable gcibReportTable;
     private JList<String> meteoHazards;
     private JLabel meteoHumidity;
     private JLabel meteoSat;
@@ -23,10 +21,15 @@ public class FlightFrame extends JFrame {
     private JLabel meteoRadioHeight;
     private JPanel mainPanel;
     private JTextArea flightModelLeft;
-    private JTextArea flightInfoRight;
-    private JTextArea infoAccuracy;
     private JTextArea infoAbds;
     private JTextArea acas;
+
+    private JTextArea register05;
+    private JTextArea register06;
+    private JTextArea register07;
+    private JTextArea register08;
+    private JTextArea register09;
+    private JTextArea register17;
 
     public FlightFrame(Track track) {
         this.track = track;
@@ -46,8 +49,6 @@ public class FlightFrame extends JFrame {
 
     private void updateContent() {
         setTitle(track.getCallsign() + " - " + track.getIcao());
-
-        ((GcibTable)gcibReportTable.getModel()).fireTableDataChanged();
 
         // Meteo Hazard
         ((DefaultListModel<String>)meteoHazards.getModel()).clear();
@@ -83,7 +84,6 @@ public class FlightFrame extends JFrame {
                 "CALLSIGN: %s\n" +
                 "WTC: %s\n" +
                 "ATYP: %s\n (REG: %s)\n" +
-                "Width & Length Code: %s\n" +
                 "OPERATOR: %s\n" +
                 "MODE A: %04d\n" +
                 "State: %s\n" +
@@ -95,9 +95,7 @@ public class FlightFrame extends JFrame {
                 "Flight Status SPI: %s\n" +
                 "-------------------------------\n" +
                 "Altitude: %d%s (step size: %d)\n" +
-                "Baro Altitude: %d\n" +
                 "Geometric offset: %d\n" +
-                "GNSS Altitude: %d\n" +
                 "Selected Altitude Source: %s\n" +
                 "Selected Altitude: %d\n" +
                 "Selected Altitude FMS: %s\n" +
@@ -111,7 +109,6 @@ public class FlightFrame extends JFrame {
                 "ROCD Baro Available: %s\n" +
                 "Baro ROCD: %dft/min\n" +
                 "------------------------------\n" +
-                "Heading Source: %s\n" +
                 "Magnetic Heading: %d\n" +
                 "True Heading: %d\n" +
                 "Selected Heading: %d\n" +
@@ -136,7 +133,6 @@ public class FlightFrame extends JFrame {
             track.getCallsign(),
             track.getWtc(),
             track.getAtype(), track.getRegistration(),
-            track.getLengthWidthCode().name(),
             track.getOperator(),
             track.getModeA(),
             track.isGroundBit() ? "GROUND" : "AIRBORNE",
@@ -147,9 +143,7 @@ public class FlightFrame extends JFrame {
             track.getFlightStatus().isAlert() ? "YES" : "NO",
             track.getFlightStatus().isSpi() ? "YES" : "NO",
             (int)track.getAltitude().getAltitude(), track.getAltitude().isMetric() ? "M" : "FT", track.getAltitude().getStep(),
-            track.getBaroAltitude(),
             track.getGeometricHeightOffset(),
-            track.getGnssHeight(),
             track.getSelectedAltitudeSource().toString(),
             track.getSelectedAltitude(),
             track.getSelectedAltitudeManagedFms() ? "YES" : "NO",
@@ -160,7 +154,6 @@ public class FlightFrame extends JFrame {
             track.getRocd(),
             track.getRocdSourceBaro() ? "YES" : "NO",
             (int)track.getBaroRocd(),
-            track.isMagneticHeading() ? "MAGNETIC" : "TRUE",
             (int)track.getMagneticHeading(),
             (int)track.getTrueHeading(),
             (int)track.getSelectedHeading(),
@@ -216,30 +209,17 @@ public class FlightFrame extends JFrame {
             track.getAcas().getTargetRange()
         ));
 
-        infoAccuracy.setText(String.format(
-            "NIC: %d\n" +
-            "NICa: %d\n" +
-            "NICb: %d\n" +
-            "NICc: %d\n" +
-            "NACv: %d\n" +
-            "NACp: %s\n" +
-            "SIL: %d\n" +
-            "----------------------------\n",
-            track.getNIC(),
-            track.getNICa(),
-            track.getNICb(),
-            track.getNICc(),
-            track.getNACv(),
-            track.getNACp(),
-            track.getSil()
-        ));
-
-        infoAbds.setText(String.format(
+        infoAbds.setText(
             "Version: %s\n" +
-            "Single Antenna: %s\n",
-            track.getVersion().name(),
-            track.getSingleAntenna() ? "YES" : "NO"
-        ));
+            track.getVersion().name()
+        );
+
+        register05.setText(track.register05().toString());
+        register06.setText(track.register06().toString());
+        register07.setText(track.register07().toString());
+        register08.setText(track.register08().toString());
+        register09.setText(track.register09().toString());
+        register17.setText(track.register17().toString());
     }
 
     private String formatAcasResolution() {
@@ -248,109 +228,5 @@ public class FlightFrame extends JFrame {
         }
 
         return track.getAcas().getResolutionAdvisory().toString();
-    }
-
-    private void createUIComponents() {
-        gcibReportTable = new JTable(new GcibTable(track));
-        gcibReportTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-    }
-
-    private class GcibTable extends AbstractTableModel {
-        private final String[] GCIB = {
-            "0,5 Extended squitter airborne position",
-            "0,6 Extended squitter surface position",
-            "0,7 Extended squitter identification and category",
-            "0,7 Extended squitter status",
-            "0,9 Extended squitter airborne velocity information",
-            "0,A Extended squitter event-driven information",
-            "2,0 Aircraft identification",
-            "2,1 Aircraft registration number",
-            "4,0 Selected vertical intention",
-            "4,1 Next waypoint identifier",
-            "4,2 Next waypoint position",
-            "4,3 Next waypoint information",
-            "4,4 Meteorological routine report",
-            "4,5 Meteorological hazard report",
-            "4,8 VHF channel report",
-            "5,0 Track and turn report",
-            "5,1 Position coarse",
-            "5,2 Position fine",
-            "5,3 Air-referenced state vector",
-            "5,4 Waypoint 1",
-            "5,5 Waypoint 2",
-            "5,6 Waypoint 3",
-            "5,F Quasi-static parameter monitoring",
-            "6,0 Heading and speed report",
-        };
-
-        public GcibTable(Track track) {
-        }
-
-        @Override
-        public int getRowCount() {
-            if (track.getCapabilityReport().isAvailable()) {
-                return 24;
-            }
-
-            return 1;
-        }
-
-        @Override
-        public int getColumnCount() {
-            return 2;
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            switch (column) {
-                case 0: return "GCIB";
-                case 1: return "Available";
-            }
-
-            return null;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            if (!track.getCapabilityReport().isAvailable()) {
-                if (columnIndex == 0)
-                    return "Not Available";
-                else
-                    return "";
-            }
-
-            if (columnIndex == 0) {
-                return GCIB[rowIndex];
-            }
-
-            switch (rowIndex) {
-                case 0: return track.getCapabilityReport().isBds05() ? "YES" : "NO";
-                case 1: return track.getCapabilityReport().isBds06() ? "YES" : "NO";
-                case 2: return track.getCapabilityReport().isBds07() ? "YES" : "NO";
-                case 3: return track.getCapabilityReport().isBds08() ? "YES" : "NO";
-                case 4: return track.getCapabilityReport().isBds09() ? "YES" : "NO";
-                case 5: return track.getCapabilityReport().isBds0A() ? "YES" : "NO";
-                case 6: return track.getCapabilityReport().isBds20() ? "YES" : "NO";
-                case 7: return track.getCapabilityReport().isBds21() ? "YES" : "NO";
-                case 8: return track.getCapabilityReport().isBds40() ? "YES" : "NO";
-                case 9: return track.getCapabilityReport().isBds41() ? "YES" : "NO";
-                case 10: return track.getCapabilityReport().isBds42() ? "YES" : "NO";
-                case 11: return track.getCapabilityReport().isBds43() ? "YES" : "NO";
-                case 12: return track.getCapabilityReport().isBds44() ? "YES" : "NO";
-                case 13: return track.getCapabilityReport().isBds45() ? "YES" : "NO";
-                case 14: return track.getCapabilityReport().isBds48() ? "YES" : "NO";
-                case 15: return track.getCapabilityReport().isBds50() ? "YES" : "NO";
-                case 16: return track.getCapabilityReport().isBds51() ? "YES" : "NO";
-                case 17: return track.getCapabilityReport().isBds52() ? "YES" : "NO";
-                case 18: return track.getCapabilityReport().isBds53() ? "YES" : "NO";
-                case 19: return track.getCapabilityReport().isBds54() ? "YES" : "NO";
-                case 20: return track.getCapabilityReport().isBds55() ? "YES" : "NO";
-                case 21: return track.getCapabilityReport().isBds56() ? "YES" : "NO";
-                case 22: return track.getCapabilityReport().isBds5F() ? "YES" : "NO";
-                case 23: return track.getCapabilityReport().isBds60() ? "YES" : "NO";
-            }
-
-            return null;
-        }
     }
 }

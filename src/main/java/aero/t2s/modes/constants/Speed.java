@@ -7,5 +7,5 @@ public enum Speed {
     IAS,
     TAS,
     GS,
-    ;
+    UNKNOWN;
 }

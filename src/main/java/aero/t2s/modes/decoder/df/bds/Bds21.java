@@ -69,6 +69,10 @@ public class Bds21 extends Bds {
         if (statusAirlineRegistration) {
             track.setOperator(airline);
         }
+
+        if (statusAircraftRegistration || statusAirlineRegistration) {
+            track.register21().update(registration, airline);
+        }
     }
 
     @Override

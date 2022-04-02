@@ -1,7 +1,11 @@
 package aero.t2s.modes.decoder.df.df17;
 
 import aero.t2s.modes.Track;
+import aero.t2s.modes.constants.NavigationAccuracyCategoryVelocity;
 import aero.t2s.modes.constants.RocdSource;
+import aero.t2s.modes.constants.Version;
+import aero.t2s.modes.registers.Register09;
+import aero.t2s.modes.registers.Register09V0;
 
 public class AirborneVelocityGroundspeed extends AirborneVelocity {
     private boolean xVelocityAvailable;
@@ -38,8 +42,6 @@ public class AirborneVelocityGroundspeed extends AirborneVelocity {
 
     @Override
     public void apply(Track track) {
-        track.setNACv(NACv.ordinal());
-
         if (isGnssAltitudeDifferenceFromBaroAvailable()) {
             track.setGeometricHeightOffset(getGnssAltitudeDifferenceFromBaro());
         }
@@ -64,6 +66,31 @@ public class AirborneVelocityGroundspeed extends AirborneVelocity {
 
         if (xVelocityAvailable && yVelocityAvailable) {
             track.setGs(Math.sqrt(xVelocity * xVelocity + yVelocity * yVelocity));
+        }
+
+        if (track.getVersion().equals(Version.VERSION2) && track.register09() instanceof Register09V0) {
+            track.register09(new Register09V0());
+        }
+        if (!track.getVersion().equals(Version.VERSION2) && !(track.register09() instanceof Register09V0)) {
+            track.register09(new Register09());
+        }
+
+        if (track.register09() instanceof Register09V0) {
+            ((Register09V0) track.register09()).setIfrCapability(isIfrCapability());
+        }
+
+        track.register09()
+            .setVerticalRateSource(isRocdAvailable() ? getRocdSource() : RocdSource.UNKNOWN)
+            .setVerticalRate(isRocdAvailable() ? getRocd() : 0)
+            .setGnssDifferenceFromBaro(isGnssAltitudeDifferenceFromBaroAvailable() ? getGnssAltitudeDifferenceFromBaro() : 0)
+            .setIntentChangeFlag(isIntentChange())
+            .setNACv(NavigationAccuracyCategoryVelocity.values()[NACv.ordinal()])
+            .validate();
+
+        if (xVelocityAvailable && yVelocityAvailable) {
+            track.register09()
+                .setVx(xVelocity)
+                .setVy(yVelocity);
         }
     }
 }

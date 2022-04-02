@@ -73,7 +73,7 @@ public class Bds17 extends Bds {
 
     @Override
     public void apply(Track track) {
-        track.getCapabilityReport().update(this);
+        track.register17().update(this);
     }
 
     @Override

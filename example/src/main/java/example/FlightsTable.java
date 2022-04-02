@@ -43,15 +43,19 @@ class FlightsTable extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        switch (columnIndex) {
-            case 0: return tracks.get(rowIndex).getIcao();
-            case 1: return tracks.get(rowIndex).getCallsign();
-            case 2: return String.format("%2.4f", tracks.get(rowIndex).getLat());
-            case 3: return String.format("%03.4f", tracks.get(rowIndex).getLon());
-            case 4: return tracks.get(rowIndex).getRocd();
-            case 5: return tracks.get(rowIndex).getAltitude().getAltitude();
-            case 6: return Math.round(tracks.get(rowIndex).getMagneticHeading());
-            case 7: return (int)tracks.get(rowIndex).getGs();
+        try {
+            switch (columnIndex) {
+                case 0: return tracks.get(rowIndex).getIcao();
+                case 1: return tracks.get(rowIndex).getCallsign();
+                case 2: return String.format("%2.4f", tracks.get(rowIndex).getLat());
+                case 3: return String.format("%03.4f", tracks.get(rowIndex).getLon());
+                case 4: return tracks.get(rowIndex).getRocd();
+                case 5: return tracks.get(rowIndex).getAltitude().getAltitude();
+                case 6: return Math.round(tracks.get(rowIndex).getMagneticHeading());
+                case 7: return (int)tracks.get(rowIndex).getGs();
+            }
+        } catch (IndexOutOfBoundsException ex) {
+            return null;
         }
 
         return null;

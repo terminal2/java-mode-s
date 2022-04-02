@@ -1,9 +1,10 @@
 package aero.t2s.modes.decoder.df.df17;
 
 import aero.t2s.modes.Track;
-import aero.t2s.modes.constants.BarometricAltitudeIntegrityCode;
-import aero.t2s.modes.constants.SurveillanceStatus;
-import aero.t2s.modes.constants.Version;
+import aero.t2s.modes.constants.*;
+import aero.t2s.modes.registers.Register05;
+import aero.t2s.modes.registers.Register05V0;
+import aero.t2s.modes.registers.Register05V2;
 
 public class AirbornePosition extends ExtendedSquitter {
     private final double originLat;
@@ -66,23 +67,42 @@ public class AirbornePosition extends ExtendedSquitter {
         track.setSpi(surveillanceStatus == SurveillanceStatus.SPI);
         track.setTempAlert(surveillanceStatus == SurveillanceStatus.TEMPORARY_ALERT);
         track.setEmergency(surveillanceStatus == SurveillanceStatus.PERMANENT_ALERT);
-
-        // Determine Antenna or Navigation Integrity Category
-        if (track.getVersion().ordinal() < Version.VERSION2.ordinal()) {
-            track.setSingleAntenna(singleAntennaFlag == 0);
-        } else {
-            track.setNICb(singleAntennaFlag);
-        }
-
-        if (altitudeSourceBaro) {
-            track.setBaroAltitude(altitude);
-        } else {
-            track.setGnssHeight(altitude);
-        }
-
-        track.setNIC(determineNIC(track, typeCode));
         track.setLat(lat);
         track.setLon(lon);
+
+        if (versionChanged(track)) {
+            switch (track.getVersion()) {
+                case VERSION0:
+                case VERSION1:
+                    track.register05(new Register05V0());
+                    break;
+                case VERSION2:
+                    track.register05(new Register05V2());
+                    break;
+            }
+        }
+        HorizontalProtectionLimit hpl = determineHorizontalProtection(track);
+        AltitudeSource altitudeSource = determineAltitudeSource();
+
+        Register05 position = track.register05();
+
+        if (position instanceof Register05V2) {
+            position.update(hpl, altitude, altitudeSource, lat, lon, surveillanceStatus);
+        } else {
+            ((Register05V0) position).update(hpl, altitude, altitudeSource, lat, lon, surveillanceStatus, singleAntennaFlag == 1);
+        }
+    }
+
+    private boolean versionChanged(Track track) {
+        if (track.register05() == null) {
+            return true;
+        }
+
+        if (track.getVersion() == Version.VERSION2 && track.register05().getVersion() != Version.VERSION2) {
+            return true;
+        }
+
+        return false;
     }
 
     public int getSingleAntennaFlag() {
@@ -131,45 +151,57 @@ public class AirbornePosition extends ExtendedSquitter {
         return lon;
     }
 
-    private int determineNIC(Track track, int typeCode) {
+    private HorizontalProtectionLimit determineHorizontalProtection(Track track) {
         switch (typeCode) {
             case 9:
             case 20:
-                return 11;
+                return HorizontalProtectionLimit.RC_7_5;
             case 10:
             case 21:
-                return 10;
+                return HorizontalProtectionLimit.RC_25;
             case 11:
-                if (track.getNICa() == 1 && track.getNICb() == 1) {
-                    return 9;
-                } else if (track.getNICa() == 0 && track.getNICb() == 0) {
-                    return 8;
+                if (singleAntennaFlag == 1 && track.getVersion() == Version.VERSION2) {
+                    return HorizontalProtectionLimit.RC_75;
                 } else {
-                    return 0;
+                    return HorizontalProtectionLimit.RC_185;
                 }
             case 12:
-                return 7;
+                return HorizontalProtectionLimit.RC_370;
             case 13:
-                return 6;
-            case 14:
-                return 5;
-            case 15:
-                return 4;
-            case 16:
-                if (track.getNICa() == 0 && track.getNICb() == 0) {
-                    return 2;
-                } else if (track.getNICa() == 1 && track.getNICb() == 1) {
-                    return 3;
+                if (singleAntennaFlag == 1 && track.getVersion() == Version.VERSION2) {
+                    return HorizontalProtectionLimit.RC_555;
                 } else {
-                    return 0;
+                    return HorizontalProtectionLimit.RC_926;
+                }
+            case 14:
+                return HorizontalProtectionLimit.RC_1852;
+            case 15:
+                return HorizontalProtectionLimit.RC_3704;
+            case 16:
+                if (singleAntennaFlag == 1 && track.getVersion() == Version.VERSION2) {
+                    return HorizontalProtectionLimit.RC_7408;
+                } else {
+                    return HorizontalProtectionLimit.RC_14816;
                 }
             case 17:
-                return 1;
+                return HorizontalProtectionLimit.RC_37040;
             case 18:
             case 22:
             default:
-                return 0;
+                return HorizontalProtectionLimit.RC_UNKNOWN;
         }
+    }
+
+    private AltitudeSource determineAltitudeSource() {
+        if (typeCode < 19) {
+            return AltitudeSource.BARO;
+        }
+
+        if (typeCode == 19) {
+            return AltitudeSource.BARO_GNSS_DIFF;
+        }
+
+        return AltitudeSource.GNSS_HAE;
     }
 
     private void calculatePosition(boolean isEven, double lat, double lon, double time) {

@@ -214,4 +214,35 @@ public class CapabilityReport {
         bds5F = true;
         bds60 = true;
     }
+
+
+    @Override
+    public String toString() {
+        return "Bds17{" +
+            "\nbds05=" + bds05 +
+            ",\n bds06=" + bds06 +
+            ",\n bds07=" + bds07 +
+            ",\n bds08=" + bds08 +
+            ",\n bds09=" + bds09 +
+            ",\n bds0A=" + bds0A +
+            ",\n bds20=" + bds20 +
+            ",\n bds21=" + bds21 +
+            ",\n bds40=" + bds40 +
+            ",\n bds41=" + bds41 +
+            ",\n bds42=" + bds42 +
+            ",\n bds43=" + bds43 +
+            ",\n bds44=" + bds44 +
+            ",\n bds45=" + bds45 +
+            ",\n bds48=" + bds48 +
+            ",\n bds50=" + bds50 +
+            ",\n bds51=" + bds51 +
+            ",\n bds52=" + bds52 +
+            ",\n bds53=" + bds53 +
+            ",\n bds54=" + bds54 +
+            ",\n bds55=" + bds55 +
+            ",\n bds56=" + bds56 +
+            ",\n bds5F=" + bds5F +
+            ",\n bds60=" + bds60 +
+            "\n}";
+    }
 }

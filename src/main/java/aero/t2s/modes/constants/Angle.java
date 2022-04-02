@@ -8,5 +8,6 @@ public enum Angle {
     TRACK,
     MAGNETIC_TRACK,
     TRUE_TRACK,
-    ;
+
+    UNAVAILABLE;
 }

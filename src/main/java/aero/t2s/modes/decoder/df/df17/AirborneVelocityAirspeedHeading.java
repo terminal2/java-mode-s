@@ -1,8 +1,9 @@
 package aero.t2s.modes.decoder.df.df17;
 
 import aero.t2s.modes.Track;
-import aero.t2s.modes.constants.RocdSource;
-import aero.t2s.modes.constants.Speed;
+import aero.t2s.modes.constants.*;
+import aero.t2s.modes.registers.Register09;
+import aero.t2s.modes.registers.Register09V0;
 
 public class AirborneVelocityAirspeedHeading extends AirborneVelocity {
     private static final double HEADING_RESOLUTION = 360.0 / 1024.0;
@@ -35,8 +36,6 @@ public class AirborneVelocityAirspeedHeading extends AirborneVelocity {
 
     @Override
     public void apply(Track track) {
-        track.setNACv(NACv.ordinal());
-
         if (isGnssAltitudeDifferenceFromBaroAvailable()) {
             track.setGeometricHeightOffset(getGnssAltitudeDifferenceFromBaro());
         }
@@ -50,6 +49,31 @@ public class AirborneVelocityAirspeedHeading extends AirborneVelocity {
                 track.setRocd(getRocd());
             }
         }
+
+
+        if (track.getVersion().equals(Version.VERSION2) && track.register09() instanceof Register09V0) {
+            track.register09(new Register09V0());
+        }
+        if (!track.getVersion().equals(Version.VERSION2) && !(track.register09() instanceof Register09V0)) {
+            track.register09(new Register09());
+        }
+
+        if (track.register09() instanceof Register09V0) {
+            ((Register09V0) track.register09()).setIfrCapability(isIfrCapability());
+        }
+
+        track.register09()
+            .setHeadingSource(isHeadingAvailable() ? Angle.HEADING : Angle.UNAVAILABLE)
+            .setHeading((int) Math.round(heading))
+            .setAirspeedSource(isAirspeedAvailable() ? airspeedType : Speed.UNKNOWN)
+            .setAirspeed(airspeed)
+            .setVerticalRateSource(isRocdAvailable() ? getRocdSource() : RocdSource.UNKNOWN)
+            .setVerticalRate(isRocdAvailable() ? getRocd() : 0)
+            .setGnssDifferenceFromBaro(isGnssAltitudeDifferenceFromBaroAvailable() ? getGnssAltitudeDifferenceFromBaro() : 0)
+            .setIntentChangeFlag(isIntentChange())
+            .setNACv(NavigationAccuracyCategoryVelocity.values()[NACv.ordinal()])
+            .validate();
+        ;
     }
 
     public boolean isHeadingAvailable() {

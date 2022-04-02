@@ -1,6 +1,5 @@
 package aero.t2s.modes.decoder.df.df17;
 
-import aero.t2s.modes.NotImplementedException;
 import aero.t2s.modes.Track;
 import aero.t2s.modes.constants.*;
 
@@ -61,8 +60,6 @@ public class TargetStatusMessageType0 extends TargetStatusMessage {
 
     @Override
     public void apply(Track track) {
-        track.setNACp(NACp);
-
         if (horizontalDataAvailable != HorizontalDataAvailable.NOT_VALID)
             track.setSelectedHeading(targetHeadingTrack);
 

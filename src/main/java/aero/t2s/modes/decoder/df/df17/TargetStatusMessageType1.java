@@ -81,16 +81,10 @@ public class TargetStatusMessageType1 extends TargetStatusMessage {
         track.setSelectedAltitudeManagedMcp(selectedAltitudeType == SelectedAltitudeSource.MCP);
         track.setSelectedAltitude(selectedAltitudeType != SelectedAltitudeSource.UNKNOWN ? selectedAltitude : 0);
 
-        if (isBaroAvailable()) {
-            track.setBaroAltitude((int) Math.round(baroSetting));
-        }
-
         if (selectedHeadingAvailable) {
             track.setSelectedHeading(selectedHeading);
         }
 
-        track.setNACp(NACp);
-        track.setNICb(NICbaro.ordinal());
         track.setSil(SIL.ordinal());
         track.setAutopilot(autopilot);
         track.setVnav(autopilotVnav);
