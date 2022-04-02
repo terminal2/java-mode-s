@@ -1,8 +1,10 @@
 package aero.t2s.modes.decoder.df.bds;
 
+import aero.t2s.modes.Altitude;
 import aero.t2s.modes.Meteo;
 import aero.t2s.modes.Track;
 import aero.t2s.modes.constants.Hazard;
+import aero.t2s.modes.decoder.AltitudeEncoding;
 
 public class Bds45 extends Bds {
     private static final double SAT_ACCURACY = 0.25d;
@@ -104,6 +106,28 @@ public class Bds45 extends Bds {
         if (!statusRadioHeight && radioHeight != 0) {
             invalidate();
             return;
+        }
+
+        // Windshear + turbulence + microburst => Very unlikely to be a BDS 45 valid message let's flag it as invalid
+        if (statusTurbulence && statusWindShear && statusMicroBurst) {
+            invalidate();
+            return;
+        }
+
+        if (statusMicroBurst) {
+            // If message is DF20 (altitude encoding) and altitude is above 10000ft microburst is unlikely flag as invalid
+            if (data[0] >>> 3 == 20) {
+                Altitude altitude = AltitudeEncoding.decode((data[2] & 0x1F) << 8 | data[3]);
+                if (altitude.getAltitude() > 10_000) {
+                    invalidate();
+                    return;
+                }
+            }
+            // DF 21 message since we do not have altitude info and message is likely to be BDS17 flag BDS45 on DF21 with microburst as invalid
+            else {
+                invalidate();
+                return;
+            }
         }
     }
 
