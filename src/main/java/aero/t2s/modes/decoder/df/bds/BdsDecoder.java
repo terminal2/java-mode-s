@@ -44,6 +44,18 @@ public class BdsDecoder {
         }
 
         if (valid.size() > 1) {
+            // Is BDS 50 / 60 pair
+            if (valid.size() == 2 && valid.stream().anyMatch(bds -> bds.getClass().equals(Bds50.class)) && valid.stream().anyMatch(bds -> bds.getClass().equals(Bds60.class))) {
+                Bds bds50 = valid.stream().filter(bds -> bds.getClass().equals(Bds50.class)).findFirst().get();
+                Bds bds60 = valid.stream().filter(bds -> bds.getClass().equals(Bds60.class)).findFirst().get();
+
+                Bds likelyBds = ((Bds50)bds50).compareWithBds60((Bds60) bds60);
+
+                if (likelyBds != null) {
+                    return likelyBds;
+                }
+            }
+
             throw new MultipleBdsMatchesFoundException(valid);
         }
 

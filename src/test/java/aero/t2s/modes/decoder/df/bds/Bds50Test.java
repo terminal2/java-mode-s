@@ -43,8 +43,8 @@ class Bds50Test {
             0b00000000,
         });
 
-        assertTrue(bds.isValid());
-        assertEquals(45, bds.getRollAngle());
+        assertFalse(bds.isValid());
+        assertEquals(0, bds.getRollAngle());
         assertEquals(0, bds.getTrueTrack());
         assertEquals(0, bds.getGs());
         assertEquals(0, bds.getTrackAngleRate());
@@ -61,8 +61,8 @@ class Bds50Test {
             0b00000000,
         });
 
-        assertTrue(bds.isValid());
-        assertEquals(-45, bds.getRollAngle());
+        assertFalse(bds.isValid());
+        assertEquals(0, bds.getRollAngle());
         assertEquals(0, bds.getTrueTrack());
         assertEquals(0, bds.getGs());
         assertEquals(0, bds.getTrackAngleRate());

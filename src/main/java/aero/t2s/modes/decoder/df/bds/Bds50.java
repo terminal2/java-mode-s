@@ -1,6 +1,8 @@
 package aero.t2s.modes.decoder.df.bds;
 
+import aero.t2s.modes.Altitude;
 import aero.t2s.modes.Track;
+import aero.t2s.modes.decoder.AltitudeEncoding;
 
 /**
  * 56-bit MB Field is structured in the following format
@@ -150,7 +152,7 @@ public class Bds50 extends Bds {
             return;
         }
         if (statusRollAngle) {
-            if (Math.abs(rollAngle) > 50) {
+            if (Math.abs(rollAngle) > 32) {
                 invalidate();
                 rollAngle = 0;
                 return;
@@ -200,6 +202,38 @@ public class Bds50 extends Bds {
         if (statusGs && statusTas && Math.abs((tas - gs)) > 200) {
             invalidate();
             return;
+        }
+    }
+
+    public Bds compareWithBds60(Bds60 bds60) {
+        // average speed of sound between 0 - 45000ft
+        double speedOfSound = 617d;
+
+        short[] data = getData();
+        if (data[0] >>> 3 == 20) {
+            Altitude altitude = AltitudeEncoding.decode((data[2] & 0x1F) << 8 | data[3]);
+            // Estimated TAS
+            double bds60Tas = bds60.getIas() * (1 + (altitude.getAltitude() / 1000) * 0.02);
+            // Estimated Mach
+            double bds60Mach = bds60Tas / speedOfSound;
+
+            if (Math.abs(bds60Mach - bds60.getMach()) < 0.1) {
+                return bds60;
+            }
+
+            return this;
+        } else {
+            // No altitude information assume check in 2000ft increments
+            for (int altitude = 0; altitude < 45; altitude += 2) {
+                double bds60Tas = bds60.getIas() * (1 + altitude * 0.02);
+                double bds60Mach = bds60Tas / speedOfSound;
+
+                if (Math.abs(bds60Mach - bds60.getMach()) < 0.01) {
+                    return bds60;
+                }
+            }
+
+            return this;
         }
     }
 

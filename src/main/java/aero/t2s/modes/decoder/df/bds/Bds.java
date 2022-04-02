@@ -23,4 +23,8 @@ public abstract class Bds {
     public boolean isValid() {
         return valid;
     }
+
+    public short[] getData() {
+        return data;
+    }
 }
