@@ -1,12 +1,11 @@
 package example.flight;
 
-import aero.t2s.modes.Track;
-import aero.t2s.modes.constants.Hazard;
-
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.*;
+
+import aero.t2s.modes.Track;
+import aero.t2s.modes.constants.Hazard;
 
 public class FlightFrame extends JFrame {
     java.util.Timer timer = new Timer();

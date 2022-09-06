@@ -8,5 +8,5 @@ repositories {
 }
 
 dependencies {
-    compile ('aero.t2s:mode-s:0.2.5-SNAPSHOT')
+    implementation project(':')
 }

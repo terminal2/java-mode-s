@@ -15,6 +15,12 @@ def javaTargetVersion = 11
 
 sourceCompatibility = javaTargetVersion
 
+subprojects {
+    tasks.withType(JavaCompile.class) {
+        options.release = javaTargetVersion
+    }
+}
+
 dependencies {
     api 'org.slf4j:slf4j-api:1.7.32'
 

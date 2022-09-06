@@ -1,9 +1,9 @@
 package example;
 
-import aero.t2s.modes.Track;
-
-import javax.swing.table.AbstractTableModel;
 import java.util.List;
+import javax.swing.table.AbstractTableModel;
+
+import aero.t2s.modes.Track;
 
 class FlightsTable extends AbstractTableModel {
     private static String[] columns = {
