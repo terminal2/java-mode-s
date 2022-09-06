@@ -11,6 +11,10 @@ apply plugin: 'idea'
 apply plugin: 'java-library'
 apply plugin: "com.vanniktech.maven.publish"
 
+def javaTargetVersion = 11
+
+sourceCompatibility = javaTargetVersion
+
 dependencies {
     api 'org.slf4j:slf4j-api:1.7.32'
 
@@ -24,9 +28,8 @@ repositories {
     mavenLocal()
 }
 
-compileJava {
-    sourceCompatibility = 11
-    targetCompatibility = 11
+tasks.withType(JavaCompile.class) {
+    options.release = javaTargetVersion
 }
 
 test {
