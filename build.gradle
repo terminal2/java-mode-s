@@ -12,7 +12,7 @@ apply plugin: 'java-library'
 apply plugin: "com.vanniktech.maven.publish"
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.32'
+    api 'org.slf4j:slf4j-api:1.7.32'
 
     // Use JUnit test framework
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
