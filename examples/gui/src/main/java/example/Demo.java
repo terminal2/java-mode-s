@@ -1,18 +1,18 @@
 package example;
 
-import aero.t2s.modes.ModeS;
-import aero.t2s.modes.Track;
-import example.flight.FlightFrame;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import aero.t2s.modes.ModeS;
+import aero.t2s.modes.Track;
+import example.flight.FlightFrame;
 
 /*
  * ButtonDemo.java requires the following files:

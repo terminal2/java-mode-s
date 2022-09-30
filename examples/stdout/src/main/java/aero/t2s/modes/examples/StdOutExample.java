@@ -1,11 +1,11 @@
 package aero.t2s.modes.examples;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import aero.t2s.modes.ModeS;
 import aero.t2s.modes.decoder.df.DF20;
 import aero.t2s.modes.decoder.df.DF21;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class StdOutExample {
     public static void main(String[] args) {
