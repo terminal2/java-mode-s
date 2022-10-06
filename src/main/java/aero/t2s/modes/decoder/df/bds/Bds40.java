@@ -58,9 +58,9 @@ import aero.t2s.modes.constants.SelectedAltitudeSource;
  *
  * <h2>Barometric Pressure Setting</h2>
  *
- * <p>When status flag (bit 27) is set to false indicates the information is valid and van be used</p>
+ * <p>When status flag (bit 27) is set to 1 indicates the information is valid and van be used</p>
  *
- * <i>Note: LSB (1 bit) = 0.1mb with a range 0 - 410mb. You need to add 800mb to receive the real baro steting</i>
+ * <i>Note: LSB (1 bit) = 0.1mb with a range 0 - 410mb. You need to add 800mb to receive the real baro setting</i>
  *
  * <h2>MCP/FCU Mode bits</h2>
  * <p>
