@@ -118,7 +118,7 @@ public class Bds60 extends Bds {
         }
 
         if (statusBaroRocd && statusIrsRocd) {
-            if (Math.abs(irsRocd - baroRocd) > 500) {
+            if (Math.abs(irsRocd - baroRocd) > 700) {
                 invalidate();
                 return;
             }
