@@ -10,7 +10,7 @@ public class Register09 extends Register {
 
     /**
      * An intent change event shall be triggered 4 seconds after the detection of new information being inserted in registers 4016 to 4216.
-     * The code shall remain set for 18 ±1 second following an intent change.
+     * The code shall remain set for 18 +/-1 second following an intent change.
      */
     private boolean intentChangeFlag;
     private int heading = 0;
