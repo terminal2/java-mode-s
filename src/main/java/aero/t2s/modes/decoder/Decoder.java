@@ -71,7 +71,7 @@ public class Decoder {
                 throw new UnknownDownlinkFormatException(downlinkFormat, data);
         }
 
-        return df.decode();
+        return df.decode().aircraft(modeSDatabase.find(df.getIcao()));
     }
 
     public Track getTrack(String icao) {
