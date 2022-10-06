@@ -39,7 +39,7 @@ import aero.t2s.modes.constants.SelectedAltitudeSource;
  *     See {@link SelectedAltitudeSource} for more details
  * </p>
  *
- * <i>Note: LSB (1 bit) = 16feet with a range 0 - 65520 feet, this class considers altitudes above 50000ft as invalid / error.</i>
+ * <i>Note: LSB (1 bit) = 16feet with a range 0 - 65520 feet, this class considers altitudes above 52000ft as invalid / error.</i>
  *
  * <h2>FMS Selected altitude</h2>
  *
@@ -54,7 +54,7 @@ import aero.t2s.modes.constants.SelectedAltitudeSource;
  *     The FMS selected altitude field is transmitting 32000ft, the Target Altitude Source flag is set to MCP.
  * </p>
  *
- * <i>Note: LSB (1 bit) = 16feet with a range 0 - 65520 feet, this class considers altitudes above 50000ft as invalid / error.</i>
+ * <i>Note: LSB (1 bit) = 16feet with a range 0 - 65520 feet, this class considers altitudes above 52000ft as invalid / error.</i>
  *
  * <h2>Barometric Pressure Setting</h2>
  *
