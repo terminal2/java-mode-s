@@ -113,7 +113,7 @@ public class Bds40 extends Bds {
 
         selectedAltitude = (((data[4] & 0b01111111) << 5) | (data[5] & 0b11111000) >>> 3) * 16;
         if (statusMcp) {
-            if (selectedAltitude > 50000) {
+            if (selectedAltitude > 52000) {
                 invalidate();
                 return;
             }
@@ -126,7 +126,7 @@ public class Bds40 extends Bds {
 
         fmsAltitude = (((data[5] & 0x3) << 10) | (data[6] << 2) | ((data[7] >>> 6) & 0x3)) * 16;
         if (statusFms) {
-            if (fmsAltitude <= 0 || fmsAltitude > 50000) {
+            if (fmsAltitude <= 0 || fmsAltitude > 52000) {
                 invalidate();
                 return;
             }
