@@ -1,6 +1,7 @@
 package aero.t2s.modes.decoder.df;
 
 import aero.t2s.modes.Track;
+import aero.t2s.modes.database.ModeSDatabase;
 import aero.t2s.modes.decoder.Common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ public abstract class DownlinkFormat {
     protected final short[] data;
 
     private final String icao;
+    private ModeSDatabase.ModeSAircraft aircraft;
 
     public DownlinkFormat(short[] data, IcaoAddress icaoAddressFrom) {
         this.data = data;
@@ -33,6 +35,16 @@ public abstract class DownlinkFormat {
 
     public short[] getData() {
         return data;
+    }
+
+    public DownlinkFormat aircraft(ModeSDatabase.ModeSAircraft aircraft) {
+        this.aircraft = aircraft == null ? new ModeSDatabase.ModeSAircraft(this.getIcao(), null, null, null) : aircraft;
+
+        return this;
+    }
+
+    public ModeSDatabase.ModeSAircraft getAircraft() {
+        return this.aircraft;
     }
 
     protected enum IcaoAddress {
