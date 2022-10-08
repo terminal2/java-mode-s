@@ -5,19 +5,19 @@ This library decodes ADS-B Messages and creates an easy to work with track objec
 
 Message support status
 
-| Downlink Format | Human Readable                           | Supported | Note |
-|-----------------|------------------------------------------|-----------|------|
-| DF0             | Short Air-Air Surveillance               | ✅        |      |
-| DF4             | Surveillance, Altitude request           | ✅        | Updates Altitude information + SPI (Ident) |
-| DF5             | Surveillance, Identity request           | ✅        | Updates Callsign + SPI (Ident)     |
-| DF11            | MODE S only all-call                     | ✅        | Broadcasts ICAO Mode-S address     |
-| DF16            | Long Air-Air Surveillance                | ✅        | Logs warning when ACAS RA is active  |
-| DF17            | Extended Squitter (Most ADS-B Data)      | ⚠️        | Partial supported see DF17/18 status below     |
-| DF18            | Extended Squitter/Supplementary (Ground) | ⚠️        | Partial supported see DF17/18 status below     |
-| DF19            | Extended Squitter Military               | ❌        | Not supported at this stage |
-| DF20            | Comm-B Altitude                          | ⚠️        | Partial supported see DF20/21 status below     |
-| DF21            | Comm-B Identity                          | ⚠️        | Partial supported see DF20/21 status below     |
-| DF24            | Comm-B ELM                               | ❌        | Not supported at this stage |
+| Downlink Format | Human Readable                           | Supported | Note                                          |
+|-----------------|------------------------------------------|-----------|-----------------------------------------------|
+| DF0             | Short Air-Air Surveillance               | ✅        |                                               |
+| DF4             | Surveillance, Altitude request           | ✅        | Updates Altitude information + SPI (Ident)    |
+| DF5             | Surveillance, Identity request           | ✅        | Updates Callsign + SPI (Ident)                |
+| DF11            | MODE S only all-call                     | ✅        | Broadcasts ICAO Mode-S address                |
+| DF16            | Long Air-Air Surveillance                | ✅        | Logs warning when ACAS RA is active           |
+| DF17            | Extended Squitter (Most ADS-B Data)      | ⚠️        | Partially supported, see DF17/18 status below |
+| DF18            | Extended Squitter/Supplementary (Ground) | ⚠️        | Partially supported, see DF17/18 status below |
+| DF19            | Extended Squitter Military               | ❌        | Not supported at this stage                   |
+| DF20            | Comm-B Altitude                          | ⚠️        | Partially supported, see DF20/21 status below |
+| DF21            | Comm-B Identity                          | ⚠️        | Partially supported, see DF20/21 status below |
+| DF24            | Comm-B ELM                               | ❌        | Not supported at this stage                   |
 
 
 ## DF17/DF18 - Extended Squitter
@@ -68,7 +68,7 @@ Most features of the DF17/18 protocol have been implemented, some message lack s
 DF20/21 messages are replies to data requests from a radar station, you'll only receive these messages if Mode-S radar
 is actively requesting this information. You will only receive messages requested by the radar.
 
-Message is structure as follows
+Message is structured as follows:
 
 ```
 LSB |1----|6--|9----|14----|20-----------|33------------------------------------------------------|89-----------------------|
@@ -96,7 +96,7 @@ You run through each BDS and pass the message to the decoder, if the message doe
 Repeat this process until you have a match. 
 
 At this moment the coded logic has too many incorrect matches and thus decided to disable BDS guessing.
-We are actively looking for a fix, or at least ability to enable this with a experimental flag.
+We are actively looking for a fix, or at least the ability to enable this with an experimental flag.
 We hope with more BDS implemented the guessing accuracy will improve.
 
 | BDS | Human Readable                             | Supported | Note |
@@ -146,7 +146,7 @@ We hope with more BDS implemented the guessing accuracy will improve.
 
 # Installation 
 
-This package is available through maven central
+This package is available through Maven Central
 
 Pom
 ```xml
@@ -159,7 +159,7 @@ Pom
 
 Gradle
 ```
-    compile('aero.t2s:mode-s:0.2.0-SNAPSHOT')
+ compile('aero.t2s:mode-s:0.2.0-SNAPSHOT')
 ```
 
 # Usage
@@ -191,9 +191,9 @@ class Main
 
 ## Using Aircraft Database
 
-This library is compatible with opensky dataset (https://opensky-network.org/datasets/metadata/).
+This library is compatible with [OpenSky dataset](https://opensky-network.org/datasets/metadata/).
 
-In order to use the database version you can start ModeS plugin as follows
+In order to use the database version you can start ModeS plugin as follows:
 
 ```java
 class Main
@@ -222,9 +222,9 @@ class Main
 
 # Contributing
 
-You can contribute to this project by reporting/fixing bugs or implemented a new packet.  
+You can contribute to this project by reporting/fixing bugs or implement a new packet.  
 We are always looking for help on this project.
 
 # License
 
-This library is Apache 2.0 licensed read the full license [here](LICENSE).
+This library is Apache 2.0 licensed. You can read the full license [here](LICENSE).
