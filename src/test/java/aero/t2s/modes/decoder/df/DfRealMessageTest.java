@@ -72,25 +72,23 @@ public class DfRealMessageTest {
 
         assertInstanceOf(DF20.class, df);
         DF20 df20 = (DF20) df;
-        assertEquals("A48E35", df.getIcao());
-        assertEquals(51000, df20.getAltitude().getAltitude());
+        assertEquals("800736", df.getIcao());
+        assertEquals(41375, df20.getAltitude().getAltitude());
 
         assertTrue(df20.isValid());
-        assertInstanceOf(Bds40.class, df20.getBds());
+        assertInstanceOf(Bds60.class, df20.getBds());
 
-        Bds40 bds = (Bds40) df20.getBds();
-        assertTrue(bds.isStatusTargetSource());
-        assertEquals(SelectedAltitudeSource.MCP, bds.getSelectedAltitudeSource());
-        assertTrue(bds.isStatusMcp());
-        assertEquals(51008, bds.getSelectedAltitude());
-        assertTrue(bds.isStatusFms());
-        assertEquals(51008, bds.getFmsAltitude());
-        assertTrue(bds.isStatusBaro());
-        assertEquals(1013.3, bds.getBaro(), 0.1);
-        assertTrue(bds.isStatusMcpMode());
-        assertFalse(bds.isAutopilotApproach());
-        assertFalse(bds.isAutopilotVnav());
-        assertTrue(bds.isAutopilotAltitudeHold());
+        Bds60 bds = (Bds60) df20.getBds();
+        assertTrue(bds.isStatusIrsRocd());
+        assertEquals(-32, bds.getIrsRocd());
+        assertTrue(bds.isStatusBaroRocd());
+        assertEquals(-1024.0, bds.getBaroRocd());
+        assertTrue(bds.isStatusIas());
+        assertEquals(250, bds.getIas());
+        assertTrue(bds.isStatusMach());
+        assertEquals(0.84, bds.getMach(), 0.1);
+        assertTrue(bds.isStatusMagneticHeading());
+        assertEquals(101.7, bds.getMagneticHeading(), 0.1);
     }
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
