@@ -93,7 +93,7 @@ public class Bds60 extends Bds {
         }
 
         double irsSign = ((data[9] >> 1) & 0x1) == 1 ? -512.0 : 0.0;
-        irsRocd = (((data[9] & 0x1) << 8 | data[10]) + irsSign) * ROCD_ACCURCY;
+        irsRocd = ((((data[9] & 0x1) << 8 | data[10]) + irsSign) * ROCD_ACCURCY) % 16384;
         if (statusIrsRocd) {
             if (irsRocd < -8000 || irsRocd > 6000) {
                 invalidate();
