@@ -39,9 +39,36 @@ public class DfRealMessageTest {
     }
 
     @Test
-    public void test() throws UnknownDownlinkFormatException {
-//        DownlinkFormat df = testMessage("5D4CA64");
+    public void test_df_20_bds_40_a48e35() throws UnknownDownlinkFormatException {
         DownlinkFormat df = testMessage("A00006A1E3A71D30AA014672C8DF");
+
+        assertInstanceOf(DF20.class, df);
+        DF20 df20 = (DF20) df;
+        assertEquals("A48E35", df.getIcao());
+        assertEquals(51000, df20.getAltitude().getAltitude());
+
+        assertTrue(df20.isValid());
+        assertInstanceOf(Bds40.class, df20.getBds());
+
+        Bds40 bds = (Bds40) df20.getBds();
+        assertTrue(bds.isStatusTargetSource());
+        assertEquals(SelectedAltitudeSource.MCP, bds.getSelectedAltitudeSource());
+        assertTrue(bds.isStatusMcp());
+        assertEquals(51008, bds.getSelectedAltitude());
+        assertTrue(bds.isStatusFms());
+        assertEquals(51008, bds.getFmsAltitude());
+        assertTrue(bds.isStatusBaro());
+        assertEquals(1013.3, bds.getBaro(), 0.1);
+        assertTrue(bds.isStatusMcpMode());
+        assertFalse(bds.isAutopilotApproach());
+        assertFalse(bds.isAutopilotVnav());
+        assertTrue(bds.isAutopilotAltitudeHold());
+    }
+
+
+    @Test
+    public void test_df20_bds60_800736() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("A0001A1FA439F534BF07FFDE1ECC");
 
         assertInstanceOf(DF20.class, df);
         DF20 df20 = (DF20) df;
