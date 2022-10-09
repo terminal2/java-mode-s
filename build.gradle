@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.18.0'
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.22.0'
     }
 }
 
@@ -40,6 +40,12 @@ tasks.withType(JavaCompile.class) {
 
 test {
     useJUnitPlatform()
+}
+
+
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
 }
 
 signing {
