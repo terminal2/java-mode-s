@@ -168,7 +168,7 @@ public class DfRealMessageTest {
 
 
     @Test
-    public void test_df21_bds50_406ECD() throws UnknownDownlinkFormatException {
+    public void test_df21_bds50_44CD73() throws UnknownDownlinkFormatException {
         DownlinkFormat df = testMessage("A0000333E17987192250004423EC");
 
         assertInstanceOf(DF20.class, df);
