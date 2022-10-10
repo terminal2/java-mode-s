@@ -152,7 +152,7 @@ public class Bds50 extends Bds {
             return;
         }
         if (statusRollAngle) {
-            if (Math.abs(rollAngle) > 32) {
+            if (Math.abs(rollAngle) > 50) {
                 invalidate();
                 rollAngle = 0;
                 return;
