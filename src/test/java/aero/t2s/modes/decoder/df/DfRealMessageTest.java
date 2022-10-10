@@ -116,6 +116,31 @@ public class DfRealMessageTest {
         assertEquals(236.7, bds.getMagneticHeading(), 0.1);
     }
 
+    @Test
+    public void test_df21_bds60_00000() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("A800198EEABA2B30F0041257522A");
+
+        assertInstanceOf(DF21.class, df);
+        DF21 df21 = (DF21) df;
+        assertEquals("000000", df.getIcao()); // Military / corrupt transponder
+        assertEquals(5652, df21.getModeA());
+
+        assertTrue(df21.isValid());
+        assertInstanceOf(Bds60.class, df21.getBds());
+
+        Bds60 bds = (Bds60) df21.getBds();
+        assertTrue(bds.isStatusIrsRocd());
+        assertEquals(576, bds.getIrsRocd(), 0.1);
+        assertTrue(bds.isStatusBaroRocd());
+        assertEquals(0, bds.getBaroRocd(), 0.1);
+        assertTrue(bds.isStatusIas());
+        assertEquals(277, bds.getIas());
+        assertTrue(bds.isStatusMach());
+        assertEquals(0.77, bds.getMach(), 0.1);
+        assertTrue(bds.isStatusMagneticHeading());
+        assertEquals(300.0, bds.getMagneticHeading(), 0.1);
+    }
+
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
         Decoder decoder = new Decoder(new HashMap<>(), 50, 2, ModeSDatabase.createDatabase());
 
