@@ -116,13 +116,6 @@ public class Bds60 extends Bds {
                 }
             }
         }
-
-        if (statusBaroRocd && statusIrsRocd) {
-            if (Math.abs(irsRocd - baroRocd) > 1500) {
-                invalidate();
-                return;
-            }
-        }
     }
 
     private double machToCas(double altitude) {
