@@ -30,46 +30,6 @@ class Bds50Test {
     }
 
     @Test
-    public void it_decodes_bds50_roll_angle()
-    {
-        bds = new Bds50(new short[] {
-            0x0, 0x0, 0x0, 0x0,
-            0b10100000,
-            0b00000000,
-            0b00000000,
-            0b00000000,
-            0b00000000,
-            0b00000000,
-            0b00000000,
-        });
-
-        assertFalse(bds.isValid());
-        assertEquals(0, bds.getRollAngle());
-        assertEquals(0, bds.getTrueTrack());
-        assertEquals(0, bds.getGs());
-        assertEquals(0, bds.getTrackAngleRate());
-        assertEquals(0, bds.getTas());
-
-        bds = new Bds50(new short[] {
-            0x0, 0x0, 0x0, 0x0,
-            0b11100000,
-            0b00000000,
-            0b00000000,
-            0b00000000,
-            0b00000000,
-            0b00000000,
-            0b00000000,
-        });
-
-        assertFalse(bds.isValid());
-        assertEquals(0, bds.getRollAngle());
-        assertEquals(0, bds.getTrueTrack());
-        assertEquals(0, bds.getGs());
-        assertEquals(0, bds.getTrackAngleRate());
-        assertEquals(0, bds.getTas());
-    }
-
-    @Test
     public void it_is_not_bds50_when_roll_angle_is_not_available_and_bits_are_set()
     {
         bds = new Bds50(new short[] {
