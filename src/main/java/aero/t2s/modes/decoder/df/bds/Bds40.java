@@ -126,7 +126,7 @@ public class Bds40 extends Bds {
 
         fmsAltitude = (((data[5] & 0x3) << 10) | (data[6] << 2) | ((data[7] >>> 6) & 0x3)) * 16;
         if (statusFms) {
-            if (fmsAltitude <= 0 || fmsAltitude > 52000) {
+            if (fmsAltitude < 0 || fmsAltitude > 52000) {
                 invalidate();
                 return;
             }
