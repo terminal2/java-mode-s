@@ -51,7 +51,7 @@ class DF0Test {
     {
         df0 = new DF0(BinaryHelper.stringToByteArray("02E1951DE7596A")).decode();
 
-        assertEquals(33325, df0.getAltitude().getAltitude(), 0.1);
+        assertEquals(32925, df0.getAltitude().getAltitude(), 0.1);
         assertEquals(25, df0.getAltitude().getStep());
         assertFalse(df0.getAltitude().isMetric());
     }

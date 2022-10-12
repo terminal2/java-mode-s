@@ -73,7 +73,7 @@ public class DfRealMessageTest {
         assertInstanceOf(DF20.class, df);
         DF20 df20 = (DF20) df;
         assertEquals("800736", df.getIcao());
-        assertEquals(41375, df20.getAltitude().getAltitude());
+        assertEquals(40975, df20.getAltitude().getAltitude());
 
         assertTrue(df20.isValid());
         assertInstanceOf(Bds60.class, df20.getBds());

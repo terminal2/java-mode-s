@@ -23,7 +23,8 @@ public class AltitudeEncoding {
     }
 
     private static Altitude decodeFeet(int encoded) {
-        int n = ((encoded & 0b1111110000000) >>> 2) | (encoded & 0b11111);
+        // Remove bits 7 & 8 and stitch the binary message together.
+        int n = ((encoded & 0b1111110000000) >>> 2) + ((encoded & 0b100000) >>> 1) + (encoded & 0b1111);
 
         int altitude = (25 * n) - 1000;
 
