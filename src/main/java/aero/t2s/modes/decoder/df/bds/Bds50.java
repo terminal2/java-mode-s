@@ -203,6 +203,25 @@ public class Bds50 extends Bds {
             invalidate();
             return;
         }
+
+        // If known check if roll angle & track angle rate matches expected / value
+        // Formula from SkyBrary TurnRate (1) = (TAS / 10) => Roll Angle
+        // Which we can rewrite to Roll Angle * 10 * Turn Rate = TAS
+        // When TAS is not known we can use GS instead allow for bigger margin
+        if (statusTrackAngle && statusRollAngle) {
+            double expectedTAS = Math.abs(rollAngle * 10d * (trackAngleRate / 3d));
+            if (statusTas) {
+                if (Math.abs(expectedTAS - tas) > 50) {
+                    invalidate();
+                    return;
+                }
+            } else if (statusGs) {
+                if (Math.abs(expectedTAS - gs) > 150) {
+                    invalidate();
+                    return;
+                }
+            }
+        }
     }
 
     public Bds compareWithBds60(Bds60 bds60) {

@@ -237,6 +237,34 @@ public class DfRealMessageTest {
     }
 
 
+    @Test
+    public void test_df21_bds40_4CA6F8() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("A000069E8BBC2F30A40000528AB8");
+
+        assertInstanceOf(DF20.class, df);
+        DF20 df20 = (DF20) df;
+        assertEquals("4CA6F8", df.getIcao()); // Military / corrupt transponder
+        assertEquals(9750, df20.getAltitude().getAltitude());
+
+        assertTrue(df20.isValid());
+        assertInstanceOf(Bds40.class, df20.getBds());
+
+        Bds40 bds = (Bds40) df20.getBds();
+        assertFalse(bds.isStatusTargetSource());
+        assertNull(bds.getSelectedAltitudeSource());
+        assertTrue(bds.isStatusMcp());
+        assertEquals(6000, bds.getSelectedAltitude());
+        assertTrue(bds.isStatusFms());
+        assertEquals(3008, bds.getFmsAltitude());
+        assertTrue(bds.isStatusBaro());
+        assertEquals(1013.0, bds.getBaro(), 0.1);
+        assertFalse(bds.isStatusMcpMode());
+        assertFalse(bds.isAutopilotApproach());
+        assertFalse(bds.isAutopilotVnav());
+        assertFalse(bds.isAutopilotAltitudeHold());
+    }
+
+
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
         Decoder decoder = new Decoder(new HashMap<>(), 50, 2, ModeSDatabase.createDatabase());
