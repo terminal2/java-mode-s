@@ -264,6 +264,30 @@ public class DfRealMessageTest {
         assertFalse(bds.isAutopilotAltitudeHold());
     }
 
+    @Test
+    public void test_df21_bds50_485209() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("A000093BFFF16B276004997B748F");
+
+        assertInstanceOf(DF20.class, df);
+        DF20 df20 = (DF20) df;
+        assertEquals("485209", df.getIcao()); // Military / corrupt transponder
+        assertEquals(14075, df20.getAltitude().getAltitude());
+
+        assertTrue(df20.isValid());
+        assertInstanceOf(Bds50.class, df20.getBds());
+
+        Bds50 bds = (Bds50) df20.getBds();
+        assertTrue(bds.isStatusGs());
+        assertEquals(314, bds.getGs(), 0.1);
+        assertTrue(bds.isStatusTas());
+        assertEquals(306, bds.getTas(), 0.1);
+        assertTrue(bds.isStatusRollAngle());
+        assertEquals(-0.1, bds.getRollAngle(), 0.1);
+        assertTrue(bds.isStatusTrueAngleRate());
+        assertEquals(0, bds.getTrackAngleRate(), 0.1);
+        assertTrue(bds.isStatusTrackAngle());
+        assertEquals(31.8, bds.getTrueTrack(), 0.1);
+    }
 
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {

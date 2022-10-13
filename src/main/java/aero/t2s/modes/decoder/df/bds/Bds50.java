@@ -208,7 +208,7 @@ public class Bds50 extends Bds {
         // Formula from SkyBrary TurnRate (1) = (TAS / 10) => Roll Angle
         // Which we can rewrite to Roll Angle * 10 * Turn Rate = TAS
         // When TAS is not known we can use GS instead allow for bigger margin
-        if (statusTrackAngle && statusRollAngle) {
+        if (statusTrackAngle && statusRollAngle && trackAngleRate != 0) {
             double expectedTAS = Math.abs(rollAngle * 10d * (trackAngleRate / 3d));
             if (statusTas) {
                 if (Math.abs(expectedTAS - tas) > 50) {
