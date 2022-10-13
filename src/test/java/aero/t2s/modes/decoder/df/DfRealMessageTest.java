@@ -5,6 +5,7 @@ import aero.t2s.modes.constants.SelectedAltitudeSource;
 import aero.t2s.modes.database.ModeSDatabase;
 import aero.t2s.modes.decoder.Decoder;
 import aero.t2s.modes.decoder.UnknownDownlinkFormatException;
+import aero.t2s.modes.decoder.df.bds.Bds10;
 import aero.t2s.modes.decoder.df.bds.Bds40;
 import aero.t2s.modes.decoder.df.bds.Bds50;
 import aero.t2s.modes.decoder.df.bds.Bds60;
@@ -218,6 +219,24 @@ public class DfRealMessageTest {
         assertFalse(bds.isAutopilotAltitudeHold());
         assertFalse(bds.isAutopilotApproach());
     }
+
+
+    @Test
+    public void test_df21_bds10_407776() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("A000042210000600B0000089B69E");
+
+        assertInstanceOf(DF20.class, df);
+        DF20 df20 = (DF20) df;
+        assertEquals("44CC63", df.getIcao()); // Military / corrupt transponder
+        assertEquals(2000, df20.getAltitude().getAltitude());
+
+        assertTrue(df20.isValid());
+        assertInstanceOf(Bds10.class, df20.getBds());
+
+        Bds10 bds = (Bds10) df20.getBds();
+    }
+
+
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
         Decoder decoder = new Decoder(new HashMap<>(), 50, 2, ModeSDatabase.createDatabase());

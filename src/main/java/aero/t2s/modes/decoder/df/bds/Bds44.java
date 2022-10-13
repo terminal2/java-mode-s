@@ -33,6 +33,14 @@ public class Bds44 extends Bds {
         }
 
         statusWindSpeed = (data[4] & 0b00001000) != 0;
+        statusAverageStaticPressure = (data[8] & 0b00100000) != 0;
+        statusTurbulence = (data[9] & 0b00000010) != 0;
+
+        if (!statusWindSpeed) {
+            invalidate();
+            return;
+        }
+
         windSpeed = (data[4] & 0b00000111) << 6 | data[5] >> 2;
         windDirection = ((data[5] & 0b00000011) << 7 | data[6] >> 1) * WIND_DIRECTION_ACCURACY;
         if (!statusWindSpeed && windSpeed != 0) {
@@ -52,14 +60,12 @@ public class Bds44 extends Bds {
             return;
         }
 
-        statusAverageStaticPressure = (data[8] & 0b00100000) != 0;
         averageStaticPressure = ((data[8] & 0b00011111) << 6) | data[9] >> 2;
         if (!statusAverageStaticPressure && averageStaticPressure != 0) {
             invalidate();
             return;
         }
 
-        statusTurbulence = (data[9] & 0b00000010) != 0;
         turbulence = Hazard.find(((data[9] & 0b00000001) << 1) | data[10] >>> 7);
         if (!statusTurbulence && turbulence != Hazard.NIL) {
             invalidate();
