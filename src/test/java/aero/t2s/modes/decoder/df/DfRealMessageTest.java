@@ -289,6 +289,56 @@ public class DfRealMessageTest {
         assertEquals(31.8, bds.getTrueTrack(), 0.1);
     }
 
+    @Test
+    public void test_df21_bds50_484FDF() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("A800080080502D2A600CA9DF5877");
+
+        assertInstanceOf(DF21.class, df);
+        DF21 df21 = (DF21) df;
+        assertEquals("484FDF", df.getIcao()); // Military / corrupt transponder
+        assertEquals(1000, df21.getModeA());
+
+        assertTrue(df21.isValid());
+        assertInstanceOf(Bds50.class, df21.getBds());
+
+        Bds50 bds = (Bds50) df21.getBds();
+        assertTrue(bds.isStatusGs());
+        assertEquals(338, bds.getGs(), 0.1);
+        assertTrue(bds.isStatusTas());
+        assertEquals(338, bds.getTas(), 0.1);
+        assertTrue(bds.isStatusRollAngle());
+        assertEquals(0.35, bds.getRollAngle(), 0.1);
+        assertTrue(bds.isStatusTrueAngleRate());
+        assertEquals(0, bds.getTrackAngleRate(), 0.1);
+        assertTrue(bds.isStatusTrackAngle());
+        assertEquals(3.8, bds.getTrueTrack(), 0.1);
+    }
+
+    @Test
+    public void test_df20_bds50_48418A() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("A0000E978F1FBD316114BDA0FFBF");
+
+        assertInstanceOf(DF20.class, df);
+        DF20 df20 = (DF20) df;
+        assertEquals("48418A", df.getIcao()); // Military / corrupt transponder
+        assertEquals(22375, df20.getAltitude().getAltitude());
+
+        assertTrue(df20.isValid());
+        assertInstanceOf(Bds50.class, df20.getBds());
+
+        Bds50 bds = (Bds50) df20.getBds();
+        assertTrue(bds.isStatusGs());
+        assertEquals(394, bds.getGs(), 0.1);
+        assertTrue(bds.isStatusTas());
+        assertEquals(378, bds.getTas(), 0.1);
+        assertTrue(bds.isStatusRollAngle());
+        assertEquals(21, bds.getRollAngle(), 0.1);
+        assertTrue(bds.isStatusTrueAngleRate());
+        assertEquals(1, bds.getTrackAngleRate(), 0.1);
+        assertTrue(bds.isStatusTrackAngle());
+        assertEquals(354, bds.getTrueTrack(), 0.1);
+    }
+
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
         Decoder decoder = new Decoder(new HashMap<>(), 50, 2, ModeSDatabase.createDatabase());
