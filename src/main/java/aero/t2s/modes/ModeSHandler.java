@@ -35,9 +35,6 @@ abstract public class ModeSHandler {
             // example mode A/C: *21D2; *0200; *0101;
             throw new ModeAcMessageException();
         }
-        if (input.startsWith("*0000")) {
-            throw new EmptyMessageException();
-        }
 
         String hex = input.replace("*", "").replace(";", "");
 
