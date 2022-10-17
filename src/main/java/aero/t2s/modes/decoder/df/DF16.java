@@ -9,7 +9,6 @@ import aero.t2s.modes.decoder.AltitudeEncoding;
 public class DF16 extends DownlinkFormat {
 
     private VerticalStatus verticalStatus;
-    private CrossLinkCapability crossLinkCapability;
     private AcasSensitivity sensitivity;
     private AcasReplyInformation replyInformation;
     private Altitude altitude;
@@ -28,7 +27,6 @@ public class DF16 extends DownlinkFormat {
     @Override
     public DF16 decode() {
         verticalStatus = VerticalStatus.from((data[0] >>> 2) & 0x1);
-        crossLinkCapability = CrossLinkCapability.from((data[0] >>> 1) & 0x1);
         sensitivity = AcasSensitivity.from(data[1] >>> 5);
         replyInformation = AcasReplyInformation.from(((data[1] & 0x7) << 1) | ((data[2] >> 7) & 0x1));
         altitude = AltitudeEncoding.decode((((data[2] << 8) | data[3])) & 0x1FFF);
@@ -67,7 +65,6 @@ public class DF16 extends DownlinkFormat {
     public void apply(Track track) {
         Acas acas = track.getAcas();
         acas.setVerticalStatus(verticalStatus);
-        acas.setCrossLinkCapability(crossLinkCapability);
         acas.setSensitivity(sensitivity);
         acas.setReplyInformation(replyInformation);
         acas.setAltitude(altitude);
@@ -81,10 +78,6 @@ public class DF16 extends DownlinkFormat {
 
     public VerticalStatus getVerticalStatus() {
         return verticalStatus;
-    }
-
-    public CrossLinkCapability getCrossLinkCapability() {
-        return crossLinkCapability;
     }
 
     public AcasSensitivity getSensitivity() {
