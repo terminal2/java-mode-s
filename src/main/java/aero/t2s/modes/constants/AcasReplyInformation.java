@@ -12,11 +12,11 @@ public enum  AcasReplyInformation {
     /**
      * 2 - reserved for ACAS
      */
-    RESERVED2,
+    ACAS_RA_INHIBIT,
     /**
      * 3 - reserved for ACAS
      */
-    RESERVED3,
+    ACAS_RA_VERTICAL_ONLY,
     /**
      * 4 - reserved for ACAS
      */
@@ -32,7 +32,7 @@ public enum  AcasReplyInformation {
     /**
      * 7 - reserved for ACAS
      */
-    RESERVED7,
+    ACAS_RA_FULL,
     /**
      * 8 - no maximum airspeed data available
      */

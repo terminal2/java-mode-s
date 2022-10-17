@@ -43,7 +43,7 @@ class DF0Test {
     void it_decodes_reply_information()
     {
         df0 = new DF0(BinaryHelper.stringToByteArray("02E194979F2C4B")).decode();
-        assertEquals(AcasReplyInformation.RESERVED3, df0.getReplyInformation());
+        assertEquals(AcasReplyInformation.ACAS_RA_VERTICAL_ONLY, df0.getReplyInformation());
     }
 
     @Test

@@ -1,7 +1,7 @@
 package aero.t2s.modes.decoder.df;
 
 import aero.t2s.modes.BinaryHelper;
-import aero.t2s.modes.constants.SelectedAltitudeSource;
+import aero.t2s.modes.constants.*;
 import aero.t2s.modes.database.ModeSDatabase;
 import aero.t2s.modes.decoder.Decoder;
 import aero.t2s.modes.decoder.UnknownDownlinkFormatException;
@@ -339,6 +339,32 @@ public class DfRealMessageTest {
         assertEquals(354, bds.getTrueTrack(), 0.1);
     }
 
+    @Test
+    public void test_df16_bds50_48418A() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("80C18819584195384EF8505941FD");
+
+        assertInstanceOf(DF16.class, df);
+        DF16 df16 = (DF16) df;
+        assertEquals("02A198", df.getIcao()); // Military / corrupt transponder
+        assertEquals(12025, df16.getAltitude().getAltitude());
+
+        assertEquals(VerticalStatus.AIRBORNE, df16.getVerticalStatus());
+        assertEquals(AcasSensitivity.LEVEL6, df16.getSensitivity());
+        assertEquals(AcasReplyInformation.ACAS_RA_VERTICAL_ONLY, df16.getReplyInformation());
+        assertFalse(df16.getResolutionAdvisory().isActive());
+        assertFalse(df16.getResolutionAdvisory().isRequiresCorrectionUpwards());
+        assertFalse(df16.getResolutionAdvisory().isRequiresCorrectionDownwards());
+        assertFalse(df16.getResolutionAdvisory().isRequiresPositiveClimb());
+        assertFalse(df16.getResolutionAdvisory().isRequiresPositiveDescend());
+        assertFalse(df16.getResolutionAdvisory().isRequiresCrossing());
+        assertFalse(df16.getResolutionAdvisory().isSenseReversal());
+
+        assertFalse(df16.isMultipleThreats());
+        assertFalse(df16.isRANotPassAbove());
+        assertFalse(df16.isRANotPassBelow());
+        assertFalse(df16.isRANotTurnLeft());
+        assertFalse(df16.isRANotTurnRight());
+    }
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
         Decoder decoder = new Decoder(new HashMap<>(), 50, 2, ModeSDatabase.createDatabase());
