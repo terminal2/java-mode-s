@@ -93,4 +93,20 @@ public class AirborneVelocityGroundspeed extends AirborneVelocity {
                 .setVy(yVelocity);
         }
     }
+
+    public boolean isVxAvailable() {
+        return xVelocityAvailable;
+    }
+
+    public int getVx() {
+        return xVelocity;
+    }
+
+    public boolean isVyAvailable() {
+        return yVelocityAvailable;
+    }
+
+    public int getVy() {
+        return yVelocity;
+    }
 }
