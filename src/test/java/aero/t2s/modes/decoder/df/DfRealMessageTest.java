@@ -5,10 +5,7 @@ import aero.t2s.modes.constants.*;
 import aero.t2s.modes.database.ModeSDatabase;
 import aero.t2s.modes.decoder.Decoder;
 import aero.t2s.modes.decoder.UnknownDownlinkFormatException;
-import aero.t2s.modes.decoder.df.bds.Bds10;
-import aero.t2s.modes.decoder.df.bds.Bds40;
-import aero.t2s.modes.decoder.df.bds.Bds50;
-import aero.t2s.modes.decoder.df.bds.Bds60;
+import aero.t2s.modes.decoder.df.bds.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -390,6 +387,47 @@ public class DfRealMessageTest {
         assertEquals(-2.0, bds.getTrackAngleRate(), 0.1);
         assertTrue(bds.isStatusTrackAngle());
         assertEquals(210.9, bds.getTrueTrack(), 0.1);
+    }
+
+    @Test
+    public void test_df20_bds17_3D2C7C() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("A0280314020100000000004E25E8");
+
+        assertInstanceOf(DF20.class, df);
+        DF20 df20 = (DF20) df;
+        assertEquals("3D2C7C", df.getIcao()); // Military / corrupt transponder
+        assertEquals(3900, df20.getAltitude().getAltitude());
+
+        assertFalse(df20.isMultipleMatches());
+        assertTrue(df20.isValid());
+        assertEquals(Bds17.class, df20.getBds().getClass());
+
+        Bds17 bds = (Bds17) df20.getBds();
+        assertFalse(bds.isBds0A());
+        assertFalse(bds.isBds05());
+        assertFalse(bds.isBds06());
+        assertFalse(bds.isBds07());
+        assertFalse(bds.isBds08());
+        assertFalse(bds.isBds09());
+        assertFalse(bds.isBds0A());
+        assertTrue(bds.isBds20());
+        assertFalse(bds.isBds21());
+        assertFalse(bds.isBds40());
+        assertFalse(bds.isBds41());
+        assertFalse(bds.isBds42());
+        assertFalse(bds.isBds43());
+        assertFalse(bds.isBds44());
+        assertFalse(bds.isBds45());
+        assertFalse(bds.isBds48());
+        assertTrue(bds.isBds50());
+        assertFalse(bds.isBds51());
+        assertFalse(bds.isBds52());
+        assertFalse(bds.isBds53());
+        assertFalse(bds.isBds54());
+        assertFalse(bds.isBds55());
+        assertFalse(bds.isBds56());
+        assertFalse(bds.isBds5F());
+        assertFalse(bds.isBds60());
     }
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {

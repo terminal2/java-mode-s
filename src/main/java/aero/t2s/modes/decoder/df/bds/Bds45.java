@@ -129,6 +129,31 @@ public class Bds45 extends Bds {
                 return;
             }
         }
+
+        if (statusTurbulence || statusWindShear || statusMicroBurst || statusIcing || statusWake) {
+            boolean nothing = true;
+
+            if (statusTurbulence && turbulence != Hazard.NIL) {
+                nothing = false;
+            }
+            if (statusWindShear && windShear != Hazard.NIL) {
+                nothing = false;
+            }
+            if (statusMicroBurst && microBurst != Hazard.NIL) {
+                nothing = false;
+            }
+            if (statusIcing && icing != Hazard.NIL) {
+                nothing = false;
+            }
+            if (statusWake && wake != Hazard.NIL) {
+                nothing = false;
+            }
+
+            if (nothing) {
+                invalidate();
+                return;
+            }
+        }
     }
 
 
