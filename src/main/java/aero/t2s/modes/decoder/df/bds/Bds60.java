@@ -106,6 +106,14 @@ public class Bds60 extends Bds {
             }
         }
 
+        if ((irsRocd > 0 && baroRocd < 0) || (irsRocd < 0 && baroRocd > 0)) {
+            // Aircraft cannot be climbing and descending at the same time
+            if (Math.abs(irsRocd) > 1000 && Math.abs(baroRocd) > 1000) {
+                invalidate();
+                return;
+            }
+        }
+
         if (statusMach && statusIas && data[0] >>> 3 == 20) {
             double altitude = AltitudeEncoding.decode((data[2] & 0x1F) << 8 | data[3]).getAltitude();
             if (altitude > 0) {

@@ -340,7 +340,7 @@ public class DfRealMessageTest {
     }
 
     @Test
-    public void test_df16_bds50_48418A() throws UnknownDownlinkFormatException {
+    public void test_df16_02A198() throws UnknownDownlinkFormatException {
         DownlinkFormat df = testMessage("80C18819584195384EF8505941FD");
 
         assertInstanceOf(DF16.class, df);
@@ -364,6 +364,32 @@ public class DfRealMessageTest {
         assertFalse(df16.isRANotPassBelow());
         assertFalse(df16.isRANotTurnLeft());
         assertFalse(df16.isRANotTurnRight());
+    }
+
+    @Test
+    public void test_df21_bds50_02A185() throws UnknownDownlinkFormatException {
+        DownlinkFormat df = testMessage("A8001AA0F4596112BDFC569A3AEC");
+
+        assertInstanceOf(DF21.class, df);
+        DF21 df21 = (DF21) df;
+        assertEquals("02A185", df.getIcao()); // Military / corrupt transponder
+        assertEquals(7110, df21.getModeA());
+
+        assertFalse(df21.isMultipleMatches());
+        assertTrue(df21.isValid());
+        assertEquals(Bds50.class, df21.getBds().getClass());
+
+        Bds50 bds = (Bds50) df21.getBds();
+        assertTrue(bds.isStatusGs());
+        assertEquals(148, bds.getGs(), 0.1);
+        assertTrue(bds.isStatusTas());
+        assertEquals(172, bds.getTas(), 0.1);
+        assertTrue(bds.isStatusRollAngle());
+        assertEquals(-16.5, bds.getRollAngle(), 0.1);
+        assertTrue(bds.isStatusTrueAngleRate());
+        assertEquals(-2.0, bds.getTrackAngleRate(), 0.1);
+        assertTrue(bds.isStatusTrackAngle());
+        assertEquals(210.9, bds.getTrueTrack(), 0.1);
     }
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
