@@ -3,7 +3,22 @@ package aero.t2s.modes;
 public class CprPosition {
     private double lat;
     private double lon;
+    private boolean valid;
     private int time;
+
+    public CprPosition() {
+        this.lat = 0.0;
+        this.lon = 0.0;
+        this.valid = false;
+    }
+    public CprPosition(double lat, double lon) {
+        setLatLon(lat ,lon);
+    }
+    public void setLatLon(double lat, double lon) {
+        this.lat = lat;
+        this.lon = lon;
+        this.valid = true;
+    }
 
     public void setLat(double lat) {
         this.lat = lat;
@@ -30,6 +45,6 @@ public class CprPosition {
     }
 
     public boolean isValid() {
-        return lat != 0d && lon != 0;
+        return valid;
     }
 }

@@ -9,8 +9,12 @@ public class Track {
     private String icao;
     private String callsign;
     private Altitude altitude = new Altitude();
+    private boolean cprEvenValid = false;
+    private CprPosition cprEven = new CprPosition();
+    private CprPosition cprOdd = new CprPosition();
     private double lat;
     private double lon;
+    private boolean positionAvailable = false;
     private int vx;
     private int vy;
     private double gs;
@@ -172,7 +176,13 @@ public class Track {
         return groundBit;
     }
 
+    public void setLatLon(double lat, double lon) {
+        this.lon = lat;
+        this.lon = lon;
+        this.positionAvailable = true;
+    }
     public void setLat(double lat) {
+        //TODO How do we know if position really is available if we only set the lat? Can we remove this method?
         this.lat = lat;
     }
 
@@ -181,11 +191,28 @@ public class Track {
     }
 
     public void setLon(double lon) {
+        //TODO How do we know if position really is available if we only set the lon? Can we remove this method?
         this.lon = lon;
     }
 
     public double getLon() {
         return lon;
+    }
+
+    public CprPosition getCprEven() {
+        return cprEven;
+    }
+
+    public void setCprEven(CprPosition cprEven) {
+        this.cprEven = cprEven;
+    }
+
+    public CprPosition getCprOdd() {
+        return cprOdd;
+    }
+
+    public void setCprOdd(CprPosition cprOdd) {
+        this.cprOdd = cprOdd;
     }
 
     public Version getVersion() {
@@ -245,7 +272,7 @@ public class Track {
     }
 
     public boolean isPositionAvailable() {
-        return lat != 0 & lon != 0;
+        return positionAvailable;
     }
 
     public void setGeometricHeightOffset(int geometricHeightOffset) {

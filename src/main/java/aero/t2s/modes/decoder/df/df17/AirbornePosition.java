@@ -1,6 +1,7 @@
 package aero.t2s.modes.decoder.df.df17;
 
 import aero.t2s.modes.Track;
+import aero.t2s.modes.CprPosition;
 import aero.t2s.modes.constants.*;
 import aero.t2s.modes.registers.Register05;
 import aero.t2s.modes.registers.Register05V0;
@@ -17,6 +18,10 @@ public class AirbornePosition extends ExtendedSquitter {
     private int altitude;
 
     private boolean positionAvailable;
+
+    private CprPosition cprEven = new CprPosition();
+    private CprPosition cprOdd = new CprPosition();
+
     private double lat;
     private double lon;
 
@@ -43,10 +48,8 @@ public class AirbornePosition extends ExtendedSquitter {
             return this;
         }
 
-        positionAvailable = true;
-
         int time = (data[6] >>> 3) & 0x1;
-        boolean cprEven = ((data[6] >>> 2) & 0x1) == 0;
+        boolean isCprEven = ((data[6] >>> 2) & 0x1) == 0;
 
         int cprLat = (data[6] & 0x3) << 15;
         cprLat = cprLat | (data[7] << 7);
@@ -56,7 +59,14 @@ public class AirbornePosition extends ExtendedSquitter {
         cprLon = cprLon | (data[9] << 8);
         cprLon = cprLon | data[10];
 
-        calculatePosition(cprEven, ((double)cprLat) / ((double)(1 << 17)), ((double)cprLon) / ((double)(1 << 17)), time);
+        if (isCprEven) {
+            this.cprEven.setLatLon(cprLat/(double)(1 << 17), cprLon/(double)(1 << 17));
+        }
+        else {
+            this.cprOdd.setLatLon(cprLat, cprLon);
+        }
+
+        calculatePosition(isCprEven);
 
         return this;
     }
@@ -67,8 +77,9 @@ public class AirbornePosition extends ExtendedSquitter {
         track.setSpi(surveillanceStatus == SurveillanceStatus.SPI);
         track.setTempAlert(surveillanceStatus == SurveillanceStatus.TEMPORARY_ALERT);
         track.setEmergency(surveillanceStatus == SurveillanceStatus.PERMANENT_ALERT);
-        track.setLat(lat);
-        track.setLon(lon);
+        track.setCprEven(cprEven);
+        track.setCprOdd(cprOdd);
+        track.setLatLon(lat, lon);
 
         if (versionChanged(track)) {
             switch (track.getVersion()) {
@@ -204,88 +215,95 @@ public class AirbornePosition extends ExtendedSquitter {
         return AltitudeSource.GNSS_HAE;
     }
 
-    private void calculatePosition(boolean isEven, double lat, double lon, double time) {
-//        CprPosition cprEven = track.getCprPosition(true);
-//        CprPosition cprOdd = track.getCprPosition(false);
-
-//        if (! (cprEven.isValid() && cprOdd.isValid())) {
-            calculateLocal(isEven, lat, lon, time);
-//            return;
-//        }
-
-//        calculateGlobal(track, cprEven, cprOdd);
+    private void calculatePosition(boolean isEven) {
+        if (!positionAvailable) {
+            //TODO Could be other cases where we need to do global calculation, such as too much time elapsed since last position update
+            calculateGlobal(cprEven, cprOdd);
+            positionAvailable = true;
+        }
+        else {
+            if (isEven) {
+                if (cprOdd.isValid()) {
+                    calculateLocal(cprEven, false, this.lat, this.lon);
+                }
+            } else {
+                if (cprEven.isValid()) {
+                    calculateLocal(cprOdd, true, this.lat, this.lon);
+                }
+            }
+        }
     }
 
-    private void calculateLocal(boolean isEven, double lat, double lon, double time) {
-        boolean isOdd = !isEven;
-//        CprPosition cpr = track.getCprPosition(isEven);
+    private void calculateLocal(CprPosition cpr, boolean isOdd, double previousLat, double previousLon) {
 
         double dlat = isOdd ? 360.0 / 59.0 : 360.0 / 60.0;
 
-        double j = Math.floor(originLat / dlat) + Math.floor((originLat % dlat) / dlat -  lat + 0.5);
+        double j = Math.floor(previousLat / dlat) + Math.floor((previousLat % dlat) / dlat -  cpr.getLat() + 0.5);
 
-        lat = dlat * (j + lat);
+        double newLat = dlat * (j + previousLat);
 
-        double nl = NL(lat) - (isOdd ? 1.0 : 0.0);
+        double nl = NL(newLat) - (isOdd ? 1.0 : 0.0);
         double dlon = nl > 0 ? 360.0 / nl : 360;
 
-        double m = Math.floor(originLon / dlon) + Math.floor((originLon % dlon) / dlon - lon + 0.5);
-        lon = dlon * (m + lon);
+        double m = Math.floor(previousLon / dlon) + Math.floor((previousLon % dlon) / dlon - cpr.getLon() + 0.5);
+        double newLon = dlon * (m + lon);
 
+        //TODO Should be a sanity-check here to make sure the calculated position isn't outside receiver origin range
+        //TODO Should be a sanity-check here to see if the calculated movement since the last update is too far
+        this.lat = newLat;
+        this.lon = newLon;
+    }
+
+    private void calculateGlobal(CprPosition cprEven, CprPosition cprOdd) {
+        double dLat0 = 360.0 / 60.0;
+        double dLat1 = 360.0 / 59.0;
+
+        double j = Math.floor(59.0 * cprEven.getLat() - 60.0 * cprOdd.getLat() + 0.5);
+
+        double latEven = dLat0 * (j % 60.0 + cprEven.getLat());
+        double latOdd = dLat1 * (j % 59.0 + cprOdd.getLat());
+
+        if (latEven >= 270.0 && latEven <= 360.0) {
+            latEven -= 360.0;
+        }
+
+        if (latOdd >= 270.0 && latOdd <= 360.0) {
+            latOdd -= 360.0;
+        }
+
+        if (NL(latEven) != NL(latOdd)) {
+            return;
+        }
+
+        double lat;
+        double lon;
+        if (cprEven.getTime() > cprOdd.getTime()) {
+            double ni = cprN(latEven, 0);
+            double m = Math.floor(cprEven.getLon() * (NL(latEven) - 1) - cprOdd.getLon() * NL(latEven) + 0.5);
+
+            lat = latEven;
+            lon = (360d / ni) * (m % ni + cprEven.getLon());
+        } else {
+            double ni = cprN(latOdd, 1);
+            double m = Math.floor(cprEven.getLon() * (NL(latOdd) - 1) - cprOdd.getLon() * NL(latOdd) + 0.5);
+
+            lat = latOdd;
+            lon = (360d / ni) * (m % ni + cprOdd.getLon());
+        }
+
+        if (lon > 180d) {
+            lon -= 360d;
+        }
+
+        //TODO Should be a sanity-check here to make sure the calculated position isn't outside receiver origin range,
         this.lat = lat;
         this.lon = lon;
     }
+    private double cprN(double lat, double isOdd) {
+        double nl = NL(lat) - isOdd;
 
-//    private void calculateGlobal(Track track, CprPosition cprEven, CprPosition cprOdd) {
-//        double dLat0 = 360.0 / 60.0;
-//        double dLat1 = 360.0 / 59.0;
-//
-//        double j = Math.floor(59.0 * cprEven.getLat() - 60.0 * cprOdd.getLat() + 0.5);
-//
-//        double latEven = dLat0 * (j % 60.0 + cprEven.getLat());
-//        double latOdd = dLat1 * (j % 59.0 + cprOdd.getLat());
-//
-//        if (latEven >= 270.0 && latEven <= 360.0) {
-//            latEven -= 360.0;
-//        }
-//
-//        if (latOdd >= 270.0 && latOdd <= 360.0) {
-//            latOdd -= 360.0;
-//        }
-//
-//        if (NL(latEven) != NL(latOdd)) {
-//            return;
-//        }
-//
-//        double lat;
-//        double lon;
-//        if (cprEven.getTime() > cprOdd.getTime()) {
-//            double ni = cprN(latEven, 0);
-//            double m = Math.floor(cprEven.getLon() * (NL(latEven) - 1) - cprOdd.getLon() * NL(latEven) + 0.5);
-//
-//            lat = latEven;
-//            lon = (360d / ni) * (m % ni + cprEven.getLon());
-//        } else {
-//            double ni = cprN(latOdd, 1);
-//            double m = Math.floor(cprEven.getLon() * (NL(latOdd) - 1) - cprOdd.getLon() * NL(latOdd) + 0.5);
-//
-//            lat = latOdd;
-//            lon = (360d / ni) * (m % ni + cprOdd.getLon());
-//        }
-//
-//        if (lon > 180d) {
-//            lon -= 360d;
-//        }
-//
-//        track.setLat(lat);
-//        track.setLon(lon);
-//    }
-
-//    private double cprN(double lat, double isOdd) {
-//        double nl = NL(lat) - isOdd;
-//
-//        return nl > 1 ? nl : 1;
-//    }
+        return nl > 1 ? nl : 1;
+    }
 
     private double NL(double lat) {
         if (lat == 0) return 59;
