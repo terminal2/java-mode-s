@@ -174,7 +174,7 @@ public class Track {
     }
 
     public void setLatLon(double lat, double lon) {
-        this.lon = lat;
+        this.lat = lat;
         this.lon = lon;
         this.positionAvailable = true;
     }
