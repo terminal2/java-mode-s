@@ -11,6 +11,7 @@ public class Track {
     private Altitude altitude = new Altitude();
     private double lat;
     private double lon;
+    private boolean positionAvailable = false;
     private int vx;
     private int vy;
     private double gs;
@@ -172,7 +173,13 @@ public class Track {
         return groundBit;
     }
 
+    public void setLatLon(double lat, double lon) {
+        this.lat = lat;
+        this.lon = lon;
+        this.positionAvailable = true;
+    }
     public void setLat(double lat) {
+        //TODO How do we know if position really is available if we only set the lat? Can we remove this method?
         this.lat = lat;
     }
 
@@ -181,6 +188,7 @@ public class Track {
     }
 
     public void setLon(double lon) {
+        //TODO How do we know if position really is available if we only set the lon? Can we remove this method?
         this.lon = lon;
     }
 
@@ -245,7 +253,7 @@ public class Track {
     }
 
     public boolean isPositionAvailable() {
-        return lat != 0 & lon != 0;
+        return positionAvailable;
     }
 
     public void setGeometricHeightOffset(int geometricHeightOffset) {

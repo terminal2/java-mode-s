@@ -4,15 +4,10 @@ import aero.t2s.modes.Track;
 import aero.t2s.modes.decoder.df.df17.*;
 
 public class DF17 extends DownlinkFormat {
-    private final double originLat;
-    private final double originLon;
-
     private ExtendedSquitter extendedSquitter;
 
-    public DF17(short[] data, double originLat, double originLon) {
+    public DF17(short[] data) {
         super(data, IcaoAddress.FROM_MESSAGE);
-        this.originLat = originLat;
-        this.originLon = originLon;
     }
 
     @Override
@@ -34,7 +29,7 @@ public class DF17 extends DownlinkFormat {
             case 20:
             case 21:
             case 22:
-                extendedSquitter = new AirbornePosition(data, originLat, originLon);
+                extendedSquitter = new AirbornePosition(data, getIcao());
                 break;
             case 1:
             case 2:
