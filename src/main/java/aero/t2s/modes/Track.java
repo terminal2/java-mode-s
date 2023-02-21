@@ -9,9 +9,6 @@ public class Track {
     private String icao;
     private String callsign;
     private Altitude altitude = new Altitude();
-    private boolean cprEvenValid = false;
-    private CprPosition cprEven = new CprPosition();
-    private CprPosition cprOdd = new CprPosition();
     private double lat;
     private double lon;
     private boolean positionAvailable = false;
@@ -197,22 +194,6 @@ public class Track {
 
     public double getLon() {
         return lon;
-    }
-
-    public CprPosition getCprEven() {
-        return cprEven;
-    }
-
-    public void setCprEven(CprPosition cprEven) {
-        this.cprEven = cprEven;
-    }
-
-    public CprPosition getCprOdd() {
-        return cprOdd;
-    }
-
-    public void setCprOdd(CprPosition cprOdd) {
-        this.cprOdd = cprOdd;
     }
 
     public Version getVersion() {

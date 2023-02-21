@@ -1,6 +1,7 @@
 package aero.t2s.modes;
 
 import aero.t2s.modes.decoder.df.DownlinkFormat;
+import aero.t2s.modes.decoder.df.df17.AirbornePosition;
 
 import java.util.function.Consumer;
 
@@ -42,10 +43,10 @@ abstract public class ModeSHandler {
     }
 
     public void start() {
-
+        AirbornePosition.start();
     }
 
     public void stop() {
-
+        AirbornePosition.stop();
     }
 }

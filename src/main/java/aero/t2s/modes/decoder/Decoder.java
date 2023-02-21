@@ -50,7 +50,7 @@ public class Decoder {
                 df = new DF16(data);
                 break;
             case 17:
-                df = new DF17(data, originLat, originLon);
+                df = new DF17(data);
                 break;
             case 18:
                 df = new DF18(data);

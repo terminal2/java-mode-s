@@ -1,10 +1,12 @@
 package aero.t2s.modes;
 
+import java.time.Instant;
+
 public class CprPosition {
     private double lat;
     private double lon;
     private boolean valid;
-    private int time;
+    private long time;
 
     public CprPosition() {
         this.lat = 0.0;
@@ -14,9 +16,11 @@ public class CprPosition {
     public CprPosition(double lat, double lon) {
         setLatLon(lat ,lon);
     }
+
     public void setLatLon(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
+        this.time = Instant.now().toEpochMilli();
         this.valid = true;
     }
 
@@ -36,15 +40,19 @@ public class CprPosition {
         return lon;
     }
 
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
-    public int getTime() {
+    public long getTime() {
         return time;
     }
 
     public boolean isValid() {
         return valid;
+    }
+
+    public boolean isExpired() {
+        return time < Instant.now().minusSeconds(10).toEpochMilli();
     }
 }

@@ -3,14 +3,15 @@ package aero.t2s.modes.decoder.df.df17;
 import aero.t2s.modes.Track;
 import aero.t2s.modes.CprPosition;
 import aero.t2s.modes.constants.*;
+import aero.t2s.modes.decoder.Common;
 import aero.t2s.modes.registers.Register05;
 import aero.t2s.modes.registers.Register05V0;
 import aero.t2s.modes.registers.Register05V2;
 
-public class AirbornePosition extends ExtendedSquitter {
-    private final double originLat;
-    private final double originLon;
+import java.util.*;
 
+public class AirbornePosition extends ExtendedSquitter {
+    private final String address;
     private SurveillanceStatus surveillanceStatus;
     private int singleAntennaFlag;
 
@@ -19,16 +20,14 @@ public class AirbornePosition extends ExtendedSquitter {
 
     private boolean positionAvailable;
 
-    private CprPosition cprEven = new CprPosition();
-    private CprPosition cprOdd = new CprPosition();
-
     private double lat;
     private double lon;
+    private static Map<String, PositionUpdate> cache = new HashMap<>();
+    private static Timer cacheCleanup;
 
-    public AirbornePosition(short[] data, final double originLat, final double originLon) {
+    public AirbornePosition(short[] data, String address) {
         super(data);
-        this.originLat = originLat;
-        this.originLon = originLon;
+        this.address = address;
     }
 
     @Override
@@ -59,14 +58,38 @@ public class AirbornePosition extends ExtendedSquitter {
         cprLon = cprLon | (data[9] << 8);
         cprLon = cprLon | data[10];
 
-        if (isCprEven) {
-            this.cprEven.setLatLon(cprLat/(double)(1 << 17), cprLon/(double)(1 << 17));
-        }
-        else {
-            this.cprOdd.setLatLon(cprLat, cprLon);
+
+        if (!cache.containsKey(address)) {
+            if (!isCprEven) {
+                return this;
+            }
+
+            synchronized (cache) {
+                cache.putIfAbsent(address, new PositionUpdate(
+                    new CprPosition(cprLat / (double)(1 << 17), cprLon / (double)(1 << 17))
+                ));
+            }
         }
 
-        calculatePosition(isCprEven);
+        PositionUpdate positionUpdate;
+        synchronized (cache) {
+            positionUpdate = cache.get(address);
+        }
+        if (isCprEven) {
+            positionUpdate.setEven(new CprPosition(cprLat / (double) (1 << 17), cprLon / (double) (1 << 17)));
+        }  else {
+            positionUpdate.setOdd(new CprPosition(cprLat, cprLon));
+        }
+
+        if (positionUpdate.isComplete()) {
+            calculateGlobal(positionUpdate.even, positionUpdate.odd);
+        } else if (positionUpdate.isPreviousPositionAvailable() && positionUpdate.isPreviousPositionAvailable()) {
+            calculateLocal(positionUpdate.odd, true, positionUpdate.previousLat, positionUpdate.previousLon);
+        }
+
+        if (positionAvailable) {
+            positionUpdate.setPreviousPosition(this.lat, this.lon);
+        }
 
         return this;
     }
@@ -77,9 +100,9 @@ public class AirbornePosition extends ExtendedSquitter {
         track.setSpi(surveillanceStatus == SurveillanceStatus.SPI);
         track.setTempAlert(surveillanceStatus == SurveillanceStatus.TEMPORARY_ALERT);
         track.setEmergency(surveillanceStatus == SurveillanceStatus.PERMANENT_ALERT);
-        track.setCprEven(cprEven);
-        track.setCprOdd(cprOdd);
-        track.setLatLon(lat, lon);
+        if (positionAvailable) {
+            track.setLatLon(lat, lon);
+        }
 
         if (versionChanged(track)) {
             switch (track.getVersion()) {
@@ -128,14 +151,6 @@ public class AirbornePosition extends ExtendedSquitter {
         } catch (IllegalArgumentException e) {
             return BarometricAltitudeIntegrityCode.NOT_CROSS_CHECKED;
         }
-    }
-
-    public double getOriginLat() {
-        return originLat;
-    }
-
-    public double getOriginLon() {
-        return originLon;
     }
 
     public SurveillanceStatus getSurveillanceStatus() {
@@ -215,25 +230,6 @@ public class AirbornePosition extends ExtendedSquitter {
         return AltitudeSource.GNSS_HAE;
     }
 
-    private void calculatePosition(boolean isEven) {
-        if (!positionAvailable) {
-            //TODO Could be other cases where we need to do global calculation, such as too much time elapsed since last position update
-            calculateGlobal(cprEven, cprOdd);
-            positionAvailable = true;
-        }
-        else {
-            if (isEven) {
-                if (cprOdd.isValid()) {
-                    calculateLocal(cprEven, false, this.lat, this.lon);
-                }
-            } else {
-                if (cprEven.isValid()) {
-                    calculateLocal(cprOdd, true, this.lat, this.lon);
-                }
-            }
-        }
-    }
-
     private void calculateLocal(CprPosition cpr, boolean isOdd, double previousLat, double previousLon) {
 
         double dlat = isOdd ? 360.0 / 59.0 : 360.0 / 60.0;
@@ -298,6 +294,7 @@ public class AirbornePosition extends ExtendedSquitter {
         //TODO Should be a sanity-check here to make sure the calculated position isn't outside receiver origin range,
         this.lat = lat;
         this.lon = lon;
+        this.positionAvailable = true;
     }
     private double cprN(double lat, double isOdd) {
         double nl = NL(lat) - isOdd;
@@ -322,5 +319,67 @@ public class AirbornePosition extends ExtendedSquitter {
         int qBit = (data[5] & 0x1) == 1 ? 25 : 100; // true: 25ft, false: 100
 
         return (n * qBit) - 1000;
+    }
+
+    public static void start() {
+        AirbornePosition.cache.clear();
+        AirbornePosition.cacheCleanup.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                List<String> expired = new LinkedList<>();
+
+                synchronized (cache) {
+                    cache.entrySet().stream().filter(entry -> entry.getValue().isExpired()).forEach(entry -> expired.add(entry.getKey()));
+                    expired.forEach(cache::remove);
+                }
+            }
+        }, 0, 10_000);
+    }
+
+    public static void stop() {
+        AirbornePosition.cacheCleanup.cancel();
+        AirbornePosition.cacheCleanup = null;
+
+        AirbornePosition.cache.clear();
+    }
+
+    class PositionUpdate {
+        private CprPosition even;
+        private CprPosition odd;
+
+
+        private boolean previousPositionAvailable = false;
+        private double previousLat;
+        private double previousLon;
+
+        public PositionUpdate(CprPosition even) {
+            this.even = even;
+        }
+
+        public void setEven(CprPosition even) {
+            this.even = even;
+            this.odd = null;
+        }
+
+        public void setOdd(CprPosition odd) {
+            this.odd = odd;
+        }
+
+        public void setPreviousPosition(double lat, double lon) {
+            this.previousLat = lat;
+            this.previousLon = lon;
+        }
+
+        public boolean isPreviousPositionAvailable() {
+            return this.previousPositionAvailable;
+        }
+
+        public boolean isComplete() {
+            return even != null && odd != null;
+        }
+
+        public boolean isExpired() {
+            return even.isExpired() || odd.isExpired();
+        }
     }
 }
