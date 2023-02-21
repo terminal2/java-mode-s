@@ -78,7 +78,7 @@ public class AirbornePosition extends ExtendedSquitter {
         if (isCprEven) {
             positionUpdate.setEven(new CprPosition(cprLat / (double) (1 << 17), cprLon / (double) (1 << 17)));
         }  else {
-            positionUpdate.setOdd(new CprPosition(cprLat, cprLon));
+            positionUpdate.setOdd(new CprPosition(cprLat / (double) (1 << 17), cprLon / (double) (1 << 17)));
         }
 
         if (positionUpdate.isComplete()) {
