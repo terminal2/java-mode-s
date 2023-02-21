@@ -248,6 +248,7 @@ public class AirbornePosition extends ExtendedSquitter {
         //TODO Should be a sanity-check here to see if the calculated movement since the last update is too far
         this.lat = newLat;
         this.lon = newLon;
+        this.positionAvailable = true;
     }
 
     private void calculateGlobal(CprPosition cprEven, CprPosition cprOdd) {
