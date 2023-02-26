@@ -5,16 +5,31 @@ import java.time.Instant;
 public class CprPosition {
     private double lat;
     private double lon;
-    private boolean valid;
+    private boolean surface = false;
+    private boolean valid = false;
+    private double latZone;
+    private double lonZone;
     private long time;
 
     public CprPosition() {
         this.lat = 0.0;
         this.lon = 0.0;
+        this.surface = false;
         this.valid = false;
     }
+
+    public CprPosition(double lat, double lon, boolean surface) {
+        setLatLon(lat ,lon);
+        this.surface = surface;
+    }
+
     public CprPosition(double lat, double lon) {
         setLatLon(lat ,lon);
+    }
+
+    public CprPosition(int cprLat, int cprLon, boolean surface) {
+        setLatLon(cprLat / (double) (1 << 17), cprLon / (double) (1 << 17));
+        this.surface = surface;
     }
 
     public void setLatLon(double lat, double lon) {
@@ -40,6 +55,41 @@ public class CprPosition {
         return lon;
     }
 
+    public void setSurface(boolean surface) {
+        this.surface = surface;
+    }
+
+    public boolean getSurface() {
+        return this.surface;
+    }
+
+    public void validateSurface() {
+        // For SurfacePositions we get 8 possible solutions: 2x latitude, 4x longitude zones at 90 degree increments
+        // TODO Could use receiver/reference lat/lon to chose which possibile solution is closest... or build-up an average over data received to-date
+        // Just for temporary, assume northern hemisphere and west of prime meridian
+        this.lon = this.lon - 90.0;
+    }
+
+    public void setZones(double latZone, double lonZone) {
+        this.latZone = latZone;
+        this.lonZone = lonZone;
+    }
+    public void setLatZone(double zone) {
+        this.latZone = zone;
+    }
+
+    public double getLatZone() {
+        return this.latZone;
+    }
+
+    public void setLonZone(double zone) {
+        this.lonZone = zone;
+    }
+
+    public double getLonZone() {
+        return this.lonZone;
+    }
+
     public void setTime(long time) {
         this.time = time;
     }
@@ -50,6 +100,10 @@ public class CprPosition {
 
     public boolean isValid() {
         return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
 
     public boolean isExpired() {

@@ -23,7 +23,7 @@ import example.flight.FlightFrame;
 public class Demo extends JPanel {
     private static final Logger logger = LoggerFactory.getLogger(Demo.class);
 
-    private static final String IP = "192.168.178.190";
+    private static final String IP = "127.0.0.1";
     private static final int PORT = 30002;
     private static final double LAT = 51;
     private static final double LON = 2;
