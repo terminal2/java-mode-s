@@ -6,6 +6,8 @@ import aero.t2s.modes.decoder.df.df17.PositionUpdate;
 import java.util.function.Consumer;
 
 abstract public class ModeSHandler {
+    protected double originLat;
+    protected double originLon;
     protected Consumer<Track> onDeleted = track -> {};
     protected Consumer<Track> onCreated = track -> {};
     protected Consumer<Track> onUpdated = track -> {};
@@ -43,7 +45,7 @@ abstract public class ModeSHandler {
     }
 
     public void start() {
-        PositionUpdate.start();
+        PositionUpdate.start(originLat, originLon);
     }
 
     public void stop() {

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 class AirbornePositionTest {
     @Test
-    public void test_surface_position_aircraft() throws UnknownDownlinkFormatException {
+    public void test_airborne_position_aircraft() throws UnknownDownlinkFormatException {
         // This is an ODD frame with Airborne Position
         DownlinkFormat dfA = testMessage("8d4076635883069b318845770698");
 

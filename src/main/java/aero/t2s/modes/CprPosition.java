@@ -63,13 +63,6 @@ public class CprPosition {
         return this.surface;
     }
 
-    public void validateSurface() {
-        // For SurfacePositions we get 8 possible solutions: 2x latitude, 4x longitude zones at 90 degree increments
-        // TODO Could use receiver/reference lat/lon to chose which possibile solution is closest... or build-up an average over data received to-date
-        // Just for temporary, assume northern hemisphere and west of prime meridian
-        this.lon = this.lon - 90.0;
-    }
-
     public void setZones(double latZone, double lonZone) {
         this.latZone = latZone;
         this.lonZone = lonZone;

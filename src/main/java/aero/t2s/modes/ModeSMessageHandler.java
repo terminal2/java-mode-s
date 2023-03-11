@@ -22,6 +22,8 @@ public class ModeSMessageHandler extends ModeSHandler {
     private Consumer<DownlinkFormat> onMessage;
 
     public ModeSMessageHandler(double originLat, double originLon) {
+        this.originLat = originLat;
+        this.originLon = originLon;
         this.decoder = new Decoder(new HashMap<>(), originLat, originLon, ModeSDatabase.createDatabase());
     }
 

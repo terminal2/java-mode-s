@@ -29,7 +29,7 @@ class SurfacePositionTest {
         assertEquals(2.0, positionA.getVelocity());
         assertEquals(true, positionA.isTrackValid());
         assertEquals(82, positionA.getTrackEncoded());
-        assertEquals(230.625, positionA.getTrack());
+        assertEquals(230.625 * 100, positionA.getTrack() * 100);
         // We should NOT have a valid position after only one frame
         assertEquals(false, positionA.isPositionAvailable());
 

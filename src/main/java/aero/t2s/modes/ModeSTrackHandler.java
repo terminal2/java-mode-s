@@ -24,6 +24,8 @@ public class ModeSTrackHandler extends ModeSHandler {
 
     public ModeSTrackHandler(Map<String, Track> tracks, double originLat, double originLon, ModeSDatabase database) {
         this.tracks = tracks;
+        this.originLat = originLat;
+        this.originLon = originLon;
         this.decoder = new Decoder(tracks, originLat, originLon, database);
 
         timer = new Timer();

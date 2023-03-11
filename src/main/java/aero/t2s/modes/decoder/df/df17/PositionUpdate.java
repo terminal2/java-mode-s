@@ -4,13 +4,22 @@ import aero.t2s.modes.CprPosition;
 import java.util.*;
 
 public class PositionUpdate {
-    static Map<String, PositionUpdate> cache = new HashMap<>();
+    private static double originLat;                // Origin is passed-in as a command-line argument as an indication of where the receiver is located
+    private static double originLon;
+
+    private static double receiverLat;              // Receiver position is calculated based on data received
+    private static double receiverLon;
+    private static double receiverSumLat;           // Running-total of valid positions that can be used to calculate the average receiver position
+    private static double receiverSumLon;
+    private static double receiverSumCount = 0;     // number of valid positions received that are used to calculate the average
+
+    private static Map<String, PositionUpdate> cache = new HashMap<>();
     private static Timer cacheCleanup;
 
-    static final private double dLatEven = 4.0 * 15.0;
-    static final private double dLatOdd = 4.0 * 15.0 - 1.0;
-    static final private double nlNumerator = 1 - Math.cos(Math.PI / (2.0 * 15.0));
-    static final private double nlPi180 = Math.PI / 180.0;
+    private static final double dLatEven = 4.0 * 15.0;
+    private static final double dLatOdd = 4.0 * 15.0 - 1.0;
+    private static final double nlNumerator = 1 - Math.cos(Math.PI / (2.0 * 15.0));
+    private static final double nlPi180 = Math.PI / 180.0;
 
     private CprPosition even;
     private CprPosition odd;
@@ -51,6 +60,8 @@ public class PositionUpdate {
         if (isComplete() && previous == null) {
             // We've now got a pair of odd/even frames but there was no previous position... so we must use Global calculation to get accurate position
             calculateGlobal();
+            // Update the receiver position only from Global updates (likely to be the first time updating from this aircraft)
+            PositionUpdate.receiverUpdate(current.getLat(), current.getLon());
         } else if (previous != null) {
             // We had a previous accurate position, so we can use the most recent frame to do Local calculation
             calculateLocal(!isCprEven);
@@ -96,14 +107,13 @@ public class PositionUpdate {
             //return;
         }
 
-        // TODO Should be a sanity-check here to make sure the calculated position isn't outside receiver origin range
-        // TODO Should be a sanity-check here to see if the calculated movement since the last update is too far
-
         current = new CprPosition(newLat, newLon, cpr.getSurface());
         if (current.getSurface()) {
-            current.validateSurface();
+            validateSurface(current);
         }
 
+        // TODO Should be a sanity-check here to make sure the calculated position isn't outside receiver origin range
+        // TODO Should be a sanity-check here to see if the calculated movement since the last update is too far
     }
 
     private void calculateGlobal() {
@@ -113,13 +123,8 @@ public class PositionUpdate {
         double latEven = (degrees / dLatEven) * (cprMod(j, dLatEven) + even.getLat());
         double latOdd = (degrees / dLatOdd) * (cprMod(j, dLatOdd) + odd.getLat());
 
-        if (latEven >= 270.0 && latEven <= 360.0) {
-            latEven -= 360.0;
-        }
-
-        if (latOdd >= 270.0 && latOdd <= 360.0) {
-            latOdd -= 360.0;
-        }
+        latEven = normaliseLat(latEven);
+        latOdd = normaliseLat(latOdd);
 
         double nlLatEven = NL(latEven);
         double nlLatOdd = NL(latOdd);
@@ -147,31 +152,27 @@ public class PositionUpdate {
             newLat = latOdd;
             newLon = (degrees / ni) * (cprMod(m, ni) + odd.getLon());
         }
-
-        if (newLon > 180d) {
-            newLon -= 360d;
-        }
-
-        //TODO Should be a sanity-check here to make sure the calculated position isn't outside receiver origin range
+        newLon = normaliseLon(newLon);
 
         even.setZones(nlLatEven, m);
         odd.setZones(nlLatOdd, m);
 
         current = new CprPosition(newLat, newLon, even.getSurface());
         if (current.getSurface()) {
-            current.validateSurface();
+            validateSurface(current);
         }
+        //TODO Should be a sanity-check here to make sure the calculated position isn't outside receiver origin range
     }
 
-    private double cprMod(double a, double b) {
+    static private double cprMod(double a, double b) {
         return a - b * Math.floor(a/b);
     }
 
-    private double cprN(double nlLat, double isOdd) {
+    static private double cprN(double nlLat, double isOdd) {
         return Math.max(1, nlLat - isOdd);
     }
 
-    private double NL(double lat) {
+    static private double NL(double lat) {
         if (lat == 0) return 59;
         else if (Math.abs(lat) == 87) return 2;
         else if (Math.abs(lat) > 87) return 1;
@@ -197,7 +198,66 @@ public class PositionUpdate {
         return even.isExpired() || odd.isExpired();
     }
 
-    public static void start() {
+    static public double normaliseLat(double lat) {
+        if (lat >= 270.0 && lat <= 360.0) {
+            lat -= 360.0;
+        }
+        return lat;
+    }
+
+    static public double normaliseLon(double lon) {
+        if (lon > 180.0) {
+            lon -= 360.0;
+        }
+        return lon;
+    }
+
+    private void validateSurface(CprPosition pos) {
+        // For SurfacePositions we get 8 possible solutions: 2x latitude, 4x longitude zones at 90 degree increments
+        double diff;
+        double test;
+        double testDiff;
+
+        // Pick the lat which is closest to the receiver
+        test = pos.getLat();
+        diff = Math.abs(normaliseLat(test) - receiverLat);
+        for (int i = 0 ; i < 1 ; i++){
+            test = normaliseLat(test + 90.0);
+            testDiff = Math.abs(test - receiverLat);
+            if (testDiff < diff) {
+                diff = testDiff;
+                pos.setLat(test);
+            }
+        }
+
+        // Pick the lon which is closest to the receiver
+        test = pos.getLon();
+        diff = Math.abs(normaliseLon(test) - receiverLon);
+        for (int i = 0 ; i < 3 ; i++){
+            test = normaliseLon(test + 90.0);
+            testDiff = Math.abs(test - receiverLon);
+            if (testDiff < diff) {
+                diff = testDiff;
+                pos.setLon(test);
+            }
+        }
+    }
+
+    static private void receiverUpdate(double lat, double lon) {
+        if (!((lat == 0) && (lon == 0))) {
+            receiverSumCount ++;
+            receiverSumLat += lat;
+            receiverSumLon += lon;
+            receiverLat = receiverSumLat / receiverSumCount;
+            receiverLon = receiverSumLon / receiverSumCount;
+        }
+    }
+
+    static public void start(double originLat, double originLon) {
+        PositionUpdate.originLat = originLat;
+        PositionUpdate.originLon = originLon;
+
+        receiverUpdate(originLat, originLon);
 
         cache.clear();
         cacheCleanup.schedule(new TimerTask() {
@@ -213,7 +273,7 @@ public class PositionUpdate {
         }, 0, 10_000);
     }
 
-    public static void stop() {
+    static public void stop() {
         cacheCleanup.cancel();
         cacheCleanup = null;
 
