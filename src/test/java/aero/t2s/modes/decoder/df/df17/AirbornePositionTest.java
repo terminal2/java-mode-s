@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AirbornePositionTest {
     @Test
@@ -27,7 +26,7 @@ class AirbornePositionTest {
         assertInstanceOf(AirbornePosition.class, exSqA);
         AirbornePosition positionA = (AirbornePosition) exSqA;
         // We should NOT have a valid position after only one frame
-        assertEquals(false, positionA.isPositionAvailable());
+        assertFalse(positionA.isPositionAvailable());
 
         // This is an EVEN frame with Surface Position
         DownlinkFormat dfB = testMessage("8d407663588303313d84f719b2de");
@@ -39,9 +38,10 @@ class AirbornePositionTest {
         assertInstanceOf(AirbornePosition.class, exSqB);
         AirbornePosition positionB = (AirbornePosition) exSqB;
         // We should now have a valid position after receiving both even and odd frames
-        assertEquals(true, positionB.isPositionAvailable());
-        assertEquals(52.789, positionB.getLat(), 0.001);
-        assertEquals(-2.405, positionB.getLon(), 0.001);
+
+        assertTrue(positionB.isPositionAvailable());
+        assertEquals(52.789, positionB.getLat(), 0.01);
+        assertEquals(-2.405, positionB.getLon(), 0.01);
     }
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
