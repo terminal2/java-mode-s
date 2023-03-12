@@ -6,6 +6,7 @@ import aero.t2s.modes.Track;
 public class SurfacePosition extends ExtendedSquitter {
     private final String address;
     private int velocityEncoded = 0;
+    private double velocity = 0;
 
     private boolean trackValid = false;
     private int trackEncoded = 0;
@@ -13,6 +14,7 @@ public class SurfacePosition extends ExtendedSquitter {
     private double lat;
     private double lon;
     private boolean positionAvailable = false;
+    private boolean velocityAvailable = false;
 
     public SurfacePosition(short[] data, String address) {
         super(data);
@@ -22,6 +24,8 @@ public class SurfacePosition extends ExtendedSquitter {
     @Override
     public SurfacePosition decode() {
         velocityEncoded = ((data[4] & 0x7) << 4) | (data[5] >>> 4);
+        velocityAvailable = velocityEncoded != 0;
+        velocity = decodeEncodedVelocity();
 
         trackValid = ((data[5] >>> 3) & 0x1) == 0x1;
         trackEncoded = ((data[5] & 0x7) << 4) | (data[6] >>> 4);
@@ -46,18 +50,29 @@ public class SurfacePosition extends ExtendedSquitter {
         } else {
             this.positionAvailable = false;
         }
-        return this;    }
+
+        return this;
+    }
 
     @Override
     public void apply(Track track) {
         track.setGroundBit(true);
+
         if (positionAvailable) {
             track.setLatLon(lat, lon);
+        }
+
+        if (velocityAvailable) {
+            track.setGs(velocity);
         }
     }
 
     public boolean isPositionAvailable() {
         return positionAvailable;
+    }
+
+    public boolean isVelocityAvailable() {
+        return this.velocityAvailable;
     }
 
     public double getLat() {
@@ -77,6 +92,22 @@ public class SurfacePosition extends ExtendedSquitter {
     }
 
     public double getVelocity() {
+        return this.velocity;
+    }
+
+    public boolean isTrackValid() {
+        return trackValid;
+    }
+
+    public int getTrackEncoded() {
+        return trackEncoded;
+    }
+
+    public double getTrack() {
+        return trackEncoded * 360.0 / 128.0;
+    }
+
+    private double decodeEncodedVelocity() {
         if (this.velocityEncoded == 1) {
             return 0;
         }
@@ -104,18 +135,7 @@ public class SurfacePosition extends ExtendedSquitter {
         if (this.velocityEncoded == 124) {
             return 175.0;
         }
+
         return 0;   // Could be either "not available" or "reserved"... just assume zero speed for now
-    }
-
-    public boolean isTrackValid() {
-        return trackValid;
-    }
-
-    public int getTrackEncoded() {
-        return trackEncoded;
-    }
-
-    public double getTrack() {
-        return trackEncoded * 360.0 / 128.0;
     }
 }

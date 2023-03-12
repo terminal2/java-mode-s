@@ -46,6 +46,9 @@ class SurfacePositionTest {
         assertTrue(positionB.isPositionAvailable());
         assertEquals(53.3604, positionB.getLat(), 0.001);
         assertEquals(-2.2671, positionB.getLon(), 0.001);
+
+        assertTrue(positionB.isVelocityAvailable());
+        assertEquals(1.75, positionB.getVelocity());
     }
 
     @Test
