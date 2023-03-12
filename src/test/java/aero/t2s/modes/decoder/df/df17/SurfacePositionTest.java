@@ -27,11 +27,11 @@ class SurfacePositionTest {
         SurfacePosition positionA = (SurfacePosition) exSqA;
         assertEquals(13, positionA.getVelocityEncoded());
         assertEquals(2.0, positionA.getVelocity());
-        assertEquals(true, positionA.isTrackValid());
+        assertTrue(positionA.isTrackValid());
         assertEquals(82, positionA.getTrackEncoded());
-        assertEquals(230.625 * 100, positionA.getTrack() * 100);
+        assertEquals(230.625, positionA.getTrack(), 0.001);
         // We should NOT have a valid position after only one frame
-        assertEquals(false, positionA.isPositionAvailable());
+        assertFalse(positionA.isPositionAvailable());
 
         // This is an ODD frame with Surface Position
         DownlinkFormat dfB = testMessage("8c4ca6a938cd27ec46497d947b4d");
@@ -43,9 +43,9 @@ class SurfacePositionTest {
         assertInstanceOf(SurfacePosition.class, exSqB);
         SurfacePosition positionB = (SurfacePosition) exSqB;
         // We should now have a valid position after receiving both even and odd frames
-        assertEquals(true, positionB.isPositionAvailable());
-        assertEquals(Math.round(53.3604 * 100), Math.round(positionB.getLat() * 100));
-        assertEquals(Math.round(-2.2671 * 100), Math.round(positionB.getLon() * 100));
+        assertTrue(positionB.isPositionAvailable());
+        assertEquals(53.3604, positionB.getLat(), 0.001);
+        assertEquals(-2.2671, positionB.getLon(), 0.001);
     }
 
     @Test
@@ -60,7 +60,7 @@ class SurfacePositionTest {
         SurfacePosition position = (SurfacePosition) exSq;
         assertEquals(1, position.getVelocityEncoded());
         assertEquals(0.0, position.getVelocity());
-        assertEquals(false, position.isTrackValid());
+        assertFalse(position.isTrackValid());
     }
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
