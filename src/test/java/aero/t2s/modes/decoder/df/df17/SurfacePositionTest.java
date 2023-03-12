@@ -27,7 +27,7 @@ class SurfacePositionTest {
         SurfacePosition positionA = (SurfacePosition) exSqA;
         assertEquals(13, positionA.getVelocityEncoded());
         assertEquals(2.0, positionA.getVelocity());
-        assertTrue(positionA.isTrackValid());
+        assertTrue(positionA.isTrackAvailable());
         assertEquals(82, positionA.getTrackEncoded());
         assertEquals(230.625, positionA.getTrack(), 0.001);
         // We should NOT have a valid position after only one frame
@@ -48,7 +48,10 @@ class SurfacePositionTest {
         assertEquals(-2.2671, positionB.getLon(), 0.001);
 
         assertTrue(positionB.isVelocityAvailable());
-        assertEquals(1.75, positionB.getVelocity());
+        assertEquals(1.75, positionB.getVelocity(), 0.1);
+
+        assertTrue(positionB.isTrackAvailable());
+        assertEquals(230.625, positionB.getTrack(), 0.1);
     }
 
     @Test
@@ -63,7 +66,7 @@ class SurfacePositionTest {
         SurfacePosition position = (SurfacePosition) exSq;
         assertEquals(1, position.getVelocityEncoded());
         assertEquals(0.0, position.getVelocity());
-        assertFalse(position.isTrackValid());
+        assertFalse(position.isTrackAvailable());
     }
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
