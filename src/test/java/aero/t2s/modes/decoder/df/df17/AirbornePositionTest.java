@@ -40,8 +40,8 @@ class AirbornePositionTest {
         AirbornePosition positionB = (AirbornePosition) exSqB;
         // We should now have a valid position after receiving both even and odd frames
         assertEquals(true, positionB.isPositionAvailable());
-        assertEquals(Math.round(52.789 * 100), Math.round(positionB.getLat() * 100));
-        assertEquals(Math.round(-2.405 * 100), Math.round(positionB.getLon() * 100));
+        assertEquals(52.789, positionB.getLat(), 0.001);
+        assertEquals(-2.405, positionB.getLon(), 0.001);
     }
 
     private DownlinkFormat testMessage(String message) throws UnknownDownlinkFormatException {
