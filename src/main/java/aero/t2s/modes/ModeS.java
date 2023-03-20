@@ -26,8 +26,8 @@ public class ModeS {
         handler = new ModeSTrackHandler(tracks, originLat, originLon, database);
 
         handler.onTrackCreated(onTrackCreated);
-        handler.onTrackCreated(onTrackUpdated);
-        handler.onTrackCreated(onTrackDeleted);
+        handler.onTrackUpdated(onTrackUpdated);
+        handler.onTrackDeleted(onTrackDeleted);
         handler.onMessage(onMessage);
 
         listener = new ModeSListener(new InetSocketAddress(host, port), handler);
