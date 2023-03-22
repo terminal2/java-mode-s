@@ -1,17 +1,21 @@
 package aero.t2s.modes.decoder.df.df17;
 
 import aero.t2s.modes.CprPosition;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
 public class PositionUpdate {
-    private static double originLat;                // Origin is passed-in as a command-line argument as an indication of where the receiver is located
+    private static double originLat;                        // Origin is passed-in as a command-line argument as an indication of where the receiver is located
     private static double originLon;
 
-    private static double receiverLat;              // Receiver position is calculated based on data received
+    private static final double updateThreshold = 0.5d;     // Positions which move between updates by more than this (in degrees) should be rejected
+    private static final double receiverRange = 4.0d;       // Positions further away from the receiver than this (in degrees) should be rejected
+    private static double receiverLat;                      // Receiver position is calculated based on data received
     private static double receiverLon;
-    private static double receiverSumLat;           // Running-total of valid positions that can be used to calculate the average receiver position
+    private static double receiverSumLat;                   // Running-total of valid positions that can be used to calculate the average receiver position
     private static double receiverSumLon;
-    private static double receiverSumCount = 0;     // number of valid positions received that are used to calculate the average
+    private static double receiverSumCount = 0;             // number of valid positions received that are used to calculate the average
 
     private static Map<String, PositionUpdate> cache = new HashMap<>();
     private static Timer cacheCleanup;
@@ -70,7 +74,14 @@ public class PositionUpdate {
         }
 
         if (current != null && current.isValid()) {
-            previous = current;
+            // Sanity Check: Is the position just received too far away from the receiver position?
+            if ((Math.abs(current.getLat() - receiverLat) > receiverRange) || (Math.abs(current.getLon() - receiverLon) > receiverRange)) {
+                LoggerFactory.getLogger(getClass()).info("Position Update discarded due to outside receiver range.");
+                current = null;
+            }
+            else {
+                previous = current;
+            }
         }
 
         return current;
@@ -95,29 +106,20 @@ public class PositionUpdate {
         double newLon = dLon * (m + cpr.getLon());
 
         cpr.setZones(j, m);
-        if ((j != otherCpr.getLatZone()) || (m != otherCpr.getLonZone())) {
-            // The new frame is in a different CPR zone
-            if (isOdd) {
-                //even = null;        // Keep the current odd frame but discard the previous even frame
-            } else {
-                //odd = null;
-            }
-            //previous = null;
-            //current = null;
-            //return;
-        }
 
         current = new CprPosition(newLat, newLon, cpr.getSurface());
         if (current.getSurface()) {
             validateSurface(current);
         }
 
-        // TODO Should be a sanity-check here to make sure the calculated position isn't outside receiver origin range
-        // TODO Should be a sanity-check here to see if the calculated movement since the last update is too far
+        if ((Math.abs(current.getLat() - previous.getLat()) > updateThreshold) || (Math.abs(current.getLon() - previous.getLon()) > updateThreshold)) {
+                LoggerFactory.getLogger(getClass()).info("Position Update discarded due to unreasonable distance between updates.");
+                current = null;
+        }
     }
 
     private void calculateGlobal() {
-        double j = Math.floor(59.0 * even.getLat() - 60.0 * odd.getLat() + 0.5);
+        double j = Math.floor(dLatOdd * even.getLat() - dLatEven * odd.getLat() + 0.5);
         double degrees = even.getSurface() ? 90.0 : 360.0;  // Doesn't matter whether we check odd or even as they must both match by now
 
         double latEven = (degrees / dLatEven) * (cprMod(j, dLatEven) + even.getLat());
@@ -161,7 +163,6 @@ public class PositionUpdate {
         if (current.getSurface()) {
             validateSurface(current);
         }
-        //TODO Should be a sanity-check here to make sure the calculated position isn't outside receiver origin range
     }
 
     static private double cprMod(double a, double b) {

@@ -34,10 +34,10 @@ Most features of the DF17/18 protocol have been implemented, some message lack s
 | 2         | Aircraft Identification      | ✅         |                                                           |
 | 3         | Aircraft Identification      | ✅         |                                                           |
 | 4         | Aircraft Identification      | ✅         |                                                           |
-| 5         | Surface Position             | ❌         | Not implemented yet                                       |
-| 6         | Surface Position             | ❌         | Not implemented yet                                       |
-| 7         | Surface Position             | ❌         | Not implemented yet                                       |
-| 8         | Surface Position             | ❌         | Not implemented yet                                       |
+| 5         | Surface Position             | ✅         |                                                           |
+| 6         | Surface Position             | ✅         |                                                           |
+| 7         | Surface Position             | ✅         |                                                           |
+| 8         | Surface Position             | ✅         |                                                           |
 | 9         | Airborne Position            | ✅         |                                                           |
 | 10        | Airborne Position            | ✅         |                                                           |
 | 11        | Airborne Position            | ✅         |                                                           |

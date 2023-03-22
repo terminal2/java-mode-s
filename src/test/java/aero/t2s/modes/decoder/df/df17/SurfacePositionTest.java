@@ -46,12 +46,25 @@ class SurfacePositionTest {
         assertTrue(positionB.isPositionAvailable());
         assertEquals(53.3604, positionB.getLat(), 0.001);
         assertEquals(-2.2671, positionB.getLon(), 0.001);
-
         assertTrue(positionB.isVelocityAvailable());
         assertEquals(1.75, positionB.getVelocity(), 0.1);
-
         assertTrue(positionB.isTrackAvailable());
         assertEquals(230.625, positionB.getTrack(), 0.1);
+
+        // This is another ODD frame with Surface Position... so we should be able to do a local calculation of position
+        DownlinkFormat dfC = testMessage("8c4ca6a9389d27ec46497d8ea39e");
+
+        assertInstanceOf(DF17.class, dfC);
+        DF17 df17C = (DF17) dfC;
+        assertEquals("4CA6A9", df17C.getIcao());
+        ExtendedSquitter exSqC = df17C.getExtendedSquitter();
+        assertInstanceOf(SurfacePosition.class, exSqC);
+        SurfacePosition positionC = (SurfacePosition) exSqC;
+        // We should still have a valid position after receiving another odd frame
+
+        assertTrue(positionC.isPositionAvailable());
+        assertEquals(53.360, positionC.getLat(), 0.001);
+        assertEquals(-2.267, positionC.getLon(), 0.001);
     }
 
     @Test
