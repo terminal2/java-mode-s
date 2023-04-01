@@ -25,7 +25,7 @@ public class DF18 extends DownlinkFormat {
             case 6:
             case 7:
             case 8:
-                extendedSquitter = new SurfacePosition(data);
+                extendedSquitter = new SurfacePosition(data, getIcao());
                 break;
             case 19:
                 extendedSquitter = new AirborneVelocity(data);
