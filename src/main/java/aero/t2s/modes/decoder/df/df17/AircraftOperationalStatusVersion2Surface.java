@@ -13,7 +13,7 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
     private Angle horizontalSource;
     private SourceIntegrityLevelSupplement SILsupp;
     private SourceIntegrityLevel SIL;
-    private Version verison;
+    private Version version;
 
     public AircraftOperationalStatusVersion2Surface(short[] data) {
         super(data);
@@ -88,7 +88,7 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
         return SIL;
     }
 
-    public Version getVerison() {
-        return verison;
+    public Version getVersion() {
+        return version;
     }
 }
