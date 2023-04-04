@@ -67,6 +67,7 @@ public class Track {
     private String wtc = "";
     private String registration;
     private String operator;
+    private Angle horizontalSource = Angle.UNAVAILABLE;
 
     public Track(String icao) {
         this.icao = icao;
@@ -547,5 +548,13 @@ public class Track {
             lat,
             lon
         );
+    }
+
+    public void setHorizontalSource(Angle horizontalSource) {
+        this.horizontalSource = horizontalSource;
+    }
+
+    public Angle getHorizontalSource() {
+        return horizontalSource;
     }
 }

@@ -2,6 +2,7 @@ package aero.t2s.modes.decoder.df.df17;
 
 import aero.t2s.modes.CprPosition;
 import aero.t2s.modes.Track;
+import aero.t2s.modes.constants.Angle;
 
 public class SurfacePosition extends ExtendedSquitter {
     private final String address;
@@ -69,7 +70,14 @@ public class SurfacePosition extends ExtendedSquitter {
         }
 
         if (trackAvailable) {
-            track.setTrueHeading(this.track);
+            if (track.getHorizontalSource() == Angle.TRUE_TRACK) {
+                track.setTrueHeading(this.track);
+            } else if (track.getHorizontalSource() == Angle.MAGNETIC_HEADING) {
+                track.setMagneticHeading(this.track);
+            } else {
+                track.setTrueHeading(this.track);
+                track.setMagneticHeading(this.track);
+            }
         }
     }
 

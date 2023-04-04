@@ -21,23 +21,27 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
 
     @Override
     public AircraftOperationalStatusVersion2Surface decode() {
-        verison = Version.VERSION2;
-        surfaceCapability = new SurfaceCapability((data[5] << 4) | (data[6] & 0b11110000) >>> 4, verison);
+        version = Version.VERSION2;
+        surfaceCapability = new SurfaceCapability((data[5] << 4) | (data[6] & 0b11110000) >>> 4, version);
         lengthWidthCode = LengthWidthCode.from(data[6] & 0b00001111);
         operationalMode = new SurfaceOperationalMode((data[7] << 8) | data[8]);
 
-        SIL = SourceIntegrityLevel.from((data[10] & 0b000110000) >>> 4);
-        SILsupp = SourceIntegrityLevelSupplement.from((data[10] & 0b00000010) >>> 1);
-
         int NICsuppA = (data[9] & 0b00010000) >>> 4;
         int NACp = (data[9] & 0b00001111);
-        NICp = NavigationIntegrityCategory.surface(NACp, NICsuppA);
+        int GVA = (data[10] & 0b11000000) >>> 6;
+        int SIL = (data[10] & 0b00110000) >>> 4;
+
+        int SILsupp = (data[10] & 0b00000010) >>> 1;
+
+        this.SIL = SourceIntegrityLevel.from(SIL);
+        this.SILsupp = SourceIntegrityLevelSupplement.from(SILsupp);
+        this.NICp = NavigationIntegrityCategory.surface(NACp, NICsuppA);
 
         if ((data[10] & 0b00001000) != 0) {
             if ((data[10] & 0b00000100) != 0)  {
-                horizontalSource = Angle.TRUE_TRACK;
-            } else {
                 horizontalSource = Angle.MAGNETIC_TRACK;
+            } else {
+                horizontalSource = Angle.TRUE_TRACK;
             }
         } else {
             if ((data[10] & 0b00000100) != 0)  {
@@ -53,6 +57,7 @@ public class AircraftOperationalStatusVersion2Surface extends AircraftOperationa
     @Override
     public void apply(Track track) {
         track.setVersion(Version.VERSION2);
+        track.setHorizontalSource(horizontalSource);
     }
 
     public SurfaceCapability getSurfaceCapability() {
