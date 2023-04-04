@@ -27,7 +27,7 @@ public class SurfaceOperationalMode {
         acasRA = (data & 0b0010000000000000) != 0 ? AcasState.RA_ACTIVE : AcasState.RA_NOT_ACTIVE;
         acasIdent = (data & 0b0001000000000000) != 0;
         singleAntennaFlag = (data & 0b0000010000000000) != 0;
-        systemDesignAssurance = SourceIntegrityLevel.from((data & 0b0000001100000000) >>> 7);
+        systemDesignAssurance = SourceIntegrityLevel.from((data & 0b0000001100000000) >>> 8);
         int gpsAntennaOffset = (data & 0b0000000011111111);
 
         gpsLateralOffset = (gpsAntennaOffset & 0b11100000) >>> 5;
